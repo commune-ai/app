@@ -4,15 +4,16 @@ import {
   HeroSection,
   CallToActionSection,
   FrequentQuestions,
+  Footer,
 } from './components'
 import Loading from './loading'
-import { sections } from './utils'
+import { sections } from './components/Mock'
 
-export default async function Home() {
+export default function Home() {
   return (
     <Suspense fallback={<Loading />}>
-      <HeroSection />
-      <div className='mx-8 flex flex-col items-center'>
+      <div className='flex flex-col items-center'>
+        <HeroSection />
         <CallToActionSection />
         {sections.map((section, index) => {
           return (
@@ -24,11 +25,13 @@ export default async function Home() {
               color={section.color}
               features={section.features}
               gradientColor={section.gradientColor}
+              image={section.image}
             />
           )
         })}
         <FrequentQuestions />
       </div>
+      <Footer />
     </Suspense>
   )
 }

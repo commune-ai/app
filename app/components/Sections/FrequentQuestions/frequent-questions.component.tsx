@@ -1,13 +1,13 @@
 'use client'
 import { Disclosure } from '@headlessui/react'
 import { GradientLayer } from '../..'
-import { faqData } from '@/app/utils/sections-mock/frequent-questions'
+import { faqData } from '@/app/components/Mock/frequent-questions'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
 export const FrequentQuestions = () => {
   return (
     <section
-      className={` relative m-6 w-11/12 max-w-screen-xl overflow-hidden rounded-3xl bg-gray-600/20 px-10 py-16 text-left shadow-2xl md:p-12 lg:m-8 lg:p-24`}
+      className={`relative m-6 w-11/12 max-w-screen-xl overflow-hidden rounded-3xl bg-gray-600/20 px-10 py-16 text-left shadow-2xl md:p-12 lg:m-8 lg:p-24`}
     >
       <GradientLayer
         gradientColor='from-blue-400 via-blue-200'
@@ -16,7 +16,7 @@ export const FrequentQuestions = () => {
 
       <div className='mx-auto max-w-4xl divide-y divide-white/10'>
         <h2 className='text-2xl font-bold leading-10 tracking-tight text-white'>
-          Frequently asked questions
+          Frequently Asked Questions (FAQ)
         </h2>
         <dl className='mt-10 space-y-6 divide-y divide-white/10'>
           {faqData.map((faq) => (
