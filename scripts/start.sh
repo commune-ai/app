@@ -23,6 +23,7 @@ CMD_STR="docker run -d \
   --name $CONTAINER_NAME \
   --shm-size $SHM_SIZE \
   -v ~/.$NAME:/root/.$NAME \
+  -v ~/commune:/commune \
   -v $PWD:/app \
   -p $BACKEND_PORT:$BACKEND_PORT \
   -p $FRONTEND_PORT:$FRONTEND_PORT \

@@ -8,7 +8,6 @@ import commune as c
 # Pydantic model for module dat
 import requests
 import requests
-
 from .utils import load_json, save_json, logs
 
 class Hub:
@@ -18,7 +17,7 @@ class Hub:
     model='anthropic/claude-3.5-sonnet'
     free = True
     endpoints = ["get_modules", 
-               'modules', 
+                'modules', 
                 'add_module', 
                 'remove', 
                 'update', 
@@ -32,8 +31,8 @@ class Hub:
     
     # In-memory storage for modules
     
-    def get_module_path(self, module_id):
-        return f"{self.modules_path}/{module_id}.json"
+    def get_module_path(self, module):
+        return f"{self.modules_path}/{module}.json"
 
     def ls(self, path=modules_path):
         if not os.path.exists(path):
@@ -71,54 +70,55 @@ class Hub:
         save_json(module_path, module)
         return {"message": f"Module {module['key']} updated successfully"}
 
-    def get_module(self, module_id):
-        module_path = self.get_module_path(module_id)
-        return load_json(module_path)
-    
     def clear_modules(self):
         for module_path in self.ls(self.modules_path):
             print('Removing:', module_path)
             os.remove(module_path)
         return {"message": "All modules removed"}
     
-    def get_modules(self):
-        return self.modules()
-    
     def resolve_path(self, path):
         return '~/.hub/api/' + path
 
-    def modules(self, tempo=600, update=False, lite=True, page=1, page_size=100):
+    def modules(self, tempo=600, update=False, lite=True, page=1, page_size=100, verbose=False):
         modules =  c.get_modules() 
         path = self.resolve_path('modules')
         module_infos = c.get(path,[], max_age=tempo, update=update)
-
+        modules = c.modules()
+        progress = c.tqdm(modules, desc="Loading modules", unit="module")
         if len(module_infos) > 0:
             return module_infos
         else:
-            
-            modules = c.get_modules()
-            for m in modules:
+            # return modules
+            modules = sorted(modules, key=lambda x: x.lower())
+            for module in modules:
                 try:
-                    code = c.code(m)
-                    hash_code = c.hash(code)
-                    key = c.pwd2key(hash_code)
-                    m = {'name': m, 
-                        'code': code,
-                        'key': key.ss58_address, 
-                        'crypto_type': key.crypto_type ,
-                        'hash': hash_code, 
-                        'time': c.time(),
-                        }
-                    if lite:
-                        m.pop('code')
-
-                    module_infos += [m]
+                    module_infos += [self.get_module(module, lite=lite)]
+                    progress.update(1)
                 except Exception as e:
-                    print(e)
+                    if verbose:
+                        print(e)
+        
 
         c.put(path, module_infos)
 
+
         return module_infos
+
+    def get_module(self, module:str, lite=True):
+
+        code = c.code(module)
+        hash_code = c.hash(code)
+        key = c.pwd2key(hash_code)
+        module_info = {'name': module, 
+            'code': code,
+            'key': key.ss58_address, 
+            'crypto_type': key.crypto_type ,
+            'hash': hash_code, 
+            'time': c.time(),
+            }
+        if not lite:
+            module_info.pop('code')
+        return module_info
 
     def add_module(self, name  = "module", 
                    key  = "module_key", 
@@ -135,11 +135,6 @@ class Hub:
     def root():
         return {"message": "Module Management API"}
 
-    def get_module(self, module_id: str):
-        modules = self.get_modules()
-        if module_id not in modules:
-            raise HTTPException(status_code=404, detail="Module not found")
-        return modules[module_id]
 
     def remove(self, module_id: str):
         assert self.module_exists(module_id), "Module not found"
@@ -148,9 +143,6 @@ class Hub:
 
     def module_exists(self, module_id: str):
         return os.path.exists(self.get_module_path(module_id))
-
-    def get_modules(self):
-        return load_json(self.modules_path)
 
     def update(self, module_id: str, module: Dict):
         if not self.module_exists(module_id):
@@ -187,19 +179,7 @@ class Hub:
         while c.port_used(port):
             c.kill_port(port)
         return c.kill(name)
-
     
-    def app(self, name=app_name, port=app_port, server_port=server_port, remote=0):
-        self.serve(server_port)
-        return c.cmd(f'yarn dev')
-    
-    def fix(self, name=app_name, model=model):
-        logs = c.logs(name, mode='local')
-        files =   self.files(f"{logs}")
-        context = {f: c.get_text(f) for f in files}
-        prompt = f"CONTEXT {context} LOGS  {logs} OBJECTIVE fix the issue"
-        print('Sending prompt:',len(prompt))
-        return c.ask(prompt[:10000], model=model)
 
     def query(self,  
               options : list,  
