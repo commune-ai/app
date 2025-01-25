@@ -19,9 +19,11 @@ RUN git clone -b main --single-branch https://github.com/commune-ai/commune.git 
 RUN pip install -e /commune --break-system-packages
 
 # Copy package.json and install dependencies
-COPY package.json /app/
 WORKDIR /app
+COPY ./package.json .
 RUN yarn install
+COPY . .
+RUN chmod +x .run/*
+ENTRYPOINT [ "tail", "-f", "/dev/null" ]
 
-# Set your final workdir
-WORKDIR /app
+
