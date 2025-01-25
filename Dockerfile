@@ -20,10 +20,10 @@ RUN pip install -e /commune --break-system-packages
 
 # Copy package.json and install dependencies
 WORKDIR /app
-COPY ./package.json .
+COPY ./app/package.json .
 RUN yarn install
 COPY . .
-RUN chmod +x .run/*
-ENTRYPOINT [ "tail", "-f", "/dev/null" ]
+# RUN chmod +x .run/*
+ENTRYPOINT [ "bash", "-c", "./run/entry.sh" ]
 
 

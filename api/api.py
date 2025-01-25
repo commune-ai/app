@@ -25,11 +25,6 @@ class Hub:
                 'info', 
                 'functions']
     modules_path = __file__.replace(__file__.split('/')[-1], 'modules')
-
-    # def __init__(self, network='subspace'):
-    #     self.network_module = c.module(network)()
-    
-    # In-memory storage for modules
     
     def get_module_path(self, module):
         return f"{self.modules_path}/{module}.json"
@@ -45,7 +40,7 @@ class Hub:
         return c.logs(name)
 
     def check_module(self, module):
-        features = ['name', 'address', 'key']  
+        features = ['name', 'url', 'key']  
         if isinstance(module, str):
             module = self.get_module(module)
         if not isinstance(module, dict):
@@ -123,10 +118,10 @@ class Hub:
     def add_module(self, name  = "module", 
                    key  = "module_key", 
                    code = None, 
-                   address  = "0.0.0.0:8000", 
+                   url  = "0.0.0.0:8000", 
                    **kwargs ):
         
-        module = { "name": name, "address": address, "key": key, "code": code, }
+        module = { "name": name, "url": url, "key": key, "code": code, }
         self.save_module(module)
         result =  {"message": f"Module {module['name']} added successfully", "module": module}
         print('RESULT',result)
@@ -168,10 +163,6 @@ class Hub:
         assert not self.module_exists(test_module['name']), "Module not removed"
         return {"message": "All tests passed"}
     
-
-
-    avoid_terms = ['__pycache__', '.ipynb_checkpoints', "node_modules", ".git", ".lock", "public", "json"]
-
     def serve(self, port=server_port):
         return c.serve(self.module_name(), port=port)
     
@@ -271,11 +262,3 @@ class Hub:
         response = requests.get(raw_url)
         response.raise_for_status()
         return response.text
-
-    # Example Usage:
-    # files = list_github_repo_files('commune-ai', 'commune')
-    # for f in files:
-    #     print(f['name'], f['path'], f['type'])
-    #     if f['type'] == 'file':
-    #         content = file2text('commune-ai', 'commune', f['path'])
-    #         print(content)

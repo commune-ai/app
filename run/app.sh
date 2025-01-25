@@ -1,28 +1,22 @@
+#::::::::::::::::: API :::::::::::::::::
 
-# if the lock file exists, then the app is already running
-
-echo "STARTING(api)"
-c serve api
-c kill_port 3000
-
-echo "STARTING(app)"
-
-
-APP_PATH=$(pwd)/app
-cd $APP_PATH
-
-# if yarn.lock does not exist then install yarn 
-
-# check if yarn is installed
-
-if [ ! -f "yarn.lock" ]; then
-  yarn install
+API_PORT=8000
+# START API
+if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null ; then
+  echo "port $PORT is already in use"
+else
+  c serve api port=$PORT
 fi
 
+#::::::::::::::::: APP :::::::::::::::::
 
-IS_YARN_LOCK=$(ls -A app/yarn.lock)
-if [ -z "$IS_YARN_LOCK" ]; then
-  echo "yarn.lock not found, using npm"
-  yarn install
+APP_PORT=3000
+cd app 
+# check if yarn is even installed
+if ! [ -x "$(command -v yarn)" ]; then
+  echo 'Error: yarn is not installed.' >&2
+  exit 1
 fi
-yarn dev
+cd app
+echo "START(name=app app_port=$APP_PORT api_port=$API_PORT)"
+yarn dev --port $APP_PORT

@@ -7,18 +7,14 @@ else
   NAME=$1
 fi
 if [ $(docker ps -q -f name=$NAME) ]; then
-  ./run/stop.sh
+  ./run/stop.sh $NAME
 fi
-
-echo "STARTING($NAME)"
-
-# entry point to the container as a daemon
-# expose 3000 port to the host
-eval "docker run  \
-  --name $NAME \
-  -p 3000:3000 \
-  --restart unless-stopped --privileged \
+echo "STARTING($NAME image=$IMAGE_NAME)"
+docker run --name $NAME -d  --restart unless-stopped --privileged \
   -v ~/commune:/commune -v ~/.commune:/root/.commune\
-  -v $REPO_PATH:/app\
-  $IMAGE_NAME"
+  -p 3000:3000 \
+  -v $REPO_PATH:/app \
+  $IMAGE_NAME
+
+docker logs -f $NAME
 

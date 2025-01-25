@@ -1,5 +1,5 @@
 type NetworkType = 'local' | 'testnet' | 'mainnet';
-import config from '@/app/config.json';
+import config from '@/config.json';
 
 class Client {
   public address: string;

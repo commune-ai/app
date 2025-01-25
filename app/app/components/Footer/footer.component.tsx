@@ -1,4 +1,4 @@
-import config from '@/app/config.json'
+import config from '@/config.json'
 import React from 'react'
 
 const navigation = {

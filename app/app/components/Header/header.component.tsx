@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import config from '@/app/config.json'
+import config from '@/config.json'
 import { Wallet } from '@/app/wallet'
 import { CopyButton } from '@/app/components/CopyButton'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
@@ -63,7 +63,7 @@ export const Header = () => {
                 onClick={() => setWalletInfo(null)}
                 className="px-4 py-2 rounded-xl bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors"
               >
-                Sign Out
+                Sign Outt
               </button>
             </div>
           ) : (

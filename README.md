@@ -1,38 +1,121 @@
-## TEMPLATE ADOPTED FROM AGI COMMIES - https://github.com/agicommies
+# ComHub - The Hub for Commune AI Modules
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+ComHub is a web application that serves as a central hub for managing and discovering Commune AI modules. It provides a user-friendly interface to interact with modules and includes features like module search, creation, and management.
 
-## Getting Started
+## 🚀 Quick Start
 
-First, run the development server:
+### Prerequisites
 
+- Docker
+- Git
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/comhub.git
+cd comhub
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Build the Docker image:
+```bash
+./run/build.sh
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Start the container:
+```bash
+./run/start.sh
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This will:
+- Build the Docker image with all required dependencies
+- Start the container with the necessary port mappings
+- Mount required volumes for persistence
 
-## Learn More
+### Development
 
-To learn more about Next.js, take a look at the following resources:
+The application consists of two main parts:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Frontend (Next.js app running on port 3000)
+2. Backend (FastAPI server running on port 8000)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+To run the development environment:
 
-## Deploy on Vercel
+```bash
+# Enter the container
+./run/enter.sh
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Start the application
+./run/app.sh
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🛠️ Architecture
+
+The application is built with:
+
+- **Frontend**: Next.js, TailwindCSS, TypeScript
+- **Backend**: FastAPI, Python
+- **Storage**: Local file system for module data
+- **Container**: Docker
+
+## 📁 Project Structure
+
+```
+.
+├── app/                    # Frontend application
+│   ├── components/        # React components
+│   ├── modules/          # Module-related pages
+│   └── wallet/           # Wallet implementation
+├── api/                   # Backend API
+│   ├── api.py            # Main API implementation
+│   └── utils.py          # Utility functions
+├── run/                   # Shell scripts for running the application
+│   ├── app.sh            # Start the application
+│   ├── build.sh          # Build Docker image
+│   ├── enter.sh          # Enter container
+│   ├── start.sh          # Start container
+│   └── stop.sh           # Stop container
+└── Dockerfile            # Docker configuration
+```
+
+## 🔧 Configuration
+
+The application can be configured through environment variables:
+
+- `API_PORT`: Backend API port (default: 8000)
+- `APP_PORT`: Frontend application port (default: 3000)
+
+## 🚀 Features
+
+- Module discovery and search
+- Module creation and management
+- Wallet integration
+- Real-time module status
+- Grid and table views for modules
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Built on top of Commune AI
+- Inspired by the need for a central hub for AI modules
+
+```
+
+This README provides:
+1. Clear installation instructions using Docker
+2. Project structure overview
+3. Configuration options
+4. Development setup instructions
+5. Feature list
+6. Contributing guidelines

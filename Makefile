@@ -1,19 +1,26 @@
-SCRIPTS_PATH=./run
-build:
-	${SCRIPTS_PATH}/build.sh 
-start:
-	${SCRIPTS_PATH}/start.sh 
-stop:
-	${SCRIPTS_PATH}/stop.sh 
-enter:
-	${SCRIPTS_PATH}/enter.sh
-test:
-	${SCRIPTS_PATH}/test.sh
-restart:
-	make stop
-	make start
+
+
+RUN_PATH=./run
+
+# CHMOD: change the mode of the scripts
 chmod:
-	chmod +x ${SCRIPTS_PATH}/*
+	chmod +x ${RUN_PATH}/*
+# BUILD: build the app
+build:
+	${RUN_PATH}/build.sh 
+# START: start the app
+start:
+	${RUN_PATH}/start.sh 
+# STOP: stop the app
+stop:
+	${RUN_PATH}/stop.sh 
+# RESTART: restart the app
+enter:
+	${RUN_PATH}/enter.sh
+# TEST: test the app
+test:
+	${RUN_PATH}/test.sh
+
 up: 
 	make start
 down:

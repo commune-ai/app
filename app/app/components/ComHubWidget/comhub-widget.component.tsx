@@ -1,4 +1,4 @@
-import  config  from '@/app/config.json'
+import  config  from '@/config.json'
 import Image from 'next/image'
 import Link from 'next/link'
 

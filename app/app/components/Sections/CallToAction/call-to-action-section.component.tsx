@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { DiscordWidget, DevDiscordWidget, GradientLayer, ComHubWidget } from '@/app/components'
 import { gradientSectionColors } from '@/app/components/Mock'
-import config from '@/app/config.json'
+import config from '@/config.json'
 type CTAWrapper = {
   children: React.ReactElement
   gradientColor: string
