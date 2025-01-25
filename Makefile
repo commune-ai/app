@@ -1,17 +1,21 @@
-
-IMAGE_NAME=redteam
-up:
-	docker run -d -p 3000:3000 -p 8000:8000 -v ./:/app --name redteam redteam
-app:
-	docker exec redteam bash -c "cd /app/web/ ; npm run start"
-server:
-	docker exec redteam bash -c "cd /app/backend; uvicorn app.main:app --reload --host 0.0.0.0"
+SCRIPTS_PATH=./run
 build:
-	docker build -t $(IMAGE_NAME) .
-down:
-	docker stop $(IMAGE_NAME)
-	docker rm $(IMAGE_NAME)
+	${SCRIPTS_PATH}/build.sh 
+start:
+	${SCRIPTS_PATH}/start.sh 
+stop:
+	${SCRIPTS_PATH}/stop.sh 
 enter:
-	docker exec -it $(IMAGE_NAME) /bin/bash
+	${SCRIPTS_PATH}/enter.sh
+test:
+	${SCRIPTS_PATH}/test.sh
+restart:
+	make stop
+	make start
 chmod:
-	chmod +x ./scripts/*
+	chmod +x ${SCRIPTS_PATH}/*
+up: 
+	make start
+down:
+	make stop
+

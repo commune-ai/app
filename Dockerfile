@@ -1,36 +1,27 @@
-# Use Ubuntu 22.04 as base image
-FROM ubuntu:22.04
+# Start from an official Node image with version >=16 (e.g., 18 or LTS)
+FROM node:18
 
-# Avoid prompts during package installation
+# Set the DEBIAN_FRONTEND to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update package lists and install basic dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    # python3 \
-    # python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+# Update and install OS-level packages
+RUN apt-get update && \
+    apt-get install -y nano build-essential cargo libstd-rust-dev python3 python3-pip python3-venv git
 
-# Install Node.js and NPM
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
-    && apt-get install -y nodejs
+# Install pm2 globally
+RUN npm install -g pm2
 
-# Install Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && apt-get update \
-    && apt-get install -y yarn
+# Show Python version (just for logging)
+RUN python3 --version
 
+# Clone and install commune
+RUN git clone -b main --single-branch https://github.com/commune-ai/commune.git /commune
+RUN pip install -e /commune --break-system-packages
 
-# include yarnlock file if it exists
-COPY package.json ./
+# Copy package.json and install dependencies
+COPY package.json /app/
+WORKDIR /app
 RUN yarn install
 
-# Verify installations
-RUN python3 --version && \
-    npm --version && \
-    yarn --version
-
-# Set working directory
+# Set your final workdir
 WORKDIR /app

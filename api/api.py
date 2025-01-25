@@ -136,20 +136,20 @@ class Hub:
         return {"message": "Module Management API"}
 
 
-    def remove(self, module_id: str):
-        assert self.module_exists(module_id), "Module not found"
-        os.remove(self.get_module_path(module_id))
-        return {"message": f"Module {module_id} removed successfully"}
+    def remove(self, module: str):
+        assert self.module_exists(module), "Module not found"
+        os.remove(self.get_module_path(module))
+        return {"message": f"Module {module} removed successfully"}
 
-    def module_exists(self, module_id: str):
-        return os.path.exists(self.get_module_path(module_id))
+    def module_exists(self, module: str):
+        return os.path.exists(self.get_module_path(module))
 
-    def update(self, module_id: str, module: Dict):
-        if not self.module_exists(module_id):
+    def update(self, module: str):
+        if not self.module_exists(module):
             raise HTTPException(status_code=404, detail="Module not found")
-        module = self.get_module(module_id)
+        module = self.get_module(module)
         
-        self.save_module(module_id, module)
+        self.save_module(module, module)
 
     def test(self):
         
