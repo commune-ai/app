@@ -16,7 +16,7 @@ class Hub:
     app_name =  __file__.split('/')[-3] + '_app' 
     model='anthropic/claude-3.5-sonnet'
     free = True
-    endpoints = ["get_modules", 
+    endpoints = [
                 'modules', 
                 'add_module', 
                 'remove', 

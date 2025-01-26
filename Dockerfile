@@ -24,6 +24,6 @@ COPY ./app/package.json .
 RUN yarn install
 COPY . .
 # RUN chmod +x .run/*
-ENTRYPOINT [ "bash", "-c", "./run/entry.sh" ]
+ENTRYPOINT [ "bash", "-c", "./run/app.sh" ]
 
 
