@@ -11,5 +11,8 @@ done
 
 CMD="docker build -t $NAME $(pwd)"
 if [ "$FORCE" = true ]; then
-    CMD="docker build --no-cache -t $NAME $(pwd)"
+    CMD="$CMD --no-cache"
 fi
+
+$CMD
+

@@ -20,6 +20,7 @@ RUN chmod +x run/*
 # install commune
 RUN git clone -b main --single-branch https://github.com/commune-ai/commune.git /commune
 RUN pip install -e /commune --break-system-packages
+
 ENTRYPOINT [ "bash", "-c", "./run/app.sh" ]
 
 
