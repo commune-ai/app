@@ -13,8 +13,8 @@ ComHub is a web application that serves as a central hub for managing and discov
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/comhub.git
-cd comhub
+git clone https://github.com/commune-ai/app.git
+cd app
 ```
 
 2. Build the Docker image:

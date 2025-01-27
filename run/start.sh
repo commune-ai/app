@@ -11,7 +11,6 @@ if [ $(docker ps -q -f name=$NAME) ]; then
 fi
 echo "STARTING($NAME image=$IMAGE_NAME)"
 docker run --name $NAME -d  --restart unless-stopped --privileged \
-  -v ~/commune:/commune -v ~/.commune:/root/.commune\
   -p 3000:3000 \
   -v $REPO_PATH:/app \
   $IMAGE_NAME
