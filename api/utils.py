@@ -9,7 +9,6 @@ def load_json(file_path):
             return json.load(f)
     except:
         return {}
-    
 
 def save_json(file_path, data):
     dir_path = os.path.dirname(file_path)

@@ -19,12 +19,12 @@ cd comhub
 
 2. Build the Docker image:
 ```bash
-./run/build.sh
+./run/build.sh # make build
 ```
 
 3. Start the container:
 ```bash
-./run/start.sh
+./run/start.sh # make start or make up
 ```
 
 This will:
@@ -43,10 +43,10 @@ To run the development environment:
 
 ```bash
 # Enter the container
-./run/enter.sh
+./run/enter.sh # make enter
 
 # Start the application
-./run/app.sh
+./run/app.sh # make app
 ```
 
 ## 🛠️ Architecture

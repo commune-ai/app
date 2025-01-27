@@ -20,7 +20,6 @@ enter:
 # TEST: test the app
 test:
 	${RUN_PATH}/test.sh
-
 up: 
 	make start
 down:
