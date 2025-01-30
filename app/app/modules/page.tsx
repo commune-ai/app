@@ -8,16 +8,16 @@ import ModuleCard from './ModuleCard';
 type ModuleType = {
   name: string;
   key: string;
-  address: string;
+  url: string;
   description: string;
   network: string;
 };
 
-// Default module updated to include address and remove url and github
+// Default module updated to include url and remove url and github
 const defaultModule: ModuleType = {
   name: 'agi',
   key: 'agi',
-  address: 'agi.com', // Using address field instead of url
+  url: 'agi.com', // Using url field instead of url
   description: 'agi module',
   network: 'eth',
 };
@@ -64,11 +64,11 @@ export default function Modules() {
     setLoading(true);
     setError('');
     try {
-      const { name, key, address, description, network } = newModule;
+      const { name, key, url, description, network } = newModule;
       if (!name || !key) {
         throw new Error('Name and Key are required');
       }
-      const params = { name, key, address, description, network };
+      const params = { name, key, url, description, network };
       await client.call('add_module', params);
       setNewModule(defaultModule);
       setShowCreateForm(false);
@@ -160,8 +160,8 @@ export default function Modules() {
               <span className="text-2xl">🌐</span>
               <input
                 placeholder="Address"
-                value={newModule.address}
-                onChange={(e) => handleFormChange('address', e.target.value)}
+                value={newModule.url}
+                onChange={(e) => handleFormChange('url', e.target.value)}
                 className="flex-1 px-4 py-3 rounded-lg bg-gray-700/90 text-white border border-gray-600 focus:border-indigo-500 focus:outline-none"
                 disabled={loading}
               />
@@ -233,7 +233,7 @@ export default function Modules() {
                   >
                     <td className="px-4 py-2 border-b border-white/20">{mod.name}</td>
                     <td className="px-4 py-2 border-b border-white/20">{abbreviateKey(mod.key)}</td>
-                    <td className="px-4 py-2 border-b border-white/20">{mod.address}</td>
+                    <td className="px-4 py-2 border-b border-white/20">{modurl}</td>
                     <td className="px-4 py-2 border-b border-white/20">{mod.network}</td>
                   </tr>
                 ))}

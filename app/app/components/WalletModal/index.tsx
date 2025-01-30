@@ -43,7 +43,7 @@ const WalletModal = ({
         <div className="flex flex-col gap-y-4 h-[300px] overflow-y-scroll no-scrollbar">
           {wallets.map((item) => (
             <button
-              key={item.address}
+              key={itemurl}
               className="text-md text-white cursor-pointer shadow-white flex items-center gap-x-3 border border-white border-opacity-50 bg-gray-900 rounded-xl p-5"
               // style={{ border: '1px solid w' }}
 
@@ -56,7 +56,7 @@ const WalletModal = ({
                 }
               />
 
-              {item.address}
+              {itemurl}
             </button>
           ))}
           {!wallets.length && (

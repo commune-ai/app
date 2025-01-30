@@ -15,7 +15,7 @@ const navigation = [
 export const Header = () => {
   const currentPath = usePathname()
   const [password, setPassword] = useState('')
-  const [walletInfo, setWalletInfo] = useState<{address: string, type: string} | null>(null)
+  const [walletInfo, setWalletInfo] = useState<{url: string, type: string} | null>(null)
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ export const Header = () => {
       // Now that the WASM is ready, we can safely instantiate the wallet
       const wallet = new Wallet(password);
       setWalletInfo({
-        address: wallet.getAddress(),
+        url: wallet.getAddress(),
         type: wallet.getType()
       });
     } catch (error) {
@@ -55,9 +55,9 @@ export const Header = () => {
             <div className="flex items-center gap-x-4">
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800/50 border border-gray-700">
                 <span className="text-sm text-gray-400">
-                  {walletInfo.address.slice(0,6)}...{walletInfo.address.slice(-4)}
+                  {walletInfourl.slice(0,6)}...{walletInfourl.slice(-4)}
                 </span>
-                <CopyButton code={walletInfo.address} />
+                <CopyButton code={walletInfourl} />
               </div>
               <button
                 onClick={() => setWalletInfo(null)}

@@ -10,7 +10,7 @@ type ModuleType = {
   name: string;
   key: string;
   github: string;
-  address: string;
+  url: string;
   description: string;
   key_type: string;
   hash: string;
@@ -21,6 +21,7 @@ type ModuleType = {
 type Props = {
   params: {
     module: string; // This matches the [module] folder name
+    
   };
 };
 
@@ -140,11 +141,10 @@ export default function ModulePage({ params }: Props) {
 
           {/* Info Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <InfoCard title="Hash" value={module.hash} />
-            <InfoCard title="Key" value={module.key} />
-            <InfoCard title="Address" value={module.address} />
-            <InfoCard title="Network" value={module.network} />
-            <InfoCard title="GitHub" value={module.github} />
+            <InfoCard title="key" value={module.key} />
+            <InfoCard title="url" value={module.url} />
+            <InfoCard title="network" value={module.network} />
+            <InfoCard title="code" value={module.github} />
           </div>
 
           {/* Preview Section */}
@@ -152,7 +152,7 @@ export default function ModulePage({ params }: Props) {
             <h2 className="text-2xl font-semibold text-white mb-4">Preview</h2>
             <div className="relative aspect-video">
               <iframe
-                src={`http://${module.address}/docs`}
+                src={`http://${module.url}/docs`}
                 className="w-full h-[600px] rounded-xl border border-white/20"
                 title={`${module.name} preview`}
               />

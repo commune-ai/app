@@ -2,13 +2,13 @@ type NetworkType = 'local' | 'testnet' | 'mainnet';
 import config from '@/config.json';
 
 class Client {
-  public address: string;
+  public url: string;
 
-  constructor(address: string = config.url, mode: string = 'http') {
-    if (!address.startsWith(`${mode}://`)) {
-      address = `${mode}://${address}`;
+  constructor(url: string = config.url , mode: string = 'http') {
+    if (!url.startsWith(`${mode}://`)) {
+      url = `${mode}://${url}`;
     }
-    this.address = address;
+    this.url = url;
   }
 
   public async call(
@@ -42,7 +42,7 @@ class Client {
 
     requestHeaders = { ...requestHeaders, ...headers };
 
-    const url: string = `${this.address}/${fn}`;
+    const url: string = `${this.url}/${fn}`;
     try {
       const response = await fetch(url, {
         method: 'POST',

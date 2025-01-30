@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type ModuleType = {
   name: string;
   key: string;
   github: string;
-  address: string;
+  url: string;
   description: string;
   key_type: string;
   hash: string;
