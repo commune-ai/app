@@ -14,6 +14,8 @@ type ModuleType = {
   hash: string;
 };
 
+
+
 type ModuleCardProps = {
   module: ModuleType;
 };
@@ -26,7 +28,7 @@ function copyToClipboard(text: string) {
 
 function abbreviateString(str: string, maxLength = 8): string {
   if (str.length <= maxLength) return str;
-  return `${str.substring(0, maxLength)}…`;
+  return `${str.substring(0, maxLength)}...`;
 }
 
 function AbbreviateOnHover({
@@ -45,9 +47,9 @@ function AbbreviateOnHover({
       </span>
       <span
         className={`
-          absolute inset-0 
-          opacity-0 group-hover:opacity-100 
-          transition-opacity
+          absolute inset-0
+          opacity-0 group-hover:opacity-100
+          transition-opacity whitespace-nowrap
         `}
       >
         {text}
@@ -86,21 +88,30 @@ export default function ModuleCard({ module }: ModuleCardProps) {
         group
       `}
     >
-      {/* Glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
+      {/* Enhanced glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
 
-      {/* Header */}
+      {/* Header with icon */}
       <div className="relative flex items-center justify-between mb-6">
-        <div className="text-xl text-white font-bold truncate bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
-          {/* Use AbbreviateOnHover for the name */}
-          <AbbreviateOnHover text={module.name} maxLength={12} />
+        <div className="flex items-center space-x-3">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+            <span className="text-xl">🔮</span>
+          </div>
+          <div className="text-xl text-white font-bold truncate">
+            <AbbreviateOnHover text={module.name} maxLength={12} />
+          </div>
         </div>
-        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 opacity-75 group-hover:opacity-100 transition-opacity" />
+        <div className="text-white/50">{module.key_type}</div>
       </div>
 
-      {/* Content */}
-      <div className="relative mt-auto space-y-3">
-        {/* URL Row */}
+      {/* Description */}
+      <p className="text-white/70 text-sm mb-6 line-clamp-2">
+        {JSON.stringify(module) || 'No description available ${module.key}` '}
+      </p>
+
+      {/* Info Cards */}
+      <div className="relative space-y-3">
+        {/* Hash Card */}
         <div className="flex items-center gap-3 group/item">
           <span className="text-2xl transform transition-transform group-hover/item:scale-110">
             🌐
@@ -120,7 +131,7 @@ export default function ModuleCard({ module }: ModuleCardProps) {
           </div>
         </div>
 
-        {/* Key Row */}
+        {/* Key Card */}
         <div className="flex items-center gap-3 group/item">
           <span className="text-2xl transform transition-transform group-hover/item:scale-110">
             🔑

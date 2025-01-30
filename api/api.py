@@ -76,7 +76,8 @@ class Hub:
 
     def modules(self, tempo=600, update=False, lite=True, page=1, page_size=100, verbose=False):
         modules =  c.get_modules() 
-        path = self.resolve_path('modules')
+        params_id = c.hash({'lite': lite})
+        path = self.resolve_path(f'modules/{params_id}')
         module_infos = c.get(path,[], max_age=tempo, update=update)
         modules = c.modules()
         progress = c.tqdm(modules, desc="Loading modules", unit="module")
@@ -111,7 +112,7 @@ class Hub:
             'hash': hash_code, 
             'time': c.time(),
             }
-        if not lite:
+        if lite:
             module_info.pop('code')
         return module_info
 

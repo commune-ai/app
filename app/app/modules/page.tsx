@@ -43,14 +43,17 @@ export default function Modules() {
   const fetchModules = async () => {
     setLoading(true);
     setError('');
+    const data = await client.call('modules');
+    const data_str = JSON.stringify(data);
+
     try {
-      const data = await client.call('modules');
+
       if (!Array.isArray(data)) {
-        throw new Error('Invalid modules data');
+        throw new Error(`Invalid response: ${data_str}`);
       }
       setModules(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch modules');
+      setError(err.message || `Failed to fetch ${data_str}`);
       setModules([]);
     } finally {
       setLoading(false);
@@ -138,7 +141,7 @@ export default function Modules() {
 
       {showCreateForm && (
         <div className="w-full max-w-lg mb-8 p-6 bg-gray-800/90 backdrop-blur-md rounded-xl shadow-lg border border-white/20">
-          <h2 className="text-2xl font-bold mb-6 text-white">Create New Module</h2>
+          <h2 className="text-2xl font-bold mb-6 text-white">Module (Anything is Possible)</h2>
 
           <div className="space-y-4">
 
