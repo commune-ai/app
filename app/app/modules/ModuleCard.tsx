@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type ModuleType = {
   name: string;
@@ -12,9 +12,8 @@ type ModuleType = {
   description: string;
   key_type: string;
   hash: string;
+  network?: string;
 };
-
-
 
 type ModuleCardProps = {
   module: ModuleType;
@@ -22,7 +21,7 @@ type ModuleCardProps = {
 
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text).catch(() => {
-    console.error('Failed to copy to clipboard');
+    console.error("Failed to copy to clipboard");
   });
 }
 
@@ -62,6 +61,9 @@ export default function ModuleCard({ module }: ModuleCardProps) {
   const router = useRouter();
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // NEW: state for expanding/collapsing the JSON
+  const [expanded, setExpanded] = useState(false);
+
   const handleCopy = (
     e: React.MouseEvent<HTMLButtonElement>,
     text: string,
@@ -71,6 +73,11 @@ export default function ModuleCard({ module }: ModuleCardProps) {
     copyToClipboard(text);
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 2000);
+  };
+
+  const toggleExpand = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setExpanded((prev) => !prev);
   };
 
   return (
@@ -104,10 +111,22 @@ export default function ModuleCard({ module }: ModuleCardProps) {
         <div className="text-white/50">{module.key_type}</div>
       </div>
 
-      {/* Description */}
-      <p className="text-white/70 text-sm mb-6 line-clamp-2">
-        {JSON.stringify(module) || 'No description available ${module.key}` '}
-      </p>
+      {/* Description (now JSON with expand/collapse) */}
+      <div className="mb-6">
+        <p
+          className={`text-white/70 text-sm transition-all ${
+            expanded ? "" : "line-clamp-2"
+          }`}
+        >
+          {JSON.stringify(module, null, 2) || `No description available ${module.key}`}
+        </p>
+        <button
+          onClick={toggleExpand}
+          className="mt-2 underline text-blue-400 text-sm"
+        >
+          {expanded ? "Show Less" : "Show More"}
+        </button>
+      </div>
 
       {/* Info Cards */}
       <div className="relative space-y-3">
@@ -122,10 +141,10 @@ export default function ModuleCard({ module }: ModuleCardProps) {
                 <AbbreviateOnHover text={module.hash} maxLength={28} />
               </span>
               <button
-                onClick={(e) => handleCopy(e, module.hash, 'hash')}
+                onClick={(e) => handleCopy(e, module.hash, "hash")}
                 className="ml-2 text-white/50 hover:text-white/90 transition-colors"
               >
-                {copiedField === 'hash' ? '✓' : '📋'}
+                {copiedField === "hash" ? "✓" : "📋"}
               </button>
             </div>
           </div>
@@ -142,10 +161,10 @@ export default function ModuleCard({ module }: ModuleCardProps) {
                 <AbbreviateOnHover text={module.key} maxLength={28} />
               </span>
               <button
-                onClick={(e) => handleCopy(e, module.key, 'key')}
+                onClick={(e) => handleCopy(e, module.key, "key")}
                 className="ml-2 text-white/50 hover:text-white/90 transition-colors"
               >
-                {copiedField === 'key' ? '✓' : '📋'}
+                {copiedField === "key" ? "✓" : "📋"}
               </button>
             </div>
           </div>

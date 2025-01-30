@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -14,6 +15,13 @@ type ModuleType = {
   key_type: string;
   hash: string;
   network: string;
+};
+
+// Add proper params type
+type Props = {
+  params: {
+    module: string; // This matches the [module] folder name
+  };
 };
 
 function CopyButton({ text, label }: { text: string; label: string }) {
@@ -35,7 +43,15 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   );
 }
 
-function InfoCard({ title, value, copyable = true }: { title: string; value: string; copyable?: boolean }) {
+function InfoCard({
+  title,
+  value,
+  copyable = true,
+}: {
+  title: string;
+  value: string;
+  copyable?: boolean;
+}) {
   return (
     <div className="bg-black/40 rounded-xl p-4">
       <h3 className="text-white font-semibold mb-2">{title}</h3>
@@ -47,22 +63,24 @@ function InfoCard({ title, value, copyable = true }: { title: string; value: str
   );
 }
 
-export default function ModulePage({ key }: { key: string }) {
+// Update the component to receive params
+export default function ModulePage({ params }: Props) {
   const router = useRouter();
   const [module, setModule] = useState<ModuleType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const client = new Client();
 
+  // Use params.module instead of module_key
   useEffect(() => {
     const fetchModule = async () => {
       try {
         const modules = await client.call('modules');
-        const foundModule = modules.find((m: ModuleType) => m.key === key);
+        const foundModule = modules.find((m: ModuleType) => m.key === params.module);
         if (foundModule) {
           setModule(foundModule);
         } else {
-          const msg = `Module with key ${key} not found`;
+          const msg = `Module with key = ${params.module} not found`;
           setError(msg);
         }
       } catch (error) {
@@ -74,8 +92,7 @@ export default function ModulePage({ key }: { key: string }) {
     };
 
     fetchModule();
-  }, [key]);
-
+  }, [params.module]);
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
