@@ -123,7 +123,6 @@ export default function ModuleCard({ module }: ModuleCardProps) {
           onClick={toggleExpand}
           className="mt-2 underline text-blue-400 text-sm"
         >
-          {expanded ? "Show Less" : "Show More"}
         </button>
       </div>
 

@@ -10,36 +10,59 @@ import { secp256k1 } from '@noble/curves/secp256k1';
 
 export interface WalletAccount {
     address: string;
-    type: 'sr25519' | 'ecdsa';
+    crypto_type: 'sr25519' | 'ecdsa';
     publicKey: string;
     privateKey: string;
 }
 
 export class Wallet {
-    private readonly key: WalletAccount;
+   
+    private privateKey : string;
+    public publicKey : string;
+    public address : string;
+    public crypto_type : 'sr25519' | 'ecdsa';
 
-    constructor(password: string = "bro") {
+    constructor(password: string = "bro", crypto_type:string='sr25519') {
         if (!password || typeof password !== 'string') {
             throw new Error('Invalid password provided');
         }
         // Assume cryptoWaitReady() is already called outside before construction
-        this.key = this.fromPassword(password);
+        const key = this.fromPassword(password=password, crypto_type=crypto_type);
+        this.privateKey = key.privateKey;
+        this.publicKey = key.publicKey;
+        this.address = key.address;
+        this.crypto_type = key.crypto_type;
+
     }
 
-    private fromPassword(password: string): WalletAccount {
+    private fromPassword(password: string, crypto_type:string='sr25519'): WalletAccount {
         const seedHex = blake2AsHex(password, 256);
         const seedBytes = hexToU8a(seedHex);
-        
         // Create SR25519 key pair
-        const keyPair = sr25519PairFromSeed(seedBytes);
-        const address = encodeAddress(keyPair.publicKey, 42);
 
-        return {
-            address,
-            type: 'sr25519',
-            publicKey: u8aToHex(keyPair.publicKey),
-            privateKey: u8aToHex(keyPair.secretKey)
-        };
+        if (crypto_type === 'sr25519') {
+            const keyPair = sr25519PairFromSeed(seedBytes);
+            const address = encodeAddress(keyPair.publicKey, 42);
+
+            return {
+                address,
+                crypto_type: 'sr25519',
+                publicKey: u8aToHex(keyPair.publicKey),
+                privateKey: u8aToHex(keyPair.secretKey)
+            };
+        } else if (crypto_type === 'ecdsa') {
+            const keyPair = secp256k1.keyFromPrivate(seedHex);
+            const publicKey = keyPair.getPublic(true, 'hex');
+            return {
+                address: publicKey,
+                crypto_type: 'ecdsa',
+                publicKey: publicKey,
+                privateKey: seedHex
+            };
+        } else {
+            throw new Error('Unsupported crypto type');
+        }
+
     }
 
     public static fromPrivateKey(privateKeyHex: string, type: 'sr25519' | 'ecdsa' = 'ecdsa'): WalletAccount {
@@ -60,8 +83,8 @@ export class Wallet {
         const address = encodeAddress(publicKey, 42);
         
         return {
-            address,
-            type,
+            address: address,
+            crypto_type : type,
             publicKey: u8aToHex(publicKey),
             privateKey: privateKeyHex
         };
@@ -71,23 +94,19 @@ export class Wallet {
         if (!message) {
             throw new Error('Empty message cannot be signed');
         }
-
         const messageBytes = new TextEncoder().encode(message);
+    
+        if (this.key.crypto_type === 'sr25519') {
+            const signature = sr25519Sign(hexToU8a(this.key.publicKey),hexToU8a(this.key.privateKey),messageBytes);
+            return u8aToHex(signature);
         
-        if (this.key.type === 'sr25519') {
-            const signature = sr25519Sign(
-                hexToU8a(this.key.publicKey),
-                hexToU8a(this.key.privateKey),
-                messageBytes
-            );
-            return u8aToHex(signature);
-        } else {
+        } else if (this.key.crypto_type === 'ecdsa') {
             const messageHash = blake2AsHex(message);
-            const signature = secp256k1.sign(
-                hexToU8a(messageHash),
-                hexToU8a(this.key.privateKey)
-            );
+            const signature = secp256k1.sign(hexToU8a(messageHash),hexToU8a(this.key.privateKey));
             return u8aToHex(signature);
+        }
+        else {
+            throw new Error('Unsupported crypto type');
         }
     }
 
@@ -95,13 +114,12 @@ export class Wallet {
         message: string, 
         signature: string, 
         publicKey: string,
-        type?: 'sr25519' | 'ecdsa'
     ): Promise<boolean> {
         if (!message || !signature || !publicKey) {
             throw new Error('Invalid verification parameters');
         }
 
-        const sigType = type || this.key.type;
+        const sigType = this.key.crypto_type;
         const messageBytes = new TextEncoder().encode(message);
 
         if (sigType === 'sr25519') {
@@ -110,7 +128,7 @@ export class Wallet {
                 hexToU8a(signature),
                 hexToU8a(publicKey)
             );
-        } else {
+        } else if (sigType === 'ecdsa') {
             const messageHash = blake2AsHex(message);
             return secp256k1.verify(
                 hexToU8a(signature),
@@ -125,7 +143,7 @@ export class Wallet {
             throw new Error('Invalid encryption parameters');
         }
 
-        if (this.key.type === 'sr25519') {
+        if (this.key.crypto_type === 'sr25519') {
             throw new Error('SR25519 encryption not implemented');
         }
 
@@ -159,7 +177,7 @@ export class Wallet {
             throw new Error('Invalid decryption parameters');
         }
 
-        if (this.key.type === 'sr25519') {
+        if (this.key.crypto_type === 'sr25519') {
             throw new Error('SR25519 decryption not implemented');
         }
 
@@ -189,15 +207,15 @@ export class Wallet {
         return new TextDecoder().decode(decrypted);
     }
 
-    public getPublicKey(): string {
+    public publicKey(): string {
         return this.key.publicKey;
     }
 
-    public getAddress(): string {
+    public address(): string {
         return this.key.address;
     }
 
     public getType(): 'sr25519' | 'ecdsa' {
-        return this.key.type;
+        return this.key.crypto_type;
     }
 }

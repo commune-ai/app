@@ -1,7 +1,6 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import config from '@/config.json'
 import { Wallet } from '@/app/wallet'
@@ -13,8 +12,7 @@ const navigation = [
 ]
 
 export const Header = () => {
-  const currentPath = usePathname()
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('whatsup')
   const [walletInfo, setWalletInfo] = useState<{url: string, type: string} | null>(null)
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -26,8 +24,8 @@ export const Header = () => {
       // Now that the WASM is ready, we can safely instantiate the wallet
       const wallet = new Wallet(password);
       setWalletInfo({
-        address: wallet.getAddress(),
-        type: wallet.getType()
+        address: wallet.address,
+        crypto_type: wallet.crypto_type
       });
     } catch (error) {
       console.error('Failed to create wallet:', error);
@@ -63,7 +61,7 @@ export const Header = () => {
                 onClick={() => setWalletInfo(null)}
                 className="px-4 py-2 rounded-xl bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors"
               >
-                Sign Outt
+                leave
               </button>
             </div>
           ) : (
@@ -79,7 +77,7 @@ export const Header = () => {
                 type="submit"
                 className="px-4 py-2 rounded-lg text-sm leading-6 text-gray-100 bg-indigo-500 hover:bg-indigo-600 transition-colors"
               >
-                Sign In
+                enter
               </button>
             </form>
           )}

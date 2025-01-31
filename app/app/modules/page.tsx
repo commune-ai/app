@@ -124,18 +124,11 @@ export default function Modules() {
           {loading ? 'Loading...' : '♻️'}
         </button>
         <button
-          onClick={() => setViewMode(viewMode === 'grid' ? 'table' : 'grid')}
-          disabled={loading}
-          className="px-6 py-4 bg-yellow-500/90 backdrop-blur-md text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50 shadow-lg transition-all duration-300 text-lg"
-        >
-          {viewMode === 'grid' ? '📃 Table' : '🗔 Grid'}
-        </button>
-        <button
           onClick={() => setShowCreateForm(true)}
           disabled={loading}
           className="px-6 py-4 bg-green-500/90 backdrop-blur-md text-white rounded-lg hover:bg-green-600 disabled:opacity-50 shadow-lg transition-all duration-300 text-lg"
         >
-          +
+          module (+)
         </button>
       </div>
 
