@@ -6,12 +6,14 @@ import {
   FrequentQuestions,
   Footer,
 } from './components'
-import Loading from './loading'
+import Loading from './components/Loading'
 import { sections } from './components/Mock'
+import ModulePage from './modules/ModulePage'
 
 export default function Home() {
   return (
     <Suspense fallback={<Loading />}>
+      <ModulePage />
       <div className='flex flex-col items-center'>
         <HeroSection />
         <CallToActionSection />

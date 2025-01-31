@@ -124,13 +124,6 @@ export default function Modules() {
           {loading ? 'Loading...' : '♻️'}
         </button>
         <button
-          onClick={() => setViewMode(viewMode === 'grid' ? 'table' : 'grid')}
-          disabled={loading}
-          className="px-6 py-4 bg-yellow-500/90 backdrop-blur-md text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50 shadow-lg transition-all duration-300 text-lg"
-        >
-          {viewMode === 'grid' ? '📃 Table' : '🗔 Grid'}
-        </button>
-        <button
           onClick={() => setShowCreateForm(true)}
           disabled={loading}
           className="px-6 py-4 bg-green-500/90 backdrop-blur-md text-white rounded-lg hover:bg-green-600 disabled:opacity-50 shadow-lg transition-all duration-300 text-lg"
@@ -233,7 +226,7 @@ export default function Modules() {
                   >
                     <td className="px-4 py-2 border-b border-white/20">{mod.name}</td>
                     <td className="px-4 py-2 border-b border-white/20">{abbreviateKey(mod.key)}</td>
-                    <td className="px-4 py-2 border-b border-white/20">{modurl}</td>
+                    <td className="px-4 py-2 border-b border-white/20">{mod.url}</td>
                     <td className="px-4 py-2 border-b border-white/20">{mod.network}</td>
                   </tr>
                 ))}

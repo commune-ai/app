@@ -10,5 +10,6 @@ export { Header } from './Header'
 export { DiscordWidget } from './DiscordWidget'
 export { DevDiscordWidget } from './DiscordWidget'
 export { ComHubWidget } from './ComHubWidget'
+export { Loading } from './Loading'
 
 export { Footer } from './Footer'

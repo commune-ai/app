@@ -9,7 +9,7 @@ import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { secp256k1 } from '@noble/curves/secp256k1';
 
 export interface WalletAccount {
-    url: string;
+    address: string;
     type: 'sr25519' | 'ecdsa';
     publicKey: string;
     privateKey: string;
@@ -32,10 +32,10 @@ export class Wallet {
         
         // Create SR25519 key pair
         const keyPair = sr25519PairFromSeed(seedBytes);
-        const url = encodeAddress(keyPair.publicKey, 42);
+        const address = encodeAddress(keyPair.publicKey, 42);
 
         return {
-            url,
+            address,
             type: 'sr25519',
             publicKey: u8aToHex(keyPair.publicKey),
             privateKey: u8aToHex(keyPair.secretKey)
@@ -57,10 +57,10 @@ export class Wallet {
             publicKey = secp256k1.getPublicKey(privateKey, true); // Compressed public key
         }
 
-        const url = encodeAddress(publicKey, 42);
+        const address = encodeAddress(publicKey, 42);
         
         return {
-            url,
+            address,
             type,
             publicKey: u8aToHex(publicKey),
             privateKey: privateKeyHex
@@ -194,7 +194,7 @@ export class Wallet {
     }
 
     public getAddress(): string {
-        return this.keyurl;
+        return this.key.address;
     }
 
     public getType(): 'sr25519' | 'ecdsa' {
