@@ -7,8 +7,8 @@ import "react-responsive-modal/styles.css"
 import "@/app/globals.css"
 
 export const metadata: Metadata = {
-  title: "ComHub",
-  description: "ComHub - the hub for Commune Ai modules.",
+  title: "dhub",
+  description: "dhub - the hub for modules. built with commune-ai/commune",
   robots: 'all',
   icons: [{ rel: 'icon', url: '/favicon.ico' }]
 }
