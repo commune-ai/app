@@ -187,30 +187,6 @@ export default function Modules() {
           </div>
         )}
 
-        {/* Toggle for grid/table if you want */}
-        <div className="flex justify-end mb-4 space-x-4">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`px-3 py-1 rounded ${
-              viewMode === 'grid'
-                ? 'bg-green-700'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-          >
-            Grid
-          </button>
-          <button
-            onClick={() => setViewMode('table')}
-            className={`px-3 py-1 rounded ${
-              viewMode === 'table'
-                ? 'bg-green-700'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-          >
-            Table
-          </button>
-        </div>
-
         {viewMode === 'grid' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredModules.map((m) => (

@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import config from '@/config.json'
@@ -9,7 +8,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 
 export const Header = () => {
   const [password, setPassword] = useState('whatsup')
-  const [walletInfo, setWalletInfo] = useState<{address: string, type: string} | null>(null)
+  const [walletInfo, setWalletInfo] = useState<{address: string, crypto_type: string} | null>(null)
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,15 +29,7 @@ export const Header = () => {
       <nav className="p-4 px-6 mx-auto flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center">
-            <span className="text-green-400 mr-2">$</span>
-            <Image 
-              src="/comhub.png" 
-              width={40} 
-              height={40} 
-              alt="commune logo"
-              priority
-              className="hover:opacity-80 transition-opacity" 
-            />
+            <span className="text-green-500 text-4xl mr-2">©</span>
           </Link>
         </div>
 
@@ -46,7 +37,6 @@ export const Header = () => {
           {walletInfo ? (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-black/60 border border-green-500/30 rounded">
-                <span className="text-green-400">$</span>
                 <span className="text-gray-400 text-sm font-mono">
                   {walletInfo.address.slice(0,6)}...{walletInfo.address.slice(-4)}
                 </span>
@@ -54,7 +44,7 @@ export const Header = () => {
               </div>
               <button
                 onClick={() => setWalletInfo(null)}
-                className="px-4 py-2 bg-red-900/30 text-red-400 border border-red-500/30 rounded hover:bg-red-900/50 transition-colors"
+                className="px-4 py-2 bg-black/60 text-green-400 border border-green-500/30 rounded hover:bg-green-900/20 transition-colors"
               >
                 $ logout
               </button>
@@ -71,7 +61,7 @@ export const Header = () => {
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-green-900/30 text-green-400 border border-green-500/30 rounded hover:bg-green-900/50 transition-colors font-mono"
+                className="px-4 py-2 bg-black/60 text-green-400 border border-green-500/30 rounded hover:bg-green-900/20 transition-colors font-mono"
               >
                 $ login
               </button>

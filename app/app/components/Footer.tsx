@@ -2,12 +2,6 @@ import config from '@/config.json'
 import React from 'react'
 
 const navigation = {
-  main: [
-    // { name: 'Home', href: config.links.home },
-    { name: 'Whitepaper', href: config.links.whitepaper },
-    { name: 'Modules', href: config.links.modules },
-
-  ],
 
   social: [
     {
@@ -63,21 +57,7 @@ export const Footer = () => {
   return (
     <footer className='mt-8 bg-transparent'>
       <div className='mx-auto flex max-w-7xl flex-col items-center overflow-hidden px-6 py-12 lg:px-8'>
-        <nav
-          className='-mb-6 columns-3 text-center sm:flex sm:justify-center sm:space-x-12'
-          aria-label='Footer'
-        >
-          {navigation.main.map((item) => (
-            <div key={item.name} className='pb-6'>
-              <a
-                href={item.href}
-                className='text-sm leading-6 text-gray-200 hover:text-gray-400'
-              >
-                {item.name}
-              </a>
-            </div>
-          ))}
-        </nav>
+
         <div className='mt-10 flex justify-center space-x-10'>
           {navigation.social.map((item) => (
             <a

@@ -17,62 +17,12 @@ type ModuleType = {
   network: string
 }
 
-type Props = {
-  params: {
-    module: string
-  }
-}
+type TabType = 'overview' | 'app' | 'api' | 'code'
 
-function CopyButton({
-  text,
-  label,
-}: {
-  text: string
-  label: string
-}) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="px-3 py-1 text-xs bg-gray-700/50 hover:bg-gray-600 rounded-lg transition-colors"
-    >
-      {copied ? '✓ Copied' : `Copy ${label}`}
-    </button>
-  )
-}
-
-function InfoCard({
-  title,
-  value,
-  copyable = true,
-}: {
-  title: string
-  value: string
-  copyable?: boolean
-}) {
-  return (
-    <div className="bg-black/40 rounded-xl p-4 border border-green-500/20">
-      <h3 className="text-white font-semibold mb-2 text-sm">{title}</h3>
-      <div className="bg-black/60 rounded-lg p-3 flex justify-between items-center">
-        <span className="text-white text-xs overflow-hidden text-ellipsis">
-          {value}
-        </span>
-        {copyable && <CopyButton text={value} label={title} />}
-      </div>
-    </div>
-  )
-}
-
-export default function ModuleDetailPage({ params }: Props) {
+export default function ModuleDetailPage({ params }: { params: { module: string } }) {
   const router = useRouter()
-  const [module, setModule] = useState<ModuleType | null>(null)
+  const [module, setModule] = useState<ModuleType>()
+  const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -86,11 +36,10 @@ export default function ModuleDetailPage({ params }: Props) {
         if (foundModule) {
           setModule(foundModule)
         } else {
-          setError(`Module with key = ${params.module} not found`)
+          setError(`Module ${params.module} not found`)
         }
       } catch (err) {
         setError('Failed to fetch module')
-        console.error('Failed to fetch module:', err)
       } finally {
         setLoading(false)
       }
@@ -98,71 +47,105 @@ export default function ModuleDetailPage({ params }: Props) {
     fetchModule()
   }, [params.module])
 
-  if (loading) {
-    return <Loading />
-  }
+  if (loading) return <Loading />
+  if (error || !module) return <div className="min-h-screen flex items-center justify-center bg-black text-red-500">{error}</div>
 
-  if (error || !module) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-red-500">
-        {error}
-      </div>
-    )
-  }
+  const tabs = [
+    { id: 'overview', label: 'OVERVIEW' },
+    { id: 'app', label: 'APP' },
+    { id: 'api', label: 'API' },
+    { id: 'code', label: 'CODE' }
+  ]
 
   return (
-    <div className="min-h-screen bg-black text-gray-200 p-4 md:p-8 font-mono">
-      <button
-        onClick={() => router.back()}
-        className="mb-4 text-green-300 hover:text-green-400 flex items-center gap-2"
-      >
-        <span className="text-xs">←</span>
-        <span>Back</span>
-      </button>
+    <div className="min-h-screen bg-black text-green-400 p-4 font-mono">
+      <div className="max-w-4xl mx-auto border border-green-500/30 rounded">
+        {/* Terminal Header */}
+        <div className="bg-black border-b border-green-500/30 p-2 flex items-center">
 
-      <div className="bg-gray-800/90 rounded-2xl p-8 shadow-2xl border border-green-500/30">
-        {/* Header Section */}
-        <div className="flex items-center gap-4 mb-8">
-          <div className="h-16 w-16 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center">
-            <span className="text-2xl">🔮</span>
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-white">{module.name}</h1>
-            <p className="text-green-400 text-sm">{module.key_type}</p>
-          </div>
+        <span className="text-yellow-500">$ {module.name}</span> 
         </div>
 
-        {/* Description Section */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-green-300 mb-2">
-            Description
-          </h2>
-          <p className="text-sm text-white/70">
-            {module.description || 'No description available'}
-          </p>
+        {/* Tabs */}
+        <div className="flex border-b border-green-500/30">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as TabType)}
+              className={`px-4 py-2 text-xs border-r border-green-500/30
+                ${activeTab === tab.id ? 'bg-green-900/20' : 'hover:bg-green-900/10'}`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <InfoCard title="key" value={module.key} />
-          <InfoCard title="url" value={module.url} />
-          <InfoCard title="network" value={module.network} />
-          <InfoCard title="code" value={module.github || 'n/a'} />
-        </div>
+        {/* Content */}
+        <div className="p-4">
+          {activeTab === 'overview' && (
+            <div className="space-y-4">
+              <pre className="text-sm">
+{`
+KEY:      ${module.key}
+URL:      ${module.url || 'N/A'}
+NETWORK:  ${module.network || 'N/A'}
+DESC:     ${module.description || 'No description available'}`}
+              </pre>
+            </div>
+          )}
 
-        {/* Preview Section */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Preview</h2>
-          <div className="relative aspect-video">
-            <iframe
-              src={`http://${module.url}/docs`}
-              className="w-full h-[600px] rounded-xl border border-green-500/20"
-              title={`${module.name} preview`}
-            />
-          </div>
+          {activeTab === 'app' && (
+            <div className="text-sm">
+              <p>Application interface coming soon...</p>
+            </div>
+          )}
+
+          {activeTab === 'api' && (
+            <pre className="text-sm bg-black/40 p-4 rounded">
+{`# Python API Example
+from commune import Module
+
+module = Module('${module.key}')
+
+# Basic Operations
+result = module.call('method', {
+    'param1': 'value1',
+    'param2': 'value2'
+})`}
+            </pre>
+          )}
+
+          {activeTab === 'code' && (
+            <pre className="text-sm bg-black/40 p-4 rounded">
+{`# Module Source Code
+# Github: ${module.github || 'Not available'}
+
+# Implementation details will be 
+# displayed here...`}
+            </pre>
+          )}
         </div>
       </div>
 
+      {/* Footer Actions */}
+      <div className="max-w-4xl mx-auto mt-4 flex gap-4">
+        <button
+          onClick={() => router.back()}
+          className="px-4 py-2 text-xs border border-green-500/30 hover:bg-green-900/20"
+        >
+          [ESC] BACK
+        </button>
+        {module.github && (
+          <a
+            href={module.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 text-xs border border-green-500/30 hover:bg-green-900/20"
+          >
+            [F1] SOURCE
+          </a>
+        )}
+      </div>
       <Footer />
     </div>
   )

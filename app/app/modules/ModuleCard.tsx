@@ -23,22 +23,22 @@ export default function ModuleCard({ module }: { module: ModuleType }) {
     >
       <div className="absolute top-0 left-0 right-0 h-8 bg-black/90 rounded-t-lg 
                       flex items-center px-4 border-b border-green-500/30">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-        </div>
-        <span className="ml-4 text-green-400 text-xs">$ {module.name}</span>
+
+        <span className="text-yellow-500">$ {module.name}</span> 
+
       </div>
 
       <div className="mt-6">
-        <div className="text-green-400 mb-2">
-          <span className="text-gray-500">$</span> module info
-        </div>
         <pre className="text-sm text-green-400 bg-black/60 p-4 rounded border border-green-500/20">
-{`name: ${module.name}
+  {
+`
 key:  ${module.key}
-url:  ${module.url}`}
+url:  ${module.url}
+desc: ${module.desc}
+`
+
+
+  }
         </pre>
       </div>
 
