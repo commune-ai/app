@@ -99,84 +99,111 @@ export default function Modules() {
         </div>
       )}
 
-      <div className="flex gap-4 items-center w-full max-w-3xl px-6 mb-12">
-        <div className="flex-1 relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">
-            🔍
-          </span>
-          <input
-            type="text"
-            placeholder="search modules..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 text-sm rounded-lg bg-gray-800 border border-green-500/30 focus:border-green-400 focus:outline-none shadow"
-            disabled={loading}
-          />
+    <div className="flex gap-4 items-center w-full max-w-3xl px-6 mb-12">
+      <div className="flex-1 relative border border-green-500/30 bg-black/90 rounded-lg">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400">
+          <span className="font-mono">$</span>
         </div>
-        <button
-          onClick={fetchModules}
+        <input
+          type="text"
+          placeholder="search modules..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 text-sm bg-transparent text-green-400 
+                    focus:outline-none font-mono placeholder-gray-500"
           disabled={loading}
-          className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 transition-all border border-green-500/30"
-        >
-          {loading ? 'Loading...' : '♻️ refresh'}
-        </button>
-        <button
-          onClick={() => setShowCreateForm(true)}
+        />
+      </div>
+      
+      <button
+        onClick={fetchModules}
+        disabled={loading}
+        className="px-4 py-2 bg-black/90 text-green-400 rounded-lg 
+                  border border-green-500/30 hover:border-green-400 
+                  hover:bg-green-900/20 transition-all font-mono"
+      >
+        $ refresh
+      </button>
+      
+      <button
+        onClick={() => setShowCreateForm(true)}
+        disabled={loading}
+        className="px-4 py-2 bg-black/90 text-green-400 rounded-lg 
+                  border border-green-500/30 hover:border-green-400 
+                  hover:bg-green-900/20 transition-all font-mono"
+      >
+        $ new
+      </button>
+    </div>
+    {showCreateForm && (
+  <div className="w-full max-w-lg mb-8 p-6 bg-black/90 rounded-lg 
+                  border border-green-500/30 font-mono">
+    <div className="flex items-center mb-6">
+      <div className="flex space-x-2">
+        <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
+      </div>
+      <span className="ml-4 text-yellow-500">$ new_module</span>
+    </div>
+
+    <div className="space-y-4">
+      <div className="relative">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400">$</span>
+        <input
+          placeholder="module_key"
+          value={newModule.key}
+          onChange={(e) => handleFormChange('key', e.target.value)}
+          className="w-full pl-10 pr-4 py-2 bg-black/90 text-green-400 
+                    border border-green-500/30 rounded-lg
+                    focus:border-green-400 focus:outline-none 
+                    placeholder-gray-500"
           disabled={loading}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 disabled:opacity-50 transition-all border border-green-500/30"
-        >
-          module (+)
-        </button>
+        />
       </div>
 
-      {showCreateForm && (
-        <div className="w-full max-w-lg mb-8 p-6 bg-gray-800 rounded-xl border border-green-500/30 shadow-md">
-          <h2 className="text-xl font-bold mb-6 text-white">
-            New Module
-          </h2>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🔑</span>
-              <input
-                placeholder="Module Key"
-                value={newModule.key}
-                onChange={(e) => handleFormChange('key', e.target.value)}
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white border border-green-500/30 focus:outline-none"
-                disabled={loading}
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🌐</span>
-              <input
-                placeholder="Address"
-                value={newModule.url}
-                onChange={(e) => handleFormChange('url', e.target.value)}
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white border border-green-500/30 focus:outline-none"
-                disabled={loading}
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              onClick={() => {
-                setShowCreateForm(false)
-                setNewModule(defaultModule)
-              }}
-              disabled={loading}
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleCreate}
-              disabled={loading}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 disabled:opacity-50 transition-colors"
-            >
-              {loading ? 'Creating...' : 'Create'}
-            </button>
-          </div>
-        </div>
-      )}
+      <div className="relative">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400">$</span>
+        <input
+          placeholder="module_url"
+          value={newModule.url}
+          onChange={(e) => handleFormChange('url', e.target.value)}
+          className="w-full pl-10 pr-4 py-2 bg-black/90 text-green-400 
+                    border border-green-500/30 rounded-lg
+                    focus:border-green-400 focus:outline-none 
+                    placeholder-gray-500"
+          disabled={loading}
+        />
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-4 mt-6">
+      <button
+        onClick={() => {
+          setShowCreateForm(false)
+          setNewModule(defaultModule)
+        }}
+        disabled={loading}
+        className="px-4 py-2 bg-black/90 text-green-400 
+                  border border-green-500/30 rounded-lg
+                  hover:border-green-400 hover:bg-green-900/20 
+                  transition-all disabled:opacity-50"
+      >
+        [ESC] Cancel
+      </button>
+      <button
+        onClick={handleCreate}
+        disabled={loading}
+        className="px-4 py-2 bg-black/90 text-green-400 
+                  border border-green-500/30 rounded-lg
+                  hover:border-green-400 hover:bg-green-900/20 
+                  transition-all disabled:opacity-50"
+      >
+        {loading ? 'Creating...' : '[ENTER] Create'}
+      </button>
+    </div>
+  </div>
+)}
 
       {/* Actual modules listing */}
       <div className="w-full max-w-[1600px] px-4 max-h-[70vh] overflow-y-auto">
