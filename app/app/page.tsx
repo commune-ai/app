@@ -1,12 +1,11 @@
 import { Suspense } from 'react'
-import { Footer, Loading} from './components'
-import ModulePage from './modules/ModulePage'
+import { Loading } from './components'
+import Modules from './modules/page'
 
 export default function Home() {
   return (
     <Suspense fallback={<Loading />}>
-      <ModulePage />
-      <Footer />
+      <Modules />
     </Suspense>
   )
 }
