@@ -5,6 +5,7 @@ import { Footer } from '@/app/components'
 import {Client} from '@/app/client'
 import { Loading } from '@/app/components/Loading'
 import ModuleCard from '@/app/module/ModuleCard'
+import {CreateModule} from '@/app/module/CreateModule'
 import { ModuleType, DefaultModule } from '@/app/types'
 // Helper to abbreviate keys
 export default function Modules() {
@@ -33,30 +34,6 @@ export default function Modules() {
     }
   }
 
-  const handleCreate = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const { name, key, url, description, network } = newModule
-      if (!name || !key) {
-        throw new Error('Name and Key are required')
-      }
-      const params = { name, key, url, description, network }
-      await client.call('add_module', params)
-      setNewModule(DefaultModule)
-      setShowCreateForm(false)
-      await fetchModules()
-    } catch (err: any) {
-      setError(err.message || 'Failed to create module')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleFormChange = (field: string, value: string) => {
-    setNewModule((prev) => ({ ...prev, [field]: value }))
-    if (error) setError('')
-  }
 
   const filteredModules = modules.filter((m) =>
     m.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -93,6 +70,17 @@ export default function Modules() {
         />
       </div>
       
+      {showCreateForm && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <CreateModule
+          onClose={() => setShowCreateForm(false)}
+          onSuccess={() => {
+            fetchModules()
+            setShowCreateForm(false)
+          }}
+        />
+      </div>
+    )}
       <button
         onClick={fetchModules}
         disabled={loading}
@@ -113,75 +101,6 @@ export default function Modules() {
         $ new
       </button>
     </div>
-    {showCreateForm && (
-  <div className="w-full max-w-lg mb-8 p-6 bg-black/90 rounded-lg 
-                  border border-green-500/30 font-mono">
-    <div className="flex items-center mb-6">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
-      </div>
-      <span className="ml-4 text-yellow-500">$ new_module</span>
-    </div>
-
-    <div className="space-y-4">
-      <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400">$</span>
-        <input
-          placeholder="module_key"
-          value={newModule.key}
-          onChange={(e) => handleFormChange('key', e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-black/90 text-green-400 
-                    border border-green-500/30 rounded-lg
-                    focus:border-green-400 focus:outline-none 
-                    placeholder-gray-500"
-          disabled={loading}
-        />
-      </div>
-
-      <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400">$</span>
-        <input
-          placeholder="module_url"
-          value={newModule.url}
-          onChange={(e) => handleFormChange('url', e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-black/90 text-green-400 
-                    border border-green-500/30 rounded-lg
-                    focus:border-green-400 focus:outline-none 
-                    placeholder-gray-500"
-          disabled={loading}
-        />
-      </div>
-    </div>
-
-    <div className="flex justify-end gap-4 mt-6">
-      <button
-        onClick={() => {
-          setShowCreateForm(false)
-          setNewModule(DefaultModule)
-        }}
-        disabled={loading}
-        className="px-4 py-2 bg-black/90 text-green-400 
-                  border border-green-500/30 rounded-lg
-                  hover:border-green-400 hover:bg-green-900/20 
-                  transition-all disabled:opacity-50"
-      >
-        [ESC] Cancel
-      </button>
-      <button
-        onClick={handleCreate}
-        disabled={loading}
-        className="px-4 py-2 bg-black/90 text-green-400 
-                  border border-green-500/30 rounded-lg
-                  hover:border-green-400 hover:bg-green-900/20 
-                  transition-all disabled:opacity-50"
-      >
-        {loading ? 'Creating...' : '[ENTER] Create'}
-      </button>
-    </div>
-  </div>
-)}
 
       {/* Actual modules listing */}
       <div className="w-full max-w-[1600px] px-4 max-h-[70vh] overflow-y-auto">
