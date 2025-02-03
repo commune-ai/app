@@ -1,7 +1,6 @@
 type NetworkType = 'local' | 'testnet' | 'mainnet';
 import config from '@/config.json';
-
-class Client {
+export class Client {
   public url: string;
 
   constructor(url: string = config.url , mode: string = 'http') {

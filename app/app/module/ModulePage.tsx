@@ -2,27 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Client from '@/app/client'
+import {Client} from '@/app/client'
 import { Footer } from '@/app/components'
 import { Loading } from '@/app/components/Loading'
+import { ModuleType } from '../types'
+type TabType = 'desc' | 'app' | 'api' | 'code'
 
-type ModuleType = {
-  name: string
-  key: string
-  github: string
-  url: string
-  description: string
-  key_type: string
-  hash: string
-  network: string
-}
-
-type TabType = 'overview' | 'app' | 'api' | 'code'
-
-export default function ModuleDetailPage({ params }: { params: { module: string } }) {
+export default function ModulePage({ params }: { params: { module: string } }) {
   const router = useRouter()
   const [module, setModule] = useState<ModuleType>()
-  const [activeTab, setActiveTab] = useState<TabType>('overview')
+  const [activeTab, setActiveTab] = useState<TabType>('desc')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -51,7 +40,7 @@ export default function ModuleDetailPage({ params }: { params: { module: string 
   if (error || !module) return <div className="min-h-screen flex items-center justify-center bg-black text-red-500">{error}</div>
 
   const tabs = [
-    { id: 'overview', label: 'OVERVIEW' },
+    { id: 'desc', label: 'DESC' },
     { id: 'app', label: 'APP' },
     { id: 'api', label: 'API' },
     { id: 'code', label: 'CODE' }
@@ -82,7 +71,7 @@ export default function ModuleDetailPage({ params }: { params: { module: string 
 
         {/* Content */}
         <div className="p-4">
-          {activeTab === 'overview' && (
+          {activeTab === 'desc' && (
             <div className="space-y-4">
               <pre className="text-sm">
 {`

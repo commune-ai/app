@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Loading } from './components'
-import Modules from './modules/page'
+import Modules from './module/Modules'
 
 export default function Home() {
   return (

@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { Footer } from '@/app/components'
-import Client from '@/app/client'
-import ModuleCard from './ModuleCard'
+import {Client} from '@/app/client'
 import { Loading } from '@/app/components/Loading'
+import ModuleCard from '@/app/module/ModuleCard'
+import { useRouter } from 'next/navigation'
 
 type ModuleType = {
   name: string
@@ -36,7 +37,6 @@ export default function Modules() {
   const [newModule, setNewModule] = useState<ModuleType>(defaultModule)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
 
   const fetchModules = async () => {
     setLoading(true)
@@ -214,60 +214,13 @@ export default function Modules() {
           </div>
         )}
 
-        {viewMode === 'grid' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredModules.map((m) => (
               <ModuleCard key={m.key} module={m} />
             ))}
           </div>
-        )}
 
-        {viewMode === 'table' && filteredModules.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-white border-collapse border border-green-500/30 text-sm">
-              <thead className="bg-gray-700">
-                <tr>
-                  <th className="px-4 py-2 border-b border-green-500/30">
-                    Name
-                  </th>
-                  <th className="px-4 py-2 border-b border-green-500/30">
-                    Key
-                  </th>
-                  <th className="px-4 py-2 border-b border-green-500/30">
-                    Address
-                  </th>
-                  <th className="px-4 py-2 border-b border-green-500/30">
-                    Network
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredModules.map((mod) => (
-                  <tr
-                    key={mod.key}
-                    className="hover:bg-gray-800 cursor-pointer"
-                    onClick={() => {
-                      window.location.href = `/modules/${mod.key}`
-                    }}
-                  >
-                    <td className="px-4 py-2 border-b border-green-500/30">
-                      {mod.name}
-                    </td>
-                    <td className="px-4 py-2 border-b border-green-500/30">
-                      {abbreviateKey(mod.key)}
-                    </td>
-                    <td className="px-4 py-2 border-b border-green-500/30">
-                      {mod.url}
-                    </td>
-                    <td className="px-4 py-2 border-b border-green-500/30">
-                      {mod.network}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+
       </div>
 
       <Footer />
