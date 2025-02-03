@@ -7,13 +7,7 @@ import {
 } from '@polkadot/util-crypto';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { secp256k1 } from '@noble/curves/secp256k1';
-
-export interface WalletType {
-    address: string;
-    crypto_type: 'sr25519' | 'ecdsa';
-    publicKey: string;
-    privateKey: string;
-}
+import { WalletType } from '@/app/types';
 
 export class Wallet{
 

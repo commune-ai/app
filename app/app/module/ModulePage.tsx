@@ -5,8 +5,13 @@ import { useRouter } from 'next/navigation'
 import {Client} from '@/app/client'
 import { Footer } from '@/app/components'
 import { Loading } from '@/app/components/Loading'
-import { ModuleType } from '../types'
-type TabType = 'desc' | 'app' | 'api' | 'code'
+import { ModuleType } from '@/app/types'
+type TabType = 'desc' | 'app' | 'api' | 'code' | 'history'
+
+
+function obj2str(obj: any) {
+  return JSON.stringify(obj, null, 2)
+}
 
 export default function ModulePage({ params }: { params: { module: string } }) {
   const router = useRouter()
@@ -20,8 +25,7 @@ export default function ModulePage({ params }: { params: { module: string } }) {
   useEffect(() => {
     const fetchModule = async () => {
       try {
-        const modules = await client.call('modules')
-        const foundModule = modules.find((m: ModuleType) => m.key === params.module)
+        const foundModule = await client.call('get_module', { module: params.module })
         if (foundModule) {
           setModule(foundModule)
         } else {
@@ -43,7 +47,8 @@ export default function ModulePage({ params }: { params: { module: string } }) {
     { id: 'desc', label: 'DESC' },
     { id: 'app', label: 'APP' },
     { id: 'api', label: 'API' },
-    { id: 'code', label: 'CODE' }
+    { id: 'code', label: 'CODE' },
+    { id: 'history', label: 'HISTORY' }
   ]
 
   return (
@@ -75,12 +80,16 @@ export default function ModulePage({ params }: { params: { module: string } }) {
             <div className="space-y-4">
               <pre className="text-sm">
 {`
-KEY:      ${module.key}
-URL:      ${module.url || 'N/A'}
-NETWORK:  ${module.network || 'N/A'}
-DESC:     ${module.description || 'No description available'}`}
+founder:  ${module.founder || 'N/A'}
+key:      ${module.key}
+hash:     ${module.hash || 'N/A'}
+network:  ${module.network || 'N/A'}
+url:      ${module.url || 'N/A'}
+desc:     ${module.desc || 'N/A'}`}
               </pre>
+
             </div>
+
           )}
 
           {activeTab === 'app' && (
@@ -88,31 +97,34 @@ DESC:     ${module.description || 'No description available'}`}
               <p>Application interface coming soon...</p>
             </div>
           )}
-
           {activeTab === 'api' && (
             <pre className="text-sm bg-black/40 p-4 rounded">
-{`# Python API Example
-from commune import Module
-
-module = Module('${module.key}')
-
-# Basic Operations
-result = module.call('method', {
-    'param1': 'value1',
-    'param2': 'value2'
-})`}
+{obj2str(module.schema)}
+      
             </pre>
           )}
 
           {activeTab === 'code' && (
             <pre className="text-sm bg-black/40 p-4 rounded">
-{`# Module Source Code
-# Github: ${module.github || 'Not available'}
+{`
+${module.code || 'Not available'}
 
 # Implementation details will be 
 # displayed here...`}
             </pre>
           )}
+
+  
+          {activeTab === 'history' && (
+            <pre className="text-sm bg-black/40 p-4 rounded">
+{`
+${module.history || 'Not available'}
+
+# Implementation details will be 
+# displayed here...`}
+            </pre>
+          )}
+
         </div>
       </div>
 
@@ -124,16 +136,6 @@ result = module.call('method', {
         >
           [ESC] BACK
         </button>
-        {module.github && (
-          <a
-            href={module.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 text-xs border border-green-500/30 hover:bg-green-900/20"
-          >
-            [F1] SOURCE
-          </a>
-        )}
       </div>
       <Footer />
     </div>

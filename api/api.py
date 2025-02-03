@@ -11,8 +11,7 @@ import requests
 from .utils import load_json, save_json, logs
 
 class Hub:
-    server_port = 8000
-    app_port = 3000
+    port = 8000
     app_name =  __file__.split('/')[-3] + '_app' 
     model='anthropic/claude-3.5-sonnet'
     free = True
@@ -45,6 +44,7 @@ class Hub:
             module = self.get_module(module)
         if not isinstance(module, dict):
             return False
+        assert all([f in module for f in features]), f"Missing feature in module: {module}"
         return True
 
     def check_modules(self):
@@ -93,36 +93,25 @@ class Hub:
                 except Exception as e:
                     if verbose:
                         print(e)
-        
-
         c.put(path, module_infos)
-
-
+        
         return module_infos
 
-    def get_module(self, module:str, lite=True):
+    def get_module(self, module:str, **kwargs):
+        return c.info(module, **kwargs)
 
-        code = c.code(module)
-        hash_code = c.hash(code)
-        key = c.pwd2key(hash_code)
-        module_info = {'name': module, 
-            'code': code,
-            'key': key.ss58_address, 
-            'crypto_type': key.crypto_type ,
-            'hash': hash_code, 
-            'time': c.time(),
-            }
-        if lite:
-            module_info.pop('code')
-        return module_info
+    def info(self, module:str, **kwargs):
+        return c.info(module, **kwargs)
 
-    def add_module(self, name  = "module", 
+    def add_module(self, 
+                   name  = "module", 
                    key  = "module_key", 
                    code = None, 
                    url  = "0.0.0.0:8000", 
+                   app = None,
                    **kwargs ):
         
-        module = { "name": name, "url": url, "key": key, "code": code, }
+        module = { "name": name, "url": url, "key": key, "code": code,  **kwargs }
         self.save_module(module)
         result =  {"message": f"Module {module['name']} added successfully", "module": module}
         print('RESULT',result)
@@ -164,102 +153,6 @@ class Hub:
         assert not self.module_exists(test_module['name']), "Module not removed"
         return {"message": "All tests passed"}
     
-    def serve(self, port=server_port):
-        return c.serve(self.module_name(), port=port)
-    
-    def kill_app(self, name=app_name, port=app_port):
-        while c.port_used(port):
-            c.kill_port(port)
-        return c.kill(name)
-    
 
-    def query(self,  
-              options : list,  
-              query='most relevant files', 
-              output_format="list[[key:str, score:float]]",  
-              anchor = 'OUTPUT', 
-              threshold=0.5,
-              n=10,  
-              model=model):
-
-        front_anchor = f"<{anchor}>"
-        back_anchor = f"</{anchor}>"
-        output_format = f"DICT(data:{output_format})"
-        print(f"Querying {query} with options {options}")
-        prompt = f"""
-        QUERY
-        {query}
-        OPTIONS 
-        {options} 
-        INSTRUCTION 
-        get the top {n} functions that match the query
-        OUTPUT
-        (JSON ONLY AND ONLY RESPOND WITH THE FOLLOWING INCLUDING THE ANCHORS SO WE CAN PARSE) 
-        {front_anchor}{output_format}{back_anchor}
-        """
-        output = ''
-        for ch in c.ask(prompt, model=model): 
-            print(ch, end='')
-            output += ch
-            if ch == front_anchor:
-                break
-        if '```json' in output:
-            output = output.split('```json')[1].split('```')[0]
-        elif front_anchor in output:
-            output = output.split(front_anchor)[1].split(back_anchor)[0]
-        else:
-            output = output
-        output = json.loads(output)
-        assert len(output) > 0
-        return [k for k,v in output["data"] if v > threshold]
-
-    def files(self, query='the file that is the core of commune',  path='./',  n=10, model='anthropic/claude-3.5-sonnet-20240620:beta'):
-        files =  self.query(options=c.files(path), query=query, n=n, model=model)
-        return [c.abspath(path+k) for k in files]
-    
-    networks = ['ethereum',
-                 'bitcoin', 
-                 'solana', 
-                 'bittensor', 
-                 'commune']
-    def is_valid_network(self, network):
-        return network in self.networks
-    
     def get_key(self, password, **kwargs):
         return c.str2key(password, **kwargs)
-
-    def feedback(self, path='./',  model=model):
-        code = c.file2text(path)
-   
-        prompt = f"""
-
-        PROVIDE FEEDBACK and s a score out of 100 for the following prompt on quality 
-        and honesty. I want to make sure these are legit and there is a good chance 
-        they are not. You are my gaurdian angel.
-        {code}        
-        OUTPUT_FORMAT MAKE SURE ITS IN THE LINES
-        <OUTPUT><DICT(pointers:str, score:int (out of 100))></OUTPUT>
-        OUTPUT
-        """
-
-        return c.ask(prompt, model=model)
-
-
-    def file2text(owner: str, repo: str, filepath: str, branch: str = 'main') -> str:
-        """
-        Get the text contents of a file in a GitHub repository without using the GitHub API.
-        This uses the raw.githubusercontent.com domain to fetch the file content directly.
-        
-        Parameters:
-            owner (str): Repository owner/organization
-            repo (str): Repository name
-            filepath (str): Path to the file within the repository
-            branch (str): The branch to read from (default: 'main')
-            
-        Returns:
-            str: The text content of the file.
-        """
-        raw_url = f'https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{filepath}'
-        response = requests.get(raw_url)
-        response.raise_for_status()
-        return response.text

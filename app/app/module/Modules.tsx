@@ -5,36 +5,14 @@ import { Footer } from '@/app/components'
 import {Client} from '@/app/client'
 import { Loading } from '@/app/components/Loading'
 import ModuleCard from '@/app/module/ModuleCard'
-import { useRouter } from 'next/navigation'
-
-type ModuleType = {
-  name: string
-  key: string
-  url: string
-  description: string
-  network: string
-}
-
-const defaultModule: ModuleType = {
-  name: 'agi',
-  key: 'agi',
-  url: 'agi.com',
-  description: 'agi module',
-  network: 'eth',
-}
-
+import { ModuleType, DefaultModule } from '@/app/types'
 // Helper to abbreviate keys
-function abbreviateKey(key: string) {
-  if (key.length <= 12) return key
-  return `${key.slice(0, 8)}...${key.slice(-4)}`
-}
-
 export default function Modules() {
   const client = new Client()
   const [searchTerm, setSearchTerm] = useState('')
   const [modules, setModules] = useState<ModuleType[]>([])
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [newModule, setNewModule] = useState<ModuleType>(defaultModule)
+  const [newModule, setNewModule] = useState<ModuleType>(DefaultModule)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -65,7 +43,7 @@ export default function Modules() {
       }
       const params = { name, key, url, description, network }
       await client.call('add_module', params)
-      setNewModule(defaultModule)
+      setNewModule(DefaultModule)
       setShowCreateForm(false)
       await fetchModules()
     } catch (err: any) {
@@ -181,7 +159,7 @@ export default function Modules() {
       <button
         onClick={() => {
           setShowCreateForm(false)
-          setNewModule(defaultModule)
+          setNewModule(DefaultModule)
         }}
         disabled={loading}
         className="px-4 py-2 bg-black/90 text-green-400 
