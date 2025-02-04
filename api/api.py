@@ -72,9 +72,9 @@ class Hub:
         return {"message": "All modules removed"}
     
     def resolve_path(self, path):
-        return '~/.hub/api/' + path
+        return os.path.expanduser('~/.hub/api/') + path
 
-    def modules(self, tempo=600, update=False, lite=True, page=1, page_size=100, verbose=False):
+    def modules(self, tempo=600, update=False, lite=True, page=1, page_size=100, verbose=True):
         modules =  c.get_modules() 
         params_id = c.hash({'lite': lite})
         path = self.resolve_path(f'modules/{params_id}')
@@ -87,15 +87,18 @@ class Hub:
             # return modules
             modules = sorted(modules, key=lambda x: x.lower())
             for module in modules:
+                print('MODULE', module)
                 try:
-                    module_infos += [self.get_module(module, lite=lite)]
+                    module_infos += [self.get_module(module, lite=lite, update=update)]
                     progress.update(1)
                 except Exception as e:
                     if verbose:
                         print(e)
         c.put(path, module_infos)
-        
         return module_infos
+
+    def names(self):
+        return [m['name'] for m in self.modules()]
 
     def get_module(self, module:str, **kwargs):
         return c.info(module, **kwargs)
