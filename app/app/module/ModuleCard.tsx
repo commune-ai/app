@@ -1,18 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Footer } from '@/app/components'
-import { Loading } from '@/app/components/Loading'
 import { useRouter } from 'next/navigation'
-import { ModuleType, DefaultModule } from '../types'
+import { ModuleType } from '../types'
+import { CopyButton } from '../components/CopyButton'
+import { 
+  CodeBracketIcon, 
+  ServerIcon, 
+  GlobeAltIcon,
+  KeyIcon,
+  ClockIcon,
+  HashtagIcon 
+} from '@heroicons/react/24/outline'
 
-// Helper to abbreviate keys
+// Helper function for shortening strings
 function shorten(key: string) {
   if (key.length <= 12) return key
-  return `${key.slice(0, 8)}...${key.slice(-4)}`
+  return `${key.slice(0, 8)}...`
 }
+
 function time2str(time: number) {
-  //. utc time to local time
   const d = new Date(time * 1000)
   return d.toLocaleString()
 }
@@ -23,6 +30,7 @@ export default function ModuleCard({ module }: { module: ModuleType }) {
   const [displayedDescription, setDisplayedDescription] = useState('')
   const description = module.desc || 'No description available'
 
+  // Typing effect for description
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
     let currentIndex = 0
@@ -32,7 +40,7 @@ export default function ModuleCard({ module }: { module: ModuleType }) {
         if (currentIndex < description.length) {
           setDisplayedDescription(description.slice(0, currentIndex + 1))
           currentIndex++
-          timeoutId = setTimeout(typeNextChar, 100) // 0.1s delay
+          timeoutId = setTimeout(typeNextChar, 50)
         }
       }
       typeNextChar()
@@ -43,7 +51,7 @@ export default function ModuleCard({ module }: { module: ModuleType }) {
     return () => {
       if (timeoutId) clearTimeout(timeoutId)
     }
-  }, )
+  }, [isHovered, description])
 
   return (
     <div
@@ -53,45 +61,123 @@ export default function ModuleCard({ module }: { module: ModuleType }) {
       className="relative p-6 rounded-lg cursor-pointer font-mono
                  border border-green-500/30 bg-black/90
                  hover:border-green-400 transition-all duration-300
-                 min-h-[280px] flex flex-col"
+                 min-h-[320px] flex flex-col group"
     >
-      {/* Terminal Header */}
-      <div className="absolute top-0 left-0 right-0 h-8 bg-black/90 rounded-t-lg 
-                    flex items-center px-4 border-b border-green-500/30">
-        <span className="ml-4 text-yellow-500">$ {module.name}</span>
+      {/* Terminal Header with Module Name and Key */}
+      <div className="absolute top-0 left-0 right-0 bg-black/90 rounded-t-lg 
+                    flex items-center px-6 py-4 border-b border-green-500/30">
+        <div className="flex flex-col w-full gap-3">
+        <div className="absolute top-0 left-0 right-0 bg-black/90 rounded-t-lg 
+              flex items-center px-6 py-4 border-b border-green-500/30">
+  <div className="flex items-center justify-between w-full">
+
+  <span className="text-white-500">
+        {module.name}
+      </span>
+    <div className="flex items-center space-x-4">
+      <span className="text-gray-400 w-24 font-mono">
+        {shorten(module.key)}
+      </span>
+
+    </div>
+
+
+    <div onClick={(e) => e.stopPropagation()}>
+      <CopyButton code={module.key} />
+    </div>
+  </div>
+</div>
+        </div>
       </div>
+      {/* Main Content with more spacing */}
+      <div className="mt-12 flex-grow space-y-6">
+    
 
-      {/* Module Content */}
-      <div className="mt-8 flex-grow">
-        <pre className="text-sm text-green-400 bg-black/60 p-4 rounded 
-                       border border-green-500/20 overflow-hidden">
-{`key:  ${shorten(module.key)}
-hash: ${shorten(module.hash) || 'N/A'}
-network: ${module.network || 'commune'}
-time: ${time2str(module.time) || 'N/A'}
-${isHovered ? `desc: ${displayedDescription}` : ''}`}
-        </pre>
+      {/* Description */}
+      {isHovered && (
+        <div className="bg-black/60 p-3 rounded border border-green-500/20 mt-4">
+          <span className="text-green-400 mr-2">$</span>
+          <span className="text-green-400 ml-1 animate-pulse">▋</span>
+          <span className="text-sm text-green-400">{displayedDescription}</span>
+        </div>
+      ) ||  
+      <div className="bg-black/60 p-3 rounded border border-green-500/20 mt-4">
+        <span className="text-green-400 mr-2">$</span>
+        <span className="text-green-400 ml-1">▋</span>
+        <span className="text-sm text-green-400">{description}</span>
+      </div>}
 
-        {/* Quick Access Buttons */}
-        {isHovered && (
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <button className="px-2 py-1 text-xs border border-green-500/30 
-                             hover:bg-green-900/20 text-green-400">
-              [api] 
-            </button>
-            <button className="px-2 py-1 text-xs border border-green-500/30 
-                             hover:bg-green-900/20 text-green-400">
-              [app] {}
-            </button>
+
+
+        {/* Key Info Grid with better spacing */}
+        <div className="grid grid-cols-1 gap-3">
+          {/* Remove the Key section since it's now in the header */}
+          
+          {/* Hash */}
+          <div className="flex items-center justify-between bg-black/60 p-3 rounded border border-green-500/20">
+            <div className="flex items-center gap-3">
+              <HashtagIcon className="h-4 w-4 text-green-400" />
+              <span className="text-xs text-gray-400">Hash:</span>
+            </div>
+            <span className="text-xs text-green-400">{shorten(module.hash)}</span>
+          </div>
+  
+          {/* Time */}
+          <div className="flex items-center justify-between bg-black/60 p-3 rounded border border-green-500/20">
+            <div className="flex items-center gap-3">
+              <ClockIcon className="h-4 w-4 text-green-400" />
+              <span className="text-xs text-gray-400">Time:</span>
+            </div>
+            <span className="text-xs text-green-400">{time2str(module.time)}</span>
+          </div>
+        </div>
+        {/* Tags with better spacing */}
+        {module.tags && module.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {module.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 text-xs bg-green-900/20 text-green-400 
+                         rounded-full border border-green-500/30"
+              >
+                #{tag}
+              </span>
+            ))}
           </div>
         )}
+  
+        {/* Quick Access Buttons with better spacing */}
+        <div className="grid grid-cols-3 gap-3 mt-auto">
+          <button 
+            className="px-3 py-2 text-xs border border-green-500/30 
+                      hover:bg-green-900/20 text-green-400 rounded
+                      transition-colors flex items-center justify-center gap-2"
+          >
+            <CodeBracketIcon className="h-4 w-4" />
+            <span>code</span>
+          </button>
+          {module.url && (
+            <button 
+              className="px-3 py-2 text-xs border border-green-500/30 
+                        hover:bg-green-900/20 text-green-400 rounded
+                        transition-colors flex items-center justify-center gap-2"
+            >
+              <GlobeAltIcon className="h-4 w-4" />
+              <span>app</span>
+            </button>
+          )}
+          <button 
+            className="px-3 py-2 text-xs border border-green-500/30 
+                      hover:bg-green-900/20 text-green-400 rounded
+                      transition-colors flex items-center justify-center gap-2"
+          >
+            <ServerIcon className="h-4 w-4" />
+            <span>api</span>
+          </button>
+        </div>
       </div>
+  
 
-      {/* Terminal Prompt */}
-      <div className="mt-4 flex items-center text-xs text-gray-400">
-        <span className="text-green-400 mr-2">$</span>
-        <span className="text-green-400 ml-1 animate-pulse">▋</span>
-      </div>
     </div>
   )
 }

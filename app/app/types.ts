@@ -18,7 +18,7 @@ export type ModuleType = {
     code: string // code of the module
     tags: string[] // tags of the module
     comments: string[] // comments of the module
-    founder: string // founder of the module
+    owner: string // owner of the module
     time: number // time of the module
   }
 
@@ -32,7 +32,7 @@ export const DefaultModule: ModuleType = {
     code: '0x1234567890',
     tags: ['tag1', 'tag2'],
     comments: ['comment1', 'comment2'],
-    founder: 'founder',
+    owner: 'owner',
     time: 0
     
   }
