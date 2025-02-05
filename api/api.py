@@ -87,7 +87,6 @@ class Hub:
             # return modules
             modules = sorted(modules, key=lambda x: x.lower())
             for module in modules:
-                print('MODULE', module)
                 try:
                     module_infos += [self.get_module(module, lite=lite, update=update)]
                     progress.update(1)
@@ -101,7 +100,10 @@ class Hub:
         return [m['name'] for m in self.modules()]
 
     def get_module(self, module:str, **kwargs):
-        return c.info(module, **kwargs)
+        module = module.replace('/', '.')
+        info =  c.info(module, **kwargs)
+        info['name'] = info['name'].replace('.', '/')
+        return info
 
     def info(self, module:str, **kwargs):
         return c.info(module, **kwargs)
