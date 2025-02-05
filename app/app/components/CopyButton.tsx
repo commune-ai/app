@@ -1,6 +1,6 @@
 'use client'
 
-import { DocumentDuplicateIcon } from '@heroicons/react/20/solid'
+import { DocumentDuplicateIcon , CheckIcon} from '@heroicons/react/20/solid'
 import { useState } from 'react'
 
 type TCodeComponentProps = { code: string }
@@ -28,7 +28,8 @@ export const CopyButton = (props: TCodeComponentProps) => {
       onClick={() => copyTextToClipboard(code)}
     >
       {!copied && <DocumentDuplicateIcon height={18} />}
-      {copied && <span className='text-green-600'>Copied</span>}
+      {copied && <CheckIcon height={18} />}
     </button>
   )
+
 }
