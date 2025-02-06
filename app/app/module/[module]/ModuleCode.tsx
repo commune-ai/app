@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { CopyButton } from '@/app/components/CopyButton'
 
-interface CodePageProps {
+interface ModuleCodeProps {
   code: string
   language?: string
 }
 
-export const CodePage = ({ code, path}: CodePageProps) => {
+export const ModuleCode = ({ code, path}: ModuleCodeProps) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (

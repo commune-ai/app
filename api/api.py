@@ -57,8 +57,6 @@ class Hub:
     def get_module(self, module:str, **kwargs):
         info =  c.info(module, **kwargs)
         prefix = info['name'].split('.')[0]
-        if 'code' in info:
-            info['code'] = {prefix +  k.split(prefix)[-1]: v for k, v in info['code'].items()}
         return info
 
     def get_module_path(self, module):
