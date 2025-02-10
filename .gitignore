@@ -7,6 +7,8 @@ __pycache__/**
 *.pyc
 env/
 
+.next/
+
 # benchmark results
 benchmarks/results/
 benchmarks/results/*
@@ -37,7 +39,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+node_modules/
 lib64/
 parts/
 sdist/
@@ -243,7 +245,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
