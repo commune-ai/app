@@ -2,7 +2,6 @@
 
 ./run/api.sh
 #::::::::::::::::: APP :::::::::::::::::
-PORT=3000
 cd app 
 # check if yarn is even installed
 if ! [ -x "$(command -v yarn)" ]; then
@@ -10,5 +9,6 @@ if ! [ -x "$(command -v yarn)" ]; then
   exit 1
 fi
 cd app
-echo "START(APP PORT=$PORT )"
-yarn dev --port $PORT
+echo "START(APP PORT=$PORT)"
+npm install
+npm run dev
