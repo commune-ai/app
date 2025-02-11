@@ -2,22 +2,47 @@
 
 import { WalletConnect } from "@/components/wallet/wallet-connect"
 import { SearchInput } from "@/components/search/search-input"
-import { Plus } from "lucide-react"
+import { Menu, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { MainSidebar } from "@/components/navbar/main-sidebar"
+import { ModuleType } from "@/store/module-state"
 interface NavbarProps {
   onSearch: (value: string) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onFilterChange: (filters: any) => void
+  moduleData: ModuleType[]
 }
 
-export function HubNavbar({ onSearch }: NavbarProps) {
-  const router=useRouter();
-  
+export function HubNavbar({ onSearch, onFilterChange, moduleData }: NavbarProps) {
+  const router = useRouter();
+  const pathname = usePathname()
+  const isRootPage = pathname === "/"
+
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter">
+      {isRootPage && (
+        <div className="hidden md:flex flex-shrink-0 mr-4 absolute top-4 left-9">
+          <MainSidebar onFilterChange={onFilterChange} moduleData={moduleData}>
+            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-white/10">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </MainSidebar>
+        </div>
+      )}
       <div className="container mx-auto px-4">
         <div className="flex h-20 items-center justify-between">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center">
+            {isRootPage && (
+              <div className="md:hidden flex-shrink-0 -ml-2">
+                <MainSidebar onFilterChange={onFilterChange} moduleData={moduleData}>
+                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-white/10">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </MainSidebar>
+              </div>
+            )}
             <span className="text-2xl font-bold text-white">
               <span className="text-blue-400">dhub</span>
             </span>
@@ -33,7 +58,7 @@ export function HubNavbar({ onSearch }: NavbarProps) {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={()=>{router.push("/module/create")}}
+                    onClick={() => { router.push("/module/create") }}
                     className="border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200"
                   >
                     <Plus className="h-4 w-4" />

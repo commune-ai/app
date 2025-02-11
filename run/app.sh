@@ -11,8 +11,10 @@ if ! [ -x "$(command -v npm)" ]; then
 fi
 cd app
 echo "START(APP PORT=$PORT )"
-npm run dev -- -p $PORT
+
+# for development
+# npm run dev -- -p $PORT
 
 #for production
-#npm run build
-#npm run start -- -p $PORT
+npm run build
+npm run start -- -p $PORT
