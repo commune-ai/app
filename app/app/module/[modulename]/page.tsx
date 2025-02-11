@@ -11,7 +11,6 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Badge } from "@/components/ui/badge"
 import { Copy, Share2, Rocket, Code, Check, Clock, User, ChevronRight, MessageCircle, AlertTriangle, Coins, ThumbsUp, ThumbsDown } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CodeTab } from "@/components/module-tabs/code-tab"
@@ -20,6 +19,7 @@ import { AppTab } from "@/components/module-tabs/app-tab"
 import ModuleDetailSkeleton from "@/components/skeleton/module-detail-skeleton"
 import { DiscussionTab } from "@/components/module-tabs/discussion-tab"
 import { useModuleDetailStore } from "@/store/module-detail-state"
+import { ModuleReportDialog } from "@/components/module/module-report-dialog"
 
 export default function ModuleDetailPage() {
   const params = useParams()
@@ -28,6 +28,7 @@ export default function ModuleDetailPage() {
   const [activeTab, setActiveTab] = useState("code")
   const [copied, setCopied] = useState({ key: false, hash: false })
   const [isLoading, setIsLoading] = useState(true)
+  const [isReportingModuleDialogOpen, setIsReportingModuleDialogOpen] = useState(false)
 
 
   const { fetchModuleDetail,moduleDetail } = useModuleDetailStore();
@@ -130,9 +131,6 @@ export default function ModuleDetailPage() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <h1 className="text-2xl font-bold text-white">{moduleDetail[0]?.name}</h1>
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">
-                Active
-              </Badge>
             </div>
             <p className="text-gray-400 mb-4">{moduleDetail[0]?.description||"This is a description of a module.The module take input from the user and give the output."}</p>
             <div className="flex items-center space-x-4 text-sm text-gray-400">
@@ -212,7 +210,7 @@ export default function ModuleDetailPage() {
               <Button
                 variant="outline"
                 className="w-full border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20"
-                onClick={() => { router.push(`/module/${params.modulename}/report`) }}
+                onClick={() => { setIsReportingModuleDialogOpen(true) }}
               >
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 Report on Module
@@ -269,10 +267,11 @@ export default function ModuleDetailPage() {
           </TabsContent>
 
           <TabsContent value="discussion" className="flex-1 p-6 overflow-auto">
-            <DiscussionTab moduleName={moduleData.name} />
+            <DiscussionTab moduleName={moduleDetail[0]?.name} />
           </TabsContent>
         </Tabs>
       </div>
+      <ModuleReportDialog moduleName={moduleDetail[0]?.name} open={isReportingModuleDialogOpen} onOpenChange={setIsReportingModuleDialogOpen}/>
     </div>
   )
 }

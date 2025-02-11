@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, CopyIcon,Check } from "lucide-react"
+import { Search, CopyIcon, Check } from "lucide-react"
 
 interface CodeTabProps {
   code?: {
@@ -54,9 +54,8 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
               <button
                 key={file}
                 onClick={() => setSelectedFile(file)}
-                className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${
-                  selectedFile === file ? "bg-blue-500 text-white" : "text-gray-300"
-                }`}
+                className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${selectedFile === file ? "bg-blue-500 text-white" : "text-gray-300"
+                  }`}
               >
                 {file}
               </button>
@@ -65,7 +64,7 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
         </div>
 
         {/* Code Viewer */}
-        <div className="flex-1 overflow-auto relative">
+        <div className="flex-1 relative">
           <div className="absolute right-4 top-4">
             <Button
               variant="ghost"

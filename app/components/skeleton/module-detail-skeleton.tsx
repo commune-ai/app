@@ -16,7 +16,7 @@ export default function ModuleDetailSkeleton() {
         </div>
       </div>
 
-      {/* Middle Column - Agent Details */}
+      {/* Middle Column - Module Details */}
       <div className="w-full md:w-[400px] border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-6">
         <div className="space-y-6">
           <Skeleton className="h-4 w-32 bg-white/5" />
