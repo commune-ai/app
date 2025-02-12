@@ -32,7 +32,7 @@ export function ModuleCardSkeleton() {
 
           {/* Time row */}
           <div className="flex items-center space-x-2">
-            <Skeleton className="h-4 w-4 bg-white/10" />
+            <Skeleton className="size-4 bg-white/10" />
             <Skeleton className="h-4 w-10 bg-white/10" />
             <Skeleton className="h-4 w-32 bg-white/10" />
           </div>
@@ -40,18 +40,22 @@ export function ModuleCardSkeleton() {
         {/* Tags */}
         <div className="overflow-hidden">
           <div className="flex flex-wrap gap-2">
-            <Skeleton className="h-6 w-16 bg-white/10 rounded-full" />
-            <Skeleton className="h-6 w-20 bg-white/10 rounded-full" />
-            <Skeleton className="h-6 w-14 bg-white/10 rounded-full" />
-            <Skeleton className="h-6 w-18 bg-white/10 rounded-full" />
+            {[...Array(4)].map((_, i) => (
+              <Skeleton
+                key={i}
+                className={`h-6 bg-white/10 rounded-full ${
+                  i === 0 ? 'w-16' : i === 1 ? 'w-20' : i === 2 ? 'w-14' : 'w-18'
+                }`}
+              />
+            ))}{' '}
           </div>
         </div>
       </CardContent>
 
       <CardFooter className="grid grid-cols-3 border-t border-white/10 p-0">
-        <Skeleton className="h-12 w-full bg-white/5" />
-        <Skeleton className="h-12 w-full bg-white/5" />
-        <Skeleton className="h-12 w-full bg-white/5" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full bg-white/5" />
+        ))}{' '}
       </CardFooter>
     </Card>
   );

@@ -1,36 +1,49 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search, CopyIcon, Check } from "lucide-react"
+import { useState, useCallback, useMemo } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search, CopyIcon, Check } from 'lucide-react';
+
+type CodeContent = Record<string, string>;
 
 interface CodeTabProps {
-  code?: {
-    [key: string]: string
-  }
+  code?: CodeContent;
 }
 
-const defaultCode = {
-  "error.py": 'code file not found',
-}
+const defaultCode: CodeContent = {
+  'error.py': 'code file not found',
+};
 
 export function CodeTab({ code = defaultCode }: CodeTabProps) {
-  const [selectedFile, setSelectedFile] = useState(Object.keys(code)[0] || "")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [copied, setCopied] = useState(false)
+  const [selectedFile, setSelectedFile] = useState(() => Object.keys(code)[0] || '');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [copied, setCopied] = useState(false);
 
-  const handleCopyCode = async (content: string) => {
+  const handleCopyCode = useCallback(async (content: string) => {
     try {
-      await navigator.clipboard.writeText(content)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      const timer = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timer);
     } catch (err) {
-      console.error("Failed to copy code: ", err)
+      console.error('Failed to copy code: ', err);
     }
-  }
+  }, []);
 
-  const filteredFiles = Object.keys(code).filter((file) => file.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredFiles = useMemo(
+    () =>
+      Object.keys(code).filter((file) => file.toLowerCase().includes(searchQuery.toLowerCase())),
+    [code, searchQuery]
+  );
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleFileSelect = useCallback((file: string) => {
+    setSelectedFile(file);
+  }, []);
 
   return (
     <div className="h-full flex flex-col">
@@ -40,7 +53,7 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
           <Input
             placeholder="Search in files..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="w-full bg-[#0D1117] border-[#30363D] pl-10 text-gray-300 placeholder:text-gray-500"
           />
         </div>
@@ -49,18 +62,17 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
       <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
         {/* File Explorer */}
         <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-[#30363D] overflow-y-auto p-1 md:p-1">
-          {filteredFiles.map((file) => {
-            return (
-              <button
-                key={file}
-                onClick={() => setSelectedFile(file)}
-                className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${selectedFile === file ? "bg-blue-500 text-white" : "text-gray-300"
-                  }`}
-              >
-                {file}
-              </button>
-            )
-          })}
+          {filteredFiles.map((file) => (
+            <button
+              key={file}
+              onClick={() => handleFileSelect(file)}
+              className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${
+                selectedFile === file ? 'bg-blue-500 text-white' : 'text-gray-300'
+              }`}
+            >
+              {file}
+            </button>
+          ))}
         </div>
 
         {/* Code Viewer */}
@@ -69,20 +81,23 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => handleCopyCode(code[selectedFile] || "")}
+              onClick={() => handleCopyCode(code[selectedFile] || '')}
               className="h-8 w-8 rounded-md border border-[#30363D] bg-[#0D1117] hover:bg-[#30363D] transition-all duration-200"
             >
-              {copied ? <Check className="h-4 w-4 text-blue-500" /> : <CopyIcon className="h-4 w-4 text-gray-400" />}
+              {copied ? (
+                <Check className="h-4 w-4 text-blue-500" />
+              ) : (
+                <CopyIcon className="h-4 w-4 text-gray-400" />
+              )}
             </Button>
           </div>
           <pre className="p-6 text-sm font-mono">
             <code className="text-[#238636]">
-              {code[selectedFile] || "// Select a file to view its contents"}
+              {code[selectedFile] || '// Select a file to view its contents'}
             </code>
           </pre>
         </div>
       </div>
     </div>
-  )
+  );
 }
-

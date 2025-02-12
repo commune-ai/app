@@ -8,30 +8,52 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useRouter, usePathname } from 'next/navigation';
 import { MainSidebar } from '@/components/navbar/main-sidebar';
 import { ModuleType } from '@/store/module-state';
+import { memo, useCallback } from 'react';
+
+interface FilterState {
+  network: string | null;
+  tag: string | null;
+  search: string;
+}
+
 interface NavbarProps {
   onSearch: (value: string) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onFilterChange: (filters: any) => void;
+  onFilterChange: (filters: FilterState) => void;
   moduleData: ModuleType[];
 }
 
-export function HubNavbar({ onSearch, onFilterChange, moduleData }: NavbarProps) {
+export const HubNavbar = memo(function HubNavbar({
+  onSearch,
+  onFilterChange,
+  moduleData,
+}: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const isRootPage = pathname === '/';
+
+  const handleAddNewModel = useCallback(() => {
+    router.push('/module/create');
+  }, [router]);
+
+  const renderSidebarButton = useCallback(
+    () => (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-gray-400 hover:text-white hover:bg-white/10"
+      >
+        <Menu className="h-6 w-6" />
+      </Button>
+    ),
+    []
+  );
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter">
       {isRootPage && (
         <div className="hidden md:flex flex-shrink-0 mr-4 absolute top-4 left-9">
           <MainSidebar onFilterChange={onFilterChange} moduleData={moduleData}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-400 hover:text-white hover:bg-white/10"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
+            {renderSidebarButton()}
           </MainSidebar>
         </div>
       )}
@@ -41,13 +63,7 @@ export function HubNavbar({ onSearch, onFilterChange, moduleData }: NavbarProps)
             {isRootPage && (
               <div className="md:hidden flex-shrink-0 -ml-2">
                 <MainSidebar onFilterChange={onFilterChange} moduleData={moduleData}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-gray-400 hover:text-white hover:bg-white/10"
-                  >
-                    <Menu className="h-6 w-6" />
-                  </Button>
+                  {renderSidebarButton()}
                 </MainSidebar>
               </div>
             )}
@@ -66,9 +82,7 @@ export function HubNavbar({ onSearch, onFilterChange, moduleData }: NavbarProps)
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => {
-                      router.push('/module/create');
-                    }}
+                    onClick={handleAddNewModel}
                     className="border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200"
                   >
                     <Plus className="h-4 w-4" />
@@ -80,10 +94,9 @@ export function HubNavbar({ onSearch, onFilterChange, moduleData }: NavbarProps)
               </Tooltip>
             </TooltipProvider>
           </div>
-
           <WalletConnect />
         </div>
       </div>
     </nav>
   );
-}
+});

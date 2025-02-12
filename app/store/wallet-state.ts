@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { WalletType } from "@/types/wallet-types";
+import { create } from 'zustand';
+import { WalletType } from '@/types/wallet-types';
 
 interface WalletState {
   walletConnected: boolean;
@@ -16,19 +16,18 @@ const useWalletStore = create<WalletState>((set) => ({
   walletConnected: false,
   wallet: {
     name: null,
-    address: "",
-    balance: "0",
+    address: '',
+    balance: '0',
   },
-  setWalletConnected: (connectedWallet) =>
-    set({ walletConnected: connectedWallet }),
+  setWalletConnected: (connectedWallet) => set({ walletConnected: connectedWallet }),
   setWallet: (name, address, balance) =>
-    set(({
+    set({
       wallet: {
         name,
         address,
         balance,
       },
-    })),
+    }),
 }));
 
 export default useWalletStore;

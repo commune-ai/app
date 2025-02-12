@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
@@ -17,6 +15,7 @@ import {
 import useWalletStore from '@/store/wallet-state';
 import { WalletType } from '@/types/wallet-types';
 import { usePathname } from 'next/navigation';
+
 export function WalletConnect() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { walletConnected, setWalletConnected, setWallet, wallet } = useWalletStore();
@@ -56,6 +55,8 @@ export function WalletConnect() {
               src={`/${wallet.name?.toLocaleLowerCase()}.svg`}
               className="p-1.5 object-contain"
               alt={`${wallet.name} preview`}
+              width={48}
+              height={48}
             />
           </Avatar>
         </DropdownMenuTrigger>

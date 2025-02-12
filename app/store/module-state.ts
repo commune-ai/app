@@ -17,7 +17,6 @@ export type ModuleType = {
   time: number;
 };
 
-// Network and Tags Utility Function
 const getRandomNetworkAndTags = () => {
   const networks = ['commune', 'bittensor', 'torus'];
   const tags = [
@@ -33,8 +32,9 @@ const getRandomNetworkAndTags = () => {
   const randomNetwork = networks[Math.floor(Math.random() * networks.length)];
   const randomTags = Array.from(
     new Set(
-      Array.from({ length: Math.floor(Math.random() * 4) + 1 }, () =>
-        tags[Math.floor(Math.random() * tags.length)]
+      Array.from(
+        { length: Math.floor(Math.random() * 4) + 1 },
+        () => tags[Math.floor(Math.random() * tags.length)]
       )
     )
   );
@@ -59,7 +59,7 @@ export const useModuleStore = create<ModuleStore>((set) => ({
     try {
       const client = new Client();
       const data = await client.call('modules');
-      set({ modules: data ?? [], loadingModules: false });
+      set({ modules: Array.isArray(data) ? data : [], loadingModules: false });
     } catch (error) {
       console.error('Failed to fetch modules:', error);
       set({ modules: [], loadingModules: false });

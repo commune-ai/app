@@ -1,78 +1,83 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Terminal } from "lucide-react"
-
+import { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Terminal } from 'lucide-react';
 
 interface InputField {
-  value: string
-  type: string
+  value: string;
+  type: string;
 }
 
 interface Schema {
   [key: string]: {
     input: {
-      [key: string]: InputField
-    }
+      [key: string]: InputField;
+    };
     output: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      value: any
-      type: string
-    }
-  }
+      value: any;
+      type: string;
+    };
+  };
 }
 
 interface ApiTabProps {
-  schema?: Schema
+  schema?: Schema;
 }
 
 const schemaDefault: Schema = {
-  "defaultFunction": {
-    "input": {
-      "self": {
-        "value": "_empty",
-        "type": "_empty"
+  defaultFunction: {
+    input: {
+      self: {
+        value: '_empty',
+        type: '_empty',
       },
-      "module": {
-        "value": "_empty",
-        "type": "_empty"
+      module: {
+        value: '_empty',
+        type: '_empty',
       },
-      "key": {
-        "value": "_empty",
-        "type": "_empty"
-      }
+      key: {
+        value: '_empty',
+        type: '_empty',
+      },
     },
-    "output": {
-      "value": null,
-      "type": "None"
-    }
-  }
-}
+    output: {
+      value: null,
+      type: 'None',
+    },
+  },
+};
 
-export function ApiTab({ schema=schemaDefault }: ApiTabProps) {
-  const [selectedFunction, setSelectedFunction] = useState<string>(Object.keys(schema)[0])
-  const [params, setParams] = useState<{ [key: string]: string }>({})
-  const [executionResult, setExecutionResult] = useState<string | null>(null)
-  const [isExecuting, setIsExecuting] = useState(false)
+export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
+  const [selectedFunction, setSelectedFunction] = useState<string>(Object.keys(schema)[0]);
+  const [params, setParams] = useState<{ [key: string]: string }>({});
+  const [executionResult, setExecutionResult] = useState<string | null>(null);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const handleParamChange = (param: string, value: string) => {
     setParams((prev) => ({
       ...prev,
       [param]: value,
-    }))
-  }
+    }));
+  };
 
   const handleExecute = async () => {
-    setIsExecuting(true)
+    setIsExecuting(true);
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setExecutionResult("Function executed successfully")
-    setIsExecuting(false)
-  }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setExecutionResult('Function executed successfully');
+    setIsExecuting(false);
+  };
 
   return (
     <div className="flex flex-col space-y-6">
@@ -144,7 +149,10 @@ export function ApiTab({ schema=schemaDefault }: ApiTabProps) {
                   <div className="text-center space-y-4">
                     <Terminal className="w-12 h-12 mx-auto text-blue-500" />
                     <div className="text-lg">Ready to Drop In</div>
-                    <Button variant="outline" className="border-[#30363D] text-gray-300 hover:bg-[#30363D]">
+                    <Button
+                      variant="outline"
+                      className="border-[#30363D] text-gray-300 hover:bg-[#30363D]"
+                    >
                       Vlim
                     </Button>
                   </div>
@@ -169,5 +177,5 @@ export function ApiTab({ schema=schemaDefault }: ApiTabProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

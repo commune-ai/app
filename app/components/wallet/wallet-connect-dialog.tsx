@@ -1,4 +1,3 @@
-'use client';
 import { connectToMetaMask, connectToPhantom, connectToSubWallet } from '@/utils/wallet';
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -24,51 +23,42 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
     }
   }, [isOpen]);
 
+  interface WalletResponse {
+    success: boolean;
+    address?: string;
+    balance?: string;
+    error?: string;
+  }
+
+  const handleWalletResponse = (response: WalletResponse, walletType: WalletType) => {
+    if (response.success) {
+      if (response.address && response.balance) {
+        setWallet(walletType, response.address, response.balance);
+        setWalletConnected(true);
+      } else {
+        setError('Failed to retrieve wallet address or balance');
+      }
+      onClose();
+    } else {
+      setError(response.error ?? null);
+    }
+  };
+
   const handleConnect = async (selectedWallet: WalletType) => {
     switch (selectedWallet) {
       case WalletType.METAMASK: {
-        const metaResponse = await connectToMetaMask();
-        if (metaResponse.success) {
-          if (metaResponse.address && metaResponse.balance) {
-            setWallet(WalletType.METAMASK, metaResponse.address, metaResponse.balance);
-            setWalletConnected(true);
-          } else {
-            setError('Failed to retrieve wallet address or balance');
-          }
-          onClose();
-        } else {
-          setError(metaResponse.error ?? null);
-        }
+        const response = await connectToMetaMask();
+        handleWalletResponse(response, WalletType.METAMASK);
         break;
       }
       case WalletType.SUBWALLET: {
-        const subResponse = await connectToSubWallet();
-        if (subResponse.success) {
-          if (subResponse.address && subResponse.balance) {
-            setWallet(WalletType.SUBWALLET, subResponse.address, subResponse.balance);
-            setWalletConnected(true);
-          } else {
-            setError('Failed to retrieve wallet address or balance');
-          }
-          onClose();
-        } else {
-          setError(subResponse.error ?? null);
-        }
+        const response = await connectToSubWallet();
+        handleWalletResponse(response, WalletType.SUBWALLET);
         break;
       }
       case WalletType.PHANTOM: {
-        const phantomResponse = await connectToPhantom();
-        if (phantomResponse.success) {
-          if (phantomResponse.address && phantomResponse.balance) {
-            setWallet(WalletType.PHANTOM, phantomResponse.address, phantomResponse.balance);
-            setWalletConnected(true);
-          } else {
-            setError('Failed to retrieve wallet address or balance');
-          }
-          onClose();
-        } else {
-          setError(phantomResponse.error ?? null);
-        }
+        const response = await connectToPhantom();
+        handleWalletResponse(response, WalletType.PHANTOM);
         break;
       }
       default: {
@@ -76,6 +66,12 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
       }
     }
   };
+
+  const walletOptions = [
+    { name: 'Metamask', icon: '/metamask.svg' },
+    { name: 'Subwallet', icon: '/subwallet.svg' },
+    { name: 'Phantom', icon: '/phantom.svg' },
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -97,11 +93,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
             </div>
           )}
           <div className="space-y-3">
-            {[
-              { name: 'Metamask', icon: '/metamask.svg' },
-              { name: 'Subwallet', icon: '/subwallet.svg' },
-              { name: 'Phantom', icon: '/phantom.svg' },
-            ].map((wallet) => (
+            {walletOptions.map((wallet) => (
               <Button
                 key={wallet.name}
                 variant="outline"
@@ -117,7 +109,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
                   className="mr-3"
                 />
               </Button>
-            ))}
+            ))}{' '}
           </div>
         </div>
         <div className="px-6 py-4 bg-white/5 border-t border-white/10">

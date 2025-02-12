@@ -1,5 +1,3 @@
-'use client';
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '@/config.json';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
@@ -15,9 +13,9 @@ export class Client {
 
   public async call(
     fn: string = 'info',
-    params: Record<string, any> = {},
+    params: Record<string, unknown> = {},
     headers: Record<string, string> = {}
-  ): Promise<any> {
+  ): Promise<unknown> {
     headers = {
       ...headers,
       'Content-Type': 'application/json',
@@ -34,9 +32,9 @@ export class Client {
 
   private async async_forward(
     fn: string,
-    params: Record<string, any> | FormData,
+    params: Record<string, unknown> | FormData,
     headers: Record<string, string>
-  ): Promise<any> {
+  ): Promise<unknown> {
     let requestHeaders: Record<string, string> = {};
     let data: string | FormData;
 
@@ -70,14 +68,13 @@ export class Client {
       }
 
       return response.data;
-
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log('Request failed:', error.message);
       } else {
         console.log('Unexpected error:', error);
       }
-      return null; // Return null if the request fails
+      return null;
     }
   }
 
@@ -90,7 +87,7 @@ export class Client {
       if (done) break;
 
       const chunk = decoder.decode(value);
-      console.log(chunk); // Handle streaming data as needed
+      console.log(chunk);
     }
   }
 }

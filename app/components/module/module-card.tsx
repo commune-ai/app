@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback, JSX } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Check, Copy, Code, ExternalLink, Key, Clock } from 'lucide-react';
@@ -11,13 +11,15 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+type Tag = string;
+
 interface ModuleCardProps {
   name: string;
   mkey: string;
   timestamp: string;
   imageUrl?: string;
   network?: string;
-  tags?: string[];
+  tags?: Tag[];
   description: string;
 }
 
@@ -29,49 +31,58 @@ export function ModuleCard({
   imageUrl,
   network = 'commune',
   tags = ['LLM', 'Text Conversion', 'LLM', 'Text Conversion', 'LLM', 'Text Conversion'],
-}: ModuleCardProps) {
+}: ModuleCardProps): JSX.Element {
   const router = useRouter();
-  const [copied, setCopied] = useState(false);
-  const [isHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  const [copied, setCopied] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = useCallback(async (text: string): Promise<void> => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 2000);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-  };
+  }, []);
 
-  const navigateToModule = (e: React.MouseEvent) => {
-    if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
-      router.push(`/module/${encodeURIComponent(name.toLowerCase())}`);
-    }
-  };
+  const navigateToModule = useCallback(
+    (e: React.MouseEvent): void => {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        router.push(`/module/${encodeURIComponent(name.toLowerCase())}`);
+      }
+    },
+    [router, name]
+  );
 
-  const handleCodeClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=code`);
-  };
+  const handleCodeClick = useCallback(
+    (e: React.MouseEvent): void => {
+      e.stopPropagation();
+      router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=code`);
+    },
+    [router, name]
+  );
 
-  const handleApiClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=api`);
-  };
+  const handleApiClick = useCallback(
+    (e: React.MouseEvent): void => {
+      e.stopPropagation();
+      router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=api`);
+    },
+    [router, name]
+  );
 
-  const handleAppClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=app`);
-  };
+  const handleAppClick = useCallback(
+    (e: React.MouseEvent): void => {
+      e.stopPropagation();
+      router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=app`);
+    },
+    [router, name]
+  );
 
-  const handleImageError = () => {
+  const handleImageError = useCallback((): void => {
     setImageError(true);
-  };
+  }, []);
 
   const truncatedDescription =
     description.length > 80 ? `${description.slice(0, 80)}...` : description;
@@ -98,6 +109,7 @@ export function ModuleCard({
                 height={64}
                 className="object-cover"
                 onError={handleImageError}
+                priority
               />
             </div>
             <div className="flex-1 min-w-0">
@@ -111,12 +123,10 @@ export function ModuleCard({
             </div>
           </div>
 
-          {/* Description Section - Fixed height */}
           <div className="mb-3 h-[40px]">
             <p className="text-sm text-gray-300 line-clamp-2">{truncatedDescription}</p>
           </div>
 
-          {/* Info Section */}
           <div className="font-mono text-sm space-y-1 mb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -164,13 +174,12 @@ export function ModuleCard({
             </div>
           </div>
 
-          {/* Tags Section - Fixed height for two lines of badges */}
           <div ref={cardRef} className="h-[30px]">
             <ScrollArea className="h-full w-full">
               <div className="flex flex-wrap gap-1 pr-4">
                 {tags.map((tag, index) => (
                   <Badge
-                    key={index}
+                    key={`${tag}-${index}`}
                     variant="outline"
                     className="flex-shrink-0 bg-white/5 text-gray-300 border-white/10"
                   >
@@ -222,12 +231,6 @@ export function ModuleCard({
             <span>App</span>
           </Button>
         </CardFooter>
-
-        <motion.div
-          initial={false}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"
-        />
       </Card>
     </motion.div>
   );

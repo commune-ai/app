@@ -1,21 +1,21 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { useState } from 'react';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 interface SearchInputProps {
-  onSearch: (value: string) => void
+  onSearch: (value: string) => void;
 }
 
 export function SearchInput({ onSearch }: SearchInputProps) {
-  const [searchValue, setSearchValue] = useState("")
+  const [searchValue, setSearchValue] = useState<string>('');
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
-    setSearchValue(value)
-    onSearch(value)
-  }
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const value = event.target.value;
+    setSearchValue(value);
+    onSearch(value);
+  };
 
   return (
     <div className="relative w-full">
@@ -28,6 +28,5 @@ export function SearchInput({ onSearch }: SearchInputProps) {
         className="w-full pl-10 border-white/10 bg-white/10 text-sm text-gray-300 placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
       />
     </div>
-  )
+  );
 }
-

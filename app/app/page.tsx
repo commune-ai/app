@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { HubNavbar } from '@/components/navbar/hub-navbar';
 import { SearchInput } from '@/components/search/search-input';
 import { ModuleCard } from '@/components/module/module-card';
@@ -16,28 +16,46 @@ import { useRouter } from 'next/navigation';
 
 const ITEMS_PER_PAGE = 12;
 
+interface FilterParams {
+  network: string | null;
+  tag: string | null;
+  search: string;
+}
+
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filteredModules, setFilteredModules] = useState<ModuleType[]>([]);
-  const [networkFilter, setNetworkFilter] = useState<string | null>(null); // track network filter
-  const [tagFilter, setTagFilter] = useState<string | null>(null); // track tag filter
+  const [networkFilter, setNetworkFilter] = useState<string | null>(null);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+
   const router = useRouter();
+  const hasFetched = useRef<boolean>(false);
 
   const { fetchModules, modules, loadingModules, assignRandomNetworkAndTags } = useModuleStore();
 
-  const hasFetched = useRef(false);
+  const filterModules = useCallback(
+    (modules: ModuleType[], network: string | null, tag: string | null, search: string) => {
+      return modules.filter((module) => {
+        const matchesNetwork = !network || module.network === network;
+        const matchesTag = !tag || (module.tags && module.tags.includes(tag));
+        const matchesSearch = !search || module.name.toLowerCase().includes(search.toLowerCase());
+
+        return matchesNetwork && matchesTag && matchesSearch;
+      });
+    },
+    []
+  );
 
   useEffect(() => {
     if (!hasFetched.current) {
       const fetchData = async () => {
         try {
           setIsLoading(true);
-          await fetchModules();
-          await assignRandomNetworkAndTags();
+          await Promise.all([fetchModules(), assignRandomNetworkAndTags()]);
         } catch (err) {
-          console.error(err);
+          console.error('Error fetching modules:', err);
         } finally {
           setIsLoading(false);
           hasFetched.current = true;
@@ -48,58 +66,43 @@ export default function Home() {
   }, [assignRandomNetworkAndTags, fetchModules]);
 
   useEffect(() => {
-    const filtered = modules.filter((module) => {
-      const matchesNetwork = !networkFilter || module.network === networkFilter;
-      const matchesTag = !tagFilter || (module.tags && module.tags.includes(tagFilter));
-      const matchesSearch =
-        !searchTerm || module.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-      return matchesNetwork && matchesTag && matchesSearch;
-    });
+    const filtered = filterModules(modules, networkFilter, tagFilter, searchTerm);
     setFilteredModules(filtered);
-  }, [searchTerm, modules, networkFilter, tagFilter]);
+  }, [searchTerm, modules, networkFilter, tagFilter, filterModules]);
 
   const totalPages = Math.ceil(filteredModules.length / ITEMS_PER_PAGE);
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentItems = filteredModules.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handlePageChange = (pageNumber: number) => {
+  const handlePageChange = useCallback((pageNumber: number) => {
     setCurrentPage(pageNumber);
-  };
+  }, []);
 
-  const handleSearch = (value: string) => {
+  const handleSearch = useCallback((value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handleFilterChange = ({
-    network,
-    tag,
-    search,
-  }: {
-    network: string | null;
-    tag: string | null;
-    search: string;
-  }) => {
-    setSearchTerm(search); // update the search term
+  const handleFilterChange = useCallback(
+    ({ network, tag, search }: FilterParams) => {
+      setSearchTerm(search);
 
-    // if the search is cleared, keep the selected filters intact
-    if (search) {
-      setNetworkFilter(network); // store the network filter
-      setTagFilter(tag); // store the tag filter
-    }
+      if (search) {
+        setNetworkFilter(network);
+        setTagFilter(tag);
+      }
 
-    const filtered = modules.filter((module) => {
-      const matchesNetwork = !network || module.network === network;
-      const matchesTag = !tag || (module.tags && module.tags.includes(tag));
-      const matchesSearch = !search || module.name.toLowerCase().includes(search.toLowerCase());
+      const filtered = filterModules(modules, network, tag, search);
+      setFilteredModules(filtered);
+      setCurrentPage(1);
+    },
+    [modules, filterModules]
+  );
 
-      return matchesNetwork && matchesTag && matchesSearch;
-    });
-    setFilteredModules(filtered);
-    setCurrentPage(1);
-  };
+  const handleCreateModule = useCallback(() => {
+    router.push('/module/create');
+  }, [router]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
@@ -116,9 +119,7 @@ export default function Home() {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => {
-                    router.push('/module/create');
-                  }}
+                  onClick={handleCreateModule}
                   className="border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200"
                 >
                   <Plus className="h-4 w-4" />
@@ -143,7 +144,7 @@ export default function Home() {
               ))
             : currentItems.map((module, index) => (
                 <ModuleCard
-                  key={index}
+                  key={`${module.key}-${index}`}
                   name={module.name}
                   mkey={module.key}
                   network={module.network}

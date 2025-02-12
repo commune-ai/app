@@ -2,17 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-style: normal;
+  font-display: swap;
+  src: local('Pixelify Sans'), url('/fonts/pixelify-sans.woff2') format('woff2');
+}
+
 body {
   font-family: 'Pixelify Sans', serif;
   font-optical-sizing: auto;
   font-weight: <weight>;
   font-style: normal;
+  text-rendering: optimizeLegibility;
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 0 0% 6%;
+    --foreground: 0 0% 100%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
@@ -38,8 +46,8 @@ body {
     --radius: 0.5rem;
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 6%;
+    --foreground: 0 0% 100%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;

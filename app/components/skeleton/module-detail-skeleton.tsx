@@ -28,31 +28,31 @@ export default function ModuleDetailSkeleton() {
             </div>
             <Skeleton className="h-4 w-full bg-white/5" />
             <Skeleton className="h-4 w-3/4 bg-white/5" />
-            <div className="flex items-center space-x-4">
-              <Skeleton className="h-4 w-20 bg-white/5" />
-              <Skeleton className="h-4 w-20 bg-white/5" />
-              <Skeleton className="h-4 w-16 bg-white/5" />
-              <Skeleton className="h-4 w-16 bg-white/5" />
-            </div>
+            {Array(4)
+              .fill(0)
+              .map((_, index) => (
+                <Skeleton key={index} className={`h-4 ${index < 2 ? 'w-20' : 'w-16'} bg-white/5`} />
+              ))}
           </div>
-          <Card className="border-white/10 bg-white/5">
-            <CardContent className="space-y-4 p-6">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24 bg-white/10" />
-                <Skeleton className="h-8 w-full bg-white/10" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24 bg-white/10" />
-                <Skeleton className="h-8 w-full bg-white/10" />
-              </div>
-            </CardContent>
-          </Card>
-          <div className="grid grid-cols-2 gap-3">
-            <Skeleton className="h-10 w-full bg-white/5" />
-            <Skeleton className="h-10 w-full bg-white/5" />
-            <Skeleton className="h-10 w-full bg-white/5" />
-            <Skeleton className="h-10 w-full bg-white/5" />
-          </div>
+        </div>
+        <Card className="border-white/10 bg-white/5">
+          <CardContent className="space-y-4 p-6">
+            {Array(2)
+              .fill(0)
+              .map((_, index) => (
+                <div key={index} className="space-y-2">
+                  <Skeleton className="h-4 w-24 bg-white/10" />
+                  <Skeleton className="h-8 w-full bg-white/10" />
+                </div>
+              ))}{' '}
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-2 gap-3">
+          {Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <Skeleton key={index} className="h-10 w-full bg-white/5" />
+            ))}
         </div>
       </div>
 
@@ -60,10 +60,11 @@ export default function ModuleDetailSkeleton() {
       <div className="flex-1 bg-[#0D1117] backdrop-blur-xl backdrop-filter">
         <div className="h-16 border-b border-white/10">
           <div className="flex gap-2 p-4">
-            <Skeleton className="h-8 w-20 bg-white/5" />
-            <Skeleton className="h-8 w-20 bg-white/5" />
-            <Skeleton className="h-8 w-20 bg-white/5" />
-            <Skeleton className="h-8 w-20 bg-white/5" />
+            {Array(4)
+              .fill(0)
+              .map((_, index) => (
+                <Skeleton key={index} className="h-8 w-20 bg-white/5" />
+              ))}{' '}
           </div>
         </div>
         <div className="p-6">

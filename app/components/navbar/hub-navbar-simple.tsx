@@ -1,7 +1,7 @@
-'use client';
+import { memo } from 'react';
 import { WalletConnect } from '@/components/wallet/wallet-connect';
 
-export function SimpleHubNavbar() {
+export const SimpleHubNavbar = memo(function SimpleHubNavbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter">
       <div className="container mx-auto px-4">
@@ -16,4 +16,4 @@ export function SimpleHubNavbar() {
       </div>
     </nav>
   );
-}
+});

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, JSX } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,17 +19,30 @@ interface ModuleReportDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ModuleReportDialog({ moduleName, open, onOpenChange }: ModuleReportDialogProps) {
-  const [problem, setProblem] = useState('');
+export function ModuleReportDialog({
+  moduleName,
+  open,
+  onOpenChange,
+}: ModuleReportDialogProps): JSX.Element {
+  const [problem, setProblem] = useState<string>('');
 
-  const handleSubmit = () => {
-    if (problem.trim()) {
+  const handleSubmit = useCallback(() => {
+    const trimmedProblem = problem.trim();
+    if (trimmedProblem) {
       // Here you would typically send the report data to your backend
-      console.log('Report submitted:', { problem, moduleName });
+      console.log('Report submitted:', { problem: trimmedProblem, moduleName });
       setProblem('');
       onOpenChange(false);
     }
-  };
+  }, [problem, moduleName, onOpenChange]);
+
+  const handleCancel = useCallback(() => {
+    onOpenChange(false);
+  }, [onOpenChange]);
+
+  const handleTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setProblem(e.target.value);
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -48,7 +61,7 @@ export function ModuleReportDialog({ moduleName, open, onOpenChange }: ModuleRep
             <label className="text-sm font-medium text-gray-200">Describe the problem</label>
             <Textarea
               value={problem}
-              onChange={(e) => setProblem(e.target.value)}
+              onChange={handleTextChange}
               className="min-h-[100px] bg-white/5 border-white/10 text-white placeholder-gray-400"
               placeholder="What issues are you experiencing with this module?"
               required
@@ -58,7 +71,7 @@ export function ModuleReportDialog({ moduleName, open, onOpenChange }: ModuleRep
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={handleCancel}
             className="border-white/10 bg-white/5 text-white hover:bg-white/10"
           >
             Cancel
