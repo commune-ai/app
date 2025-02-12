@@ -52,7 +52,7 @@ export function WalletConnect() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className=" bg-transparent cursor-pointer h-11 w-11">
-          <Image src={`/${wallet.name?.toLocaleLowerCase()}.svg`} className="p-1.5 object-contain" alt={`${wallet.name} preview`}/>
+          <Image src={`/${wallet.name?.toLocaleLowerCase()}.svg`} width={48} height={48} className="p-1.5 object-contain" alt={`${wallet.name} preview`}/>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 bg-white/5 border border-white/10 backdrop-blur-xl backdrop-filter text-white">

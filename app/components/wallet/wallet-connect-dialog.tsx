@@ -7,11 +7,12 @@ import {
 import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle,LogIn } from "lucide-react"
 import Image from "next/image"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import useWalletStore from "@/store/wallet-state"
 import { WalletType } from "@/types/wallet-types"
+import { useRouter } from "next/navigation";
 
 interface WalletConnectDialogProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
   const [error, setError] = useState<string | null>(null)
   const { setWallet, setWalletConnected } =
     useWalletStore();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isOpen) {
@@ -135,6 +137,13 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
                 />
               </Button>
             ))}
+            <Button
+              onClick={() => router.push("/signin")}
+              className="w-full justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all duration-200"
+            >
+              <LogIn className="h-4 w-4 mr-3" />
+              Sign in with Local Wallet Account
+            </Button>
           </div>
         </div>
         <div className="px-6 py-4 bg-white/5 border-t border-white/10">
