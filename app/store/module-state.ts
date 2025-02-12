@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Client } from '@/utils/client';
+
 export type ModuleType = {
   description: string;
   name: string;
@@ -15,6 +16,7 @@ export type ModuleType = {
   owner: string;
   time: number;
 };
+
 // Network and Tags Utility Function
 const getRandomNetworkAndTags = () => {
   const networks = ['commune', 'bittensor', 'torus'];
@@ -28,24 +30,18 @@ const getRandomNetworkAndTags = () => {
     'neural network',
   ];
 
-  // Randomly pick a network
   const randomNetwork = networks[Math.floor(Math.random() * networks.length)];
+  const randomTags = Array.from(
+    new Set(
+      Array.from({ length: Math.floor(Math.random() * 4) + 1 }, () =>
+        tags[Math.floor(Math.random() * tags.length)]
+      )
+    )
+  );
 
-  // Randomly pick a set of tags
-  const randomTagsCount = Math.floor(Math.random() * 4) + 1; // 1 to 4 random tags
-  const randomTags: string[] = [];
-  for (let i = 0; i < randomTagsCount; i++) {
-    const randomTag = tags[Math.floor(Math.random() * tags.length)];
-    if (!randomTags.includes(randomTag)) {
-      randomTags.push(randomTag);
-    }
-  }
-
-  return {
-    network: randomNetwork,
-    tags: randomTags,
-  };
+  return { network: randomNetwork, tags: randomTags };
 };
+
 interface ModuleStore {
   modules: ModuleType[];
   fetchModules: () => Promise<void>;
@@ -63,19 +59,19 @@ export const useModuleStore = create<ModuleStore>((set) => ({
     try {
       const client = new Client();
       const data = await client.call('modules');
-      set({ modules: data, loadingModules: false });
+      set({ modules: data ?? [], loadingModules: false });
     } catch (error) {
       console.error('Failed to fetch modules:', error);
       set({ modules: [], loadingModules: false });
     }
   },
+
   assignRandomNetworkAndTags: () => {
-    set((state) => {
-      const updatedModules = state.modules.map((module) => {
+    set((state) => ({
+      modules: state.modules.map((module) => {
         const { network, tags } = getRandomNetworkAndTags();
         return { ...module, network, tags };
-      });
-      return { modules: updatedModules };
-    });
+      }),
+    }));
   },
 }));
