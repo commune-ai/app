@@ -1,6 +1,8 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '@/config.json';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+
 export class Client {
   public url: string;
 
@@ -21,63 +23,66 @@ export class Client {
       'Content-Type': 'application/json',
       time: new Date().getTime().toString(),
     };
+
     try {
-      const data = await this.async_forward(fn, params, headers);
-      return data;
+      return await this.async_forward(fn, params, headers);
     } catch (error) {
-      console.error('Error in call method:', error);
-      throw error;
+      console.error('Request failed:', error);
+      return null; // Return null if the request fails
     }
   }
 
   private async async_forward(
-    fn: string = 'info',
-    params: Record<string, any> | FormData = {},
-    headers: Record<string, string> = {}
+    fn: string,
+    params: Record<string, any> | FormData,
+    headers: Record<string, string>
   ): Promise<any> {
     let requestHeaders: Record<string, string> = {};
-    let body: string | FormData;
+    let data: string | FormData;
 
     if (params instanceof FormData) {
-      body = params;
-      // Don't set Content-Type for FormData, browser will set it with boundary
+      data = params;
     } else {
-      body = JSON.stringify(params);
+      data = JSON.stringify(params);
       requestHeaders['Content-Type'] = 'application/json';
     }
 
     requestHeaders = { ...requestHeaders, ...headers };
-
     const url: string = `${this.url}/${fn}`;
+
+    const config: AxiosRequestConfig = {
+      method: 'post',
+      url: url,
+      headers: requestHeaders,
+      data: data,
+    };
+
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: requestHeaders,
-        body: body,
-      });
+      const response = await axios(config);
+      const contentType = response.headers['content-type'];
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const contentType = response.headers.get('Content-Type');
       if (contentType?.includes('text/event-stream')) {
         return this.handleStream(response);
       }
 
       if (contentType?.includes('application/json')) {
-        return await response.json();
+        return response.data;
       }
 
-      return await response.text();
+      return response.data;
+
     } catch (error) {
-      console.error('Request failed:', error);
-      return { error: (error as Error).message };
+      if (axios.isAxiosError(error)) {
+        console.log('Request failed:', error.message);
+      } else {
+        console.log('Unexpected error:', error);
+      }
+      return null; // Return null if the request fails
     }
   }
 
-  private async handleStream(response: Response): Promise<void> {
-    const reader = response.body!.getReader();
+  private async handleStream(response: AxiosResponse): Promise<void> {
+    const reader = (response.data as ReadableStream).getReader();
     const decoder = new TextDecoder();
 
     while (true) {
