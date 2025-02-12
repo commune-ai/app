@@ -13,23 +13,21 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Terminal } from 'lucide-react';
 
-interface InputField {
+type InputField = {
   value: string;
   type: string;
-}
+};
 
-interface Schema {
-  [key: string]: {
-    input: {
-      [key: string]: InputField;
-    };
+type Schema = Record<
+  string,
+  {
+    input: Record<string, InputField>;
     output: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      value: any;
+      value: unknown;
       type: string;
     };
-  };
-}
+  }
+>;
 
 interface ApiTabProps {
   schema?: Schema;
@@ -59,8 +57,8 @@ const schemaDefault: Schema = {
 };
 
 export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
-  const [selectedFunction, setSelectedFunction] = useState<string>(Object.keys(schema)[0]);
-  const [params, setParams] = useState<{ [key: string]: string }>({});
+  const [selectedFunction, setSelectedFunction] = useState<string>(() => Object.keys(schema)[0]);
+  const [params, setParams] = useState<Record<string, string>>({});
   const [executionResult, setExecutionResult] = useState<string | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
 
@@ -72,12 +70,20 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
   };
 
   const handleExecute = async () => {
-    setIsExecuting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setExecutionResult('Function executed successfully');
-    setIsExecuting(false);
+    try {
+      setIsExecuting(true);
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setExecutionResult('Function executed successfully');
+    } catch (error) {
+      console.error('Execution failed:', error);
+      setExecutionResult('Function execution failed');
+    } finally {
+      setIsExecuting(false);
+    }
   };
+
+  const functionEntries = Object.entries(schema[selectedFunction].input);
 
   return (
     <div className="flex flex-col space-y-6">
@@ -101,14 +107,14 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
 
           <div className="space-y-4">
             <h3 className="text-sm text-gray-400">Parameters</h3>
-            {Object.entries(schema[selectedFunction].input).map(([param, field]) => (
+            {functionEntries.map(([param, field]) => (
               <div key={param} className="space-y-2">
                 <label className="text-sm text-gray-400">
                   {param} <span className="text-gray-500">({field.type})</span>
                 </label>
                 <Input
                   placeholder={`Enter ${param}`}
-                  value={params[param] || field.value}
+                  value={params[param] || field.value || ''}
                   onChange={(e) => handleParamChange(param, e.target.value)}
                   className="bg-[#0D1117] border-[#30363D] text-gray-300 placeholder:text-gray-600"
                 />

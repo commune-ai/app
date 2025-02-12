@@ -1,4 +1,6 @@
-import { useState } from 'react';
+'use client';
+
+import { JSX, useState } from 'react';
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -15,29 +17,30 @@ import {
 import useWalletStore from '@/store/wallet-state';
 import { WalletType } from '@/types/wallet-types';
 import { usePathname } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
-export function WalletConnect() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+export function WalletConnect(): JSX.Element {
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const { walletConnected, setWalletConnected, setWallet, wallet } = useWalletStore();
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<boolean>(false);
   const pathname = usePathname();
 
-  const rootPath = pathname === '/' ? true : false;
+  const rootPath = useMemo(() => pathname === '/', [pathname]);
 
-  const handleOpenDialog = () => {
+  const handleOpenDialog = useCallback((): void => {
     setIsDialogOpen(true);
-  };
+  }, []);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback((): void => {
     setIsDialogOpen(false);
-  };
+  }, []);
 
-  const handleDisconnect = () => {
+  const handleDisconnect = useCallback((): void => {
     setWalletConnected(false);
     setWallet(WalletType.METAMASK, '0', '0');
-  };
+  }, [setWalletConnected, setWallet]);
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = useCallback(async (text: string): Promise<void> => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -45,18 +48,24 @@ export function WalletConnect() {
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-  };
+  }, []);
+
+  const walletImageSrc = useMemo(() => `/${wallet.name?.toLowerCase()}.svg`, [wallet.name]);
+
+  const truncatedAddress = useMemo(() => wallet.address.slice(0, 7), [wallet.address]);
+
   if (walletConnected) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className=" bg-transparent cursor-pointer h-11 w-11">
+          <Avatar className="bg-transparent cursor-pointer h-11 w-11">
             <Image
-              src={`/${wallet.name?.toLocaleLowerCase()}.svg`}
-              className="p-1.5 object-contain"
-              alt={`${wallet.name} preview`}
+              src={walletImageSrc}
               width={48}
               height={48}
+              className="p-1.5 object-contain"
+              alt={`${wallet.name} preview`}
+              priority
             />
           </Avatar>
         </DropdownMenuTrigger>
@@ -73,7 +82,7 @@ export function WalletConnect() {
           >
             <span>Address:</span>
             <div className="flex items-center">
-              <span className="mr-2">{wallet.address.slice(0, 7)}..</span>
+              <span className="mr-2">{truncatedAddress}..</span>
               {copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
             </div>
           </DropdownMenuItem>
