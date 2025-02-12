@@ -1,11 +1,8 @@
-import { ExternalProvider } from "@ethersproject/providers";
+import { ExternalProvider } from '@ethersproject/providers';
 
 interface EthereumProvider extends ExternalProvider {
   isMetaMask?: boolean;
-  request: (request: {
-    method: string;
-    params?: unknown[];
-  }) => Promise<unknown>;
+  request: (request: { method: string; params?: unknown[] }) => Promise<unknown>;
 }
 
 interface SolanaProvider {

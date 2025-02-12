@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function ModuleCardSkeleton() {
   return (
@@ -18,7 +18,6 @@ export function ModuleCardSkeleton() {
           <Skeleton className="h-4 w-full bg-white/10" />
           <Skeleton className="h-4 w-3/4 bg-white/10 mt-2" />
         </div>
-
         {/* Details section */}
         <div className="font-mono text-sm flex-1">
           {/* Key row */}
@@ -55,6 +54,5 @@ export function ModuleCardSkeleton() {
         <Skeleton className="h-12 w-full bg-white/5" />
       </CardFooter>
     </Card>
-  )
+  );
 }
-

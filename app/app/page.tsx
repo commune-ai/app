@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { HubNavbar } from '@/components/navbar/hub-navbar';
 import { SearchInput } from '@/components/search/search-input';

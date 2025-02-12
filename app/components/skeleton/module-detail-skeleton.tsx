@@ -1,6 +1,7 @@
-import { Skeleton } from "@/components/ui/skeleton"
-import { WalletConnect } from "@/components/wallet/wallet-connect"
-import { Card, CardContent } from "@/components/ui/card"
+import { Skeleton } from '@/components/ui/skeleton';
+import { WalletConnect } from '@/components/wallet/wallet-connect';
+import { Card, CardContent } from '@/components/ui/card';
+
 export default function ModuleDetailSkeleton() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#03040B]">
@@ -70,5 +71,5 @@ export default function ModuleDetailSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }
