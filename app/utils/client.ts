@@ -1,10 +1,10 @@
-"use client";
+'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '@/config.json';
 export class Client {
   public url: string;
 
-  constructor(url: string = config.url , mode: string = 'http') {
+  constructor(url: string = config.url, mode: string = 'http') {
     if (!url.startsWith(`${mode}://`)) {
       url = `${mode}://${url}`;
     }
@@ -30,32 +30,31 @@ export class Client {
     }
   }
 
-
   private async async_forward(
-      fn: string = 'info',
-      params: Record<string, any> | FormData = {},
-      headers: Record<string, string> = {}
-    ): Promise<any> {
-      let requestHeaders: Record<string, string> = {};
-      let body: string | FormData;
-    
-      if (params instanceof FormData) {
-        body = params;
-        // Don't set Content-Type for FormData, browser will set it with boundary
-      } else {
-        body = JSON.stringify(params);
-        requestHeaders['Content-Type'] = 'application/json';
-      }
-    
-      requestHeaders = { ...requestHeaders, ...headers };
-    
-      const url: string = `${this.url}/${fn}`;
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: requestHeaders,
-          body: body,
-        });
+    fn: string = 'info',
+    params: Record<string, any> | FormData = {},
+    headers: Record<string, string> = {}
+  ): Promise<any> {
+    let requestHeaders: Record<string, string> = {};
+    let body: string | FormData;
+
+    if (params instanceof FormData) {
+      body = params;
+      // Don't set Content-Type for FormData, browser will set it with boundary
+    } else {
+      body = JSON.stringify(params);
+      requestHeaders['Content-Type'] = 'application/json';
+    }
+
+    requestHeaders = { ...requestHeaders, ...headers };
+
+    const url: string = `${this.url}/${fn}`;
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: requestHeaders,
+        body: body,
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

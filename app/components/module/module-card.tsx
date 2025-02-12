@@ -1,71 +1,80 @@
-"use client"
+'use client';
 
-import { useState, useRef } from "react"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { Check, Copy, Code, ExternalLink, Key, Clock } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { Check, Copy, Code, ExternalLink, Key, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ModuleCardProps {
-  name: string
-  mkey: string
-  timestamp: string
-  imageUrl?: string
-  network?: string
-  tags?: string[]
-  description: string
+  name: string;
+  mkey: string;
+  timestamp: string;
+  imageUrl?: string;
+  network?: string;
+  tags?: string[];
+  description: string;
 }
 
-export function ModuleCard({ name, mkey, timestamp, description, imageUrl, network = "commune", tags = ["LLM", "Text Conversion","LLM", "Text Conversion","LLM", "Text Conversion"] }: ModuleCardProps) {
-  const router = useRouter()
-  const [copied, setCopied] = useState(false)
-  const [isHovered] = useState(false)
-  const [imageError, setImageError] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
+export function ModuleCard({
+  name,
+  mkey,
+  timestamp,
+  description,
+  imageUrl,
+  network = 'commune',
+  tags = ['LLM', 'Text Conversion', 'LLM', 'Text Conversion', 'LLM', 'Text Conversion'],
+}: ModuleCardProps) {
+  const router = useRouter();
+  const [copied, setCopied] = useState(false);
+  const [isHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
       setTimeout(() => {
-        setCopied(false)
-      }, 2000)
+        setCopied(false);
+      }, 2000);
     } catch (err) {
-      console.error("Failed to copy text: ", err)
+      console.error('Failed to copy text: ', err);
     }
-  }
+  };
 
   const navigateToModule = (e: React.MouseEvent) => {
     if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
-      router.push(`/module/${encodeURIComponent(name.toLowerCase())}`)
+      router.push(`/module/${encodeURIComponent(name.toLowerCase())}`);
     }
-  }
+  };
 
   const handleCodeClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=code`)
-  }
+    e.stopPropagation();
+    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=code`);
+  };
 
   const handleApiClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=api`)
-  }
+    e.stopPropagation();
+    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=api`);
+  };
 
   const handleAppClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=app`)
-  }
+    e.stopPropagation();
+    router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=app`);
+  };
 
   const handleImageError = () => {
-    setImageError(true)
-  }
+    setImageError(true);
+  };
 
-  const truncatedDescription = description.length > 80 ? `${description.slice(0, 80)}...` : description
+  const truncatedDescription =
+    description.length > 80 ? `${description.slice(0, 80)}...` : description;
 
   return (
     <motion.div
@@ -78,13 +87,11 @@ export function ModuleCard({ name, mkey, timestamp, description, imageUrl, netwo
         onClick={navigateToModule}
       >
         <CardContent className="p-5 flex flex-col">
-        <div className="flex items-center space-x-3 mb-3">
+          <div className="flex items-center space-x-3 mb-3">
             <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
               <Image
                 src={
-                  !imageError
-                    ? imageUrl || "/sample.png"
-                    : "/placeholder.svg?height=48&width=48"
+                  !imageError ? imageUrl || '/sample.png' : '/placeholder.svg?height=48&width=48'
                 }
                 alt={name}
                 width={64}
@@ -95,7 +102,10 @@ export function ModuleCard({ name, mkey, timestamp, description, imageUrl, netwo
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-white truncate">{name}</h3>
-              <Badge variant="outline" className="mt-1 bg-blue-500/10 text-blue-400 border-blue-500/20 font-medium">
+              <Badge
+                variant="outline"
+                className="mt-1 bg-blue-500/10 text-blue-400 border-blue-500/20 font-medium"
+              >
                 {network}
               </Badge>
             </div>
@@ -121,14 +131,18 @@ export function ModuleCard({ name, mkey, timestamp, description, imageUrl, netwo
                       variant="ghost"
                       size="icon"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        copyToClipboard(mkey)
+                        e.stopPropagation();
+                        copyToClipboard(mkey);
                       }}
                       className="h-8 w-8 rounded-md hover:bg-[#30363D] transition-all duration-200"
                     >
                       <AnimatePresence>
                         {copied ? (
-                          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                          <motion.span
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                          >
                             <Check className="h-4 w-4 text-green-400" />
                           </motion.span>
                         ) : (
@@ -216,5 +230,5 @@ export function ModuleCard({ name, mkey, timestamp, description, imageUrl, netwo
         />
       </Card>
     </motion.div>
-  )
+  );
 }

@@ -13,8 +13,8 @@ cd app
 echo "START(APP PORT=$PORT )"
 
 # for development
-# npm run dev -- -p $PORT
+npm run dev -- -p $PORT
 
 #for production
-npm run build
-npm run start -- -p $PORT
+# npm run build
+# npm run start -- -p $PORT

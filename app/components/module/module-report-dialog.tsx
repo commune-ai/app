@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { AlertTriangle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -11,25 +11,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog';
 
 interface ModuleReportDialogProps {
-  moduleName: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  moduleName: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function ModuleReportDialog({ moduleName, open, onOpenChange }: ModuleReportDialogProps) {
-  const [problem, setProblem] = useState("")
+  const [problem, setProblem] = useState('');
 
   const handleSubmit = () => {
     if (problem.trim()) {
       // Here you would typically send the report data to your backend
-      console.log("Report submitted:", { problem, moduleName })
-      setProblem("")
-      onOpenChange(false)
+      console.log('Report submitted:', { problem, moduleName });
+      setProblem('');
+      onOpenChange(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -73,6 +73,5 @@ export function ModuleReportDialog({ moduleName, open, onOpenChange }: ModuleRep
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

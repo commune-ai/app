@@ -1,39 +1,52 @@
-"use client"
+'use client';
 
-import { useState, useEffect, useRef } from "react"
-import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { WalletConnect } from "@/components/wallet/wallet-connect"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { WalletConnect } from '@/components/wallet/wallet-connect';
+import { Button } from '@/components/ui/button';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Copy, Share2, Rocket, Code, Check, Clock, User, ChevronRight, MessageCircle, AlertTriangle, Coins, ThumbsUp, ThumbsDown } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CodeTab } from "@/components/module-tabs/code-tab"
-import { ApiTab } from "@/components/module-tabs/api-tab"
-import { AppTab } from "@/components/module-tabs/app-tab"
-import ModuleDetailSkeleton from "@/components/skeleton/module-detail-skeleton"
-import { DiscussionTab } from "@/components/module-tabs/discussion-tab"
-import { useModuleDetailStore } from "@/store/module-detail-state"
-import { ModuleReportDialog } from "@/components/module/module-report-dialog"
+} from '@/components/ui/breadcrumb';
+import {
+  Copy,
+  Share2,
+  Rocket,
+  Code,
+  Check,
+  Clock,
+  User,
+  ChevronRight,
+  MessageCircle,
+  AlertTriangle,
+  Coins,
+  ThumbsUp,
+  ThumbsDown,
+} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CodeTab } from '@/components/module-tabs/code-tab';
+import { ApiTab } from '@/components/module-tabs/api-tab';
+import { AppTab } from '@/components/module-tabs/app-tab';
+import ModuleDetailSkeleton from '@/components/skeleton/module-detail-skeleton';
+import { DiscussionTab } from '@/components/module-tabs/discussion-tab';
+import { useModuleDetailStore } from '@/store/module-detail-state';
+import { ModuleReportDialog } from '@/components/module/module-report-dialog';
 
 export default function ModuleDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [activeTab, setActiveTab] = useState("code")
-  const [copied, setCopied] = useState({ key: false, hash: false })
-  const [isLoading, setIsLoading] = useState(true)
-  const [isReportingModuleDialogOpen, setIsReportingModuleDialogOpen] = useState(false)
+  const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState('code');
+  const [copied, setCopied] = useState({ key: false, hash: false });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isReportingModuleDialogOpen, setIsReportingModuleDialogOpen] = useState(false);
 
+  const { fetchModuleDetail, moduleDetail } = useModuleDetailStore();
 
-  const { fetchModuleDetail,moduleDetail } = useModuleDetailStore();
-
-  const hasFetched = useRef(false)
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -47,53 +60,51 @@ export default function ModuleDetailPage() {
           setIsLoading(false);
           hasFetched.current = true;
         }
-      }
-      fetchData()
+      };
+      fetchData();
     }
-  }, [fetchModuleDetail,params])
+  }, [fetchModuleDetail, params]);
 
   useEffect(() => {
-    const tab = searchParams.get("tab")
-    if (tab && ["code", "api", "app", "discussion"].includes(tab)) {
-      setActiveTab(tab)
+    const tab = searchParams.get('tab');
+    if (tab && ['code', 'api', 'app', 'discussion'].includes(tab)) {
+      setActiveTab(tab);
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   const moduleData = {
-    name: "DeepSeek AI",
-    description: "A powerful AI model for natural language processing and understanding.",
-    key: "module_key_123456789",
-    hash: "0xabc123def456...",
-    timeCreated: "2024-02-08 14:30:00",
-    owner: "Founder123",
-    status: "Active",
-    version: "1.0.0",
+    name: 'DeepSeek AI',
+    description: 'A powerful AI model for natural language processing and understanding.',
+    key: 'module_key_123456789',
+    hash: '0xabc123def456...',
+    timeCreated: '2024-02-08 14:30:00',
+    owner: 'Founder123',
+    status: 'Active',
+    version: '1.0.0',
     upvotes: 125,
     downvotes: 23,
-  }
+  };
 
-  const handleCopy = async (text: string, type: "key" | "hash") => {
+  const handleCopy = async (text: string, type: 'key' | 'hash') => {
     try {
-      await navigator.clipboard.writeText(text)
-      setCopied((prev) => ({ ...prev, [type]: true }))
+      await navigator.clipboard.writeText(text);
+      setCopied((prev) => ({ ...prev, [type]: true }));
       setTimeout(() => {
-        setCopied((prev) => ({ ...prev, [type]: false }))
-      }, 2000)
+        setCopied((prev) => ({ ...prev, [type]: false }));
+      }, 2000);
     } catch (err) {
-      console.error("Failed to copy text: ", err)
+      console.error('Failed to copy text: ', err);
     }
-  }
-
+  };
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value)
-    router.push(`/module/${params.modulename}?tab=${value}`, { scroll: false })
-  }
+    setActiveTab(value);
+    router.push(`/module/${params.modulename}?tab=${value}`, { scroll: false });
+  };
 
   if (isLoading) {
-    return <ModuleDetailSkeleton />
+    return <ModuleDetailSkeleton />;
   }
-
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#03040B] md:pl-16">
@@ -115,7 +126,12 @@ export default function ModuleDetailPage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => { router.push("/") }} className="text-sm text-gray-400 hover:text-white">
+                <BreadcrumbLink
+                  onClick={() => {
+                    router.push('/');
+                  }}
+                  className="text-sm text-gray-400 hover:text-white"
+                >
                   Modules
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -123,7 +139,9 @@ export default function ModuleDetailPage() {
                 <ChevronRight className="h-4 w-4" />
               </BreadcrumbSeparator>
               <BreadcrumbItem>
-                <BreadcrumbLink className="text-sm text-white">{moduleDetail[0]?.name}</BreadcrumbLink>
+                <BreadcrumbLink className="text-sm text-white">
+                  {moduleDetail[0]?.name}
+                </BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -132,7 +150,10 @@ export default function ModuleDetailPage() {
             <div className="flex items-center justify-between mb-2">
               <h1 className="text-2xl font-bold text-white">{moduleDetail[0]?.name}</h1>
             </div>
-            <p className="text-gray-400 mb-4">{moduleDetail[0]?.description||"This is a description of a module.The module take input from the user and give the output."}</p>
+            <p className="text-gray-400 mb-4">
+              {moduleDetail[0]?.description ||
+                'This is a description of a module.The module take input from the user and give the output.'}
+            </p>
             <div className="flex items-center space-x-4 text-sm text-gray-400">
               <span className="flex items-center">
                 <Clock className="mr-1 h-4 w-4" />
@@ -157,11 +178,13 @@ export default function ModuleDetailPage() {
             <div>
               <label className="text-sm text-gray-500 block mb-2">Module Key</label>
               <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/10">
-                <code className="text-sm text-gray-300 font-mono truncate">{moduleDetail[0]?.key}</code>
+                <code className="text-sm text-gray-300 font-mono truncate">
+                  {moduleDetail[0]?.key}
+                </code>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleCopy(moduleData.key, "key")}
+                  onClick={() => handleCopy(moduleData.key, 'key')}
                   className="h-8 w-8 rounded-md hover:bg-[#30363D] transition-all duration-200"
                 >
                   {copied.key ? (
@@ -176,11 +199,13 @@ export default function ModuleDetailPage() {
             <div>
               <label className="text-sm text-gray-500 block mb-2">Hash</label>
               <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/10">
-                <code className="text-sm text-gray-300 font-mono truncate">{moduleDetail[0]?.hash}</code>
+                <code className="text-sm text-gray-300 font-mono truncate">
+                  {moduleDetail[0]?.hash}
+                </code>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleCopy(moduleData.hash, "hash")}
+                  onClick={() => handleCopy(moduleData.hash, 'hash')}
                   className="h-8 w-8 rounded-md hover:bg-[#30363D] transition-all duration-200"
                 >
                   {copied.hash ? (
@@ -199,18 +224,26 @@ export default function ModuleDetailPage() {
                 <Rocket className="mr-2 h-4 w-4" />
                 Deploy
               </Button>
-              <Button variant="outline" className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10">
+              <Button
+                variant="outline"
+                className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+              >
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
-              <Button variant="outline" className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10">
+              <Button
+                variant="outline"
+                className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+              >
                 <Coins className="mr-2 h-4 w-4" />
                 Stake on Module
               </Button>
               <Button
                 variant="outline"
                 className="w-full border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20"
-                onClick={() => { setIsReportingModuleDialogOpen(true) }}
+                onClick={() => {
+                  setIsReportingModuleDialogOpen(true);
+                }}
               >
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 Report on Module
@@ -255,7 +288,7 @@ export default function ModuleDetailPage() {
           </div>
 
           <TabsContent value="code" className="flex-1 p-0 overflow-hidden">
-            <CodeTab code={moduleDetail[0]?.code}/>
+            <CodeTab code={moduleDetail[0]?.code} />
           </TabsContent>
 
           <TabsContent value="api" className="flex-1 p-6 overflow-auto">
@@ -271,8 +304,11 @@ export default function ModuleDetailPage() {
           </TabsContent>
         </Tabs>
       </div>
-      <ModuleReportDialog moduleName={moduleDetail[0]?.name} open={isReportingModuleDialogOpen} onOpenChange={setIsReportingModuleDialogOpen}/>
+      <ModuleReportDialog
+        moduleName={moduleDetail[0]?.name}
+        open={isReportingModuleDialogOpen}
+        onOpenChange={setIsReportingModuleDialogOpen}
+      />
     </div>
-  )
+  );
 }
-

@@ -1,0 +1,18 @@
+{
+    "semi": true,
+    "tabWidth": 2,
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "indentStyle": "p visual",
+    "wrapLines": true,
+    "linterIntegration": true,
+    "forceWidth": ["css"],
+    "noBraceForBlocks": true,
+    "spaceAfterComment": true,
+    "lineBreakAfterComment": true,
+    "lineBreakBeforeComment": true,
+    "quotes": true,
+    "whitespaceIn}}" : true
+  }
+  
