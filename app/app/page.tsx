@@ -53,7 +53,8 @@ export default function Home() {
       const fetchData = async () => {
         try {
           setIsLoading(true);
-          await Promise.all([fetchModules(), assignRandomNetworkAndTags()]);
+          await Promise.all([fetchModules()]);
+          assignRandomNetworkAndTags()
         } catch (err) {
           console.error('Error fetching modules:', err);
         } finally {
