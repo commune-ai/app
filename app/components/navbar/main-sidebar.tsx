@@ -30,10 +30,9 @@ const initialFilterState: FilterState = {
 export function MainSidebar({ children, onFilterChange, moduleData }: MainSidebarProps) {
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
 
-  const networks = useMemo(
-    () => [...new Set(moduleData.map((module) => module.network))],
-    [moduleData]
-  );
+  const networks = useMemo(() => {
+    return [...new Set(moduleData.map((module) => module.network))];
+  }, [moduleData]);
 
   const tags = useMemo(
     () => [...new Set(moduleData.flatMap((module) => module.tags || []))],

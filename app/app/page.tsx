@@ -33,6 +33,11 @@ export default function Home() {
   const router = useRouter();
   const hasFetched = useRef<boolean>(false);
 
+  const totalPages = Math.ceil(filteredModules.length / ITEMS_PER_PAGE);
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+  const currentItems = filteredModules.slice(indexOfFirstItem, indexOfLastItem);
+
   const { fetchModules, modules, loadingModules, assignRandomNetworkAndTags } = useModuleStore();
 
   const filterModules = useCallback(
@@ -48,36 +53,13 @@ export default function Home() {
     []
   );
 
-  useEffect(() => {
-    if (!hasFetched.current) {
-      const fetchData = async () => {
-        try {
-          setIsLoading(true);
-          await Promise.all([fetchModules(), assignRandomNetworkAndTags()]);
-        } catch (err) {
-          console.error('Error fetching modules:', err);
-        } finally {
-          setIsLoading(false);
-          hasFetched.current = true;
-        }
-      };
-      fetchData();
-    }
-  }, [assignRandomNetworkAndTags, fetchModules]);
-
-  useEffect(() => {
-    const filtered = filterModules(modules, networkFilter, tagFilter, searchTerm);
-    setFilteredModules(filtered);
-  }, [searchTerm, modules, networkFilter, tagFilter, filterModules]);
-
-  const totalPages = Math.ceil(filteredModules.length / ITEMS_PER_PAGE);
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-  const currentItems = filteredModules.slice(indexOfFirstItem, indexOfLastItem);
-
   const handlePageChange = useCallback((pageNumber: number) => {
     setCurrentPage(pageNumber);
   }, []);
+
+  const handleCreateModule = useCallback(() => {
+    router.push('/module/create');
+  }, [router]);
 
   const handleSearch = useCallback((value: string) => {
     setSearchTerm(value);
@@ -100,9 +82,28 @@ export default function Home() {
     [modules, filterModules]
   );
 
-  const handleCreateModule = useCallback(() => {
-    router.push('/module/create');
-  }, [router]);
+  useEffect(() => {
+    if (!hasFetched.current) {
+      const fetchData = async () => {
+        try {
+          setIsLoading(true);
+          await Promise.all([fetchModules()]);
+          assignRandomNetworkAndTags();
+        } catch (err) {
+          console.error('Error fetching modules:', err);
+        } finally {
+          setIsLoading(false);
+          hasFetched.current = true;
+        }
+      };
+      fetchData();
+    }
+  }, [assignRandomNetworkAndTags, fetchModules]);
+
+  useEffect(() => {
+    const filtered = filterModules(modules, networkFilter, tagFilter, searchTerm);
+    setFilteredModules(filtered);
+  }, [searchTerm, modules, networkFilter, tagFilter, filterModules]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
