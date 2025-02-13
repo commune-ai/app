@@ -7,16 +7,20 @@ import { Footer } from "@/components/footer/hub-footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Copy, AlertTriangle, Check, ChevronLeft } from "lucide-react"
+import { Copy, AlertTriangle, Check, ChevronLeft,Loader } from "lucide-react"
 import * as bip39 from "bip39"
 import { Wallet } from "@/utils/local-wallet"
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import useWalletStore from "@/store/use-wallet-state"
+import { WalletType } from "@/types/wallet-types"
 
 export default function SignUp() {
   const [mnemonic, setMnemonic] = useState("")
   const [copied, setCopied] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
   const router = useRouter()
+  const { setWallet,setWalletConnected } = useWalletStore()
+  const [walletLoading,setWalletLoading] = useState(false)
 
   const getBalance = async (address: string) => {
     const wsProvider = new WsProvider('wss://rpc.polkadot.io');
@@ -44,18 +48,31 @@ export default function SignUp() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleSignUp = async() => {
+  const handleSignUp = async () => {
     if (!confirmed) {
       setConfirmed(true)
       return
     }
-    const wallet =new Wallet()
-    const walletData=await wallet.fromPassword(mnemonic)
-    const walletAddress = walletData.address;
-    const balance=await getBalance(walletAddress)
-    console.log("Wallet Address:", walletAddress)
-    console.log("Balance:", balance)
-    console.log("Mnemonic (treated as private key for demonstration):", mnemonic)
+    try {
+      setWalletLoading(true)
+      const localWallet = new Wallet()
+      const walletData = await localWallet.fromPassword(mnemonic)
+      const walletAddress = walletData.address;
+      if(walletAddress==="undefined"){
+        throw new Error("Invalid wallet address")
+      }
+      const balance = await getBalance(walletAddress)
+      if(balance==="undefined"){
+        throw new Error("Invalid balance")
+      }
+      setWalletConnected(true)
+      setWallet(WalletType.LOCAL, walletAddress, balance)
+      setWalletLoading(false)
+      router.push("/")
+    } catch (e) {
+      console.error(e)
+      setWalletLoading(false)
+    }
   }
 
   return (
@@ -122,8 +139,10 @@ export default function SignUp() {
                 onClick={handleSignUp}
                 className={`w-full ${confirmed ? "bg-blue-500 hover:bg-blue-600" : "bg-yellow-500 hover:bg-yellow-600"
                   } text-white transition-colors`}
+                  disabled={walletLoading}
               >
                 {confirmed ? "Create Account" : "I've Saved My Mnemonic"}
+                {walletLoading && <Loader className="ml-2 h-5 w-5 animate-spin" />}
               </Button>
 
               {copied && <p className="text-center text-sm text-green-400">Mnemonic copied to clipboard!</p>}

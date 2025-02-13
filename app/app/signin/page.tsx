@@ -9,16 +9,51 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Key, ChevronLeft } from "lucide-react"
+import { Key, ChevronLeft, Loader } from "lucide-react"
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { Wallet } from "@/utils/local-wallet"
+import useWalletStore from "@/store/use-wallet-state"
+import { WalletType } from "@/types/wallet-types"
 
 export default function SignIn() {
   const [privateKey, setPrivateKey] = useState("")
   const router = useRouter()
+  const { setWallet, setWalletConnected } = useWalletStore()
+  const [walletLoading, setWalletLoading] = useState(false)
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const getBalance = async (address: string) => {
+    const wsProvider = new WsProvider('wss://rpc.polkadot.io');
+    const api = await ApiPromise.create({ provider: wsProvider });
+
+    const accountInfo = await api.query.system.account(address);
+    const {
+      data: { free: balance },
+    } = accountInfo.toHuman() as { data: { free: string } };
+    return balance.toString();
+  }
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Private Key entered:", privateKey)
-    router.push("/")
+    try {
+      setWalletLoading(true)
+      const localWallet = new Wallet()
+      const walletData = await localWallet.fromPassword(privateKey)
+      const walletAddress = walletData.address;
+      if (walletAddress === "undefined") {
+        throw new Error("Invalid wallet address")
+      }
+      const balance = await getBalance(walletAddress)
+      if (balance === "undefined") {
+        throw new Error("Invalid balance")
+      }
+      setWalletConnected(true)
+      setWallet(WalletType.LOCAL, walletAddress, balance)
+      setWalletLoading(false)
+      router.push("/")
+    } catch (e) {
+      console.error(e)
+      setWalletLoading(false)
+    }
   }
 
   return (
@@ -58,8 +93,8 @@ export default function SignIn() {
                     />
                   </div>
                 </div>
-                <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
-                  Sign In
+                <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" disabled={walletLoading}>
+                  Sign In {walletLoading && <Loader className="h-5 w-5 animate-spin" />}
                 </Button>
               </form>
 

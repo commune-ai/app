@@ -25,7 +25,7 @@ export function WalletConnect(): JSX.Element {
   const [copied, setCopied] = useState<boolean>(false);
   const pathname = usePathname();
 
-  const rootPath = useMemo(() => pathname === '/', [pathname]);
+  const isModulePath = useMemo(() => pathname.startsWith('/module/'), [pathname]);
 
   const handleOpenDialog = useCallback((): void => {
     setIsDialogOpen(true);
@@ -112,7 +112,7 @@ export function WalletConnect(): JSX.Element {
         onClick={handleOpenDialog}
       >
         <Wallet className="mr-2 h-4 w-4" />
-        {rootPath && <span className="hidden sm:inline">Connect Wallet</span>}
+        {!isModulePath && <span className="hidden sm:inline">Connect Wallet</span>}
       </Button>
       <WalletConnectDialog isOpen={isDialogOpen} onClose={handleCloseDialog} />
     </>
