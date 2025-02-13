@@ -2,13 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Pixelify Sans';
-  font-style: normal;
-  font-display: swap;
-  src: local('Pixelify Sans'), url('/fonts/pixelify-sans.woff2') format('woff2');
-}
-
 body {
   font-family: 'Pixelify Sans', serif;
   font-optical-sizing: auto;
