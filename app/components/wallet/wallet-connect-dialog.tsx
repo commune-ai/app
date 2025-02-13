@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { DialogDescription } from '@radix-ui/react-dialog';
-import useWalletStore from '@/store/wallet-state';
+import useWalletStore from '@/store/use-wallet-state';
 import { WalletType } from '@/types/wallet-types';
 
 interface WalletConnectDialogProps {

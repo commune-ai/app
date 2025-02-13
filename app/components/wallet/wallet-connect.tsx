@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import useWalletStore from '@/store/wallet-state';
+import useWalletStore from '@/store/use-wallet-state';
 import { WalletType } from '@/types/wallet-types';
 import { usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';

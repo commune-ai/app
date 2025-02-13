@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useRouter, usePathname } from 'next/navigation';
 import { MainSidebar } from '@/components/navbar/main-sidebar';
-import { ModuleType } from '@/store/module-state';
+import { ModuleType } from '@/store/use-module-state';
 import { memo, useCallback } from 'react';
 
 interface FilterState {

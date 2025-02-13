@@ -32,7 +32,7 @@ import { ApiTab } from '@/components/module-tabs/api-tab';
 import { AppTab } from '@/components/module-tabs/app-tab';
 import ModuleDetailSkeleton from '@/components/skeleton/module-detail-skeleton';
 import { DiscussionTab } from '@/components/module-tabs/discussion-tab';
-import { useModuleDetailStore } from '@/store/module-detail-state';
+import { useModuleDetailStore } from '@/store/use-module-detail-state';
 import { ModuleReportDialog } from '@/components/module/module-report-dialog';
 
 export default function ModuleDetailPage() {
