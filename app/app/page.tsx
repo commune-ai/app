@@ -54,7 +54,7 @@ export default function Home() {
         try {
           setIsLoading(true);
           await Promise.all([fetchModules()]);
-          assignRandomNetworkAndTags()
+          assignRandomNetworkAndTags();
         } catch (err) {
           console.error('Error fetching modules:', err);
         } finally {
@@ -137,28 +137,27 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
         >
           {isLoading
-            ? Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-                <ModuleCardSkeleton key={index} />
+            ? [...Array(ITEMS_PER_PAGE)].map((_, index) => (
+                <ModuleCardSkeleton key={`skeleton-${index}`} />
               ))
-            : currentItems.map((module, index) => (
+            : currentItems.map((module) => (
                 <ModuleCard
-                  key={`${module.key}-${index}`}
+                  key={module.key}
                   name={module.name}
                   mkey={module.key}
                   network={module.network}
                   tags={module.tags}
                   timestamp={module.time.toString()}
                   description={
-                    module?.description ||
+                    module.description ??
                     'This is a description of a module.The module takes input from the user and gives the output.'
                   }
                 />
               ))}
         </motion.div>
-
         {!isLoading && filteredModules.length > ITEMS_PER_PAGE && (
           <ModulePagination
             currentPage={currentPage}

@@ -44,7 +44,7 @@ export default function ModuleDetailSkeleton() {
                   <Skeleton className="h-4 w-24 bg-white/10" />
                   <Skeleton className="h-8 w-full bg-white/10" />
                 </div>
-              ))}{' '}
+              ))}
           </CardContent>
         </Card>
         <div className="grid grid-cols-2 gap-3">
@@ -64,7 +64,7 @@ export default function ModuleDetailSkeleton() {
               .fill(0)
               .map((_, index) => (
                 <Skeleton key={index} className="h-8 w-20 bg-white/5" />
-              ))}{' '}
+              ))}
           </div>
         </div>
         <div className="p-6">
