@@ -13,6 +13,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { motion } from 'framer-motion';
 import { ModuleType, useModuleStore } from '@/store/use-module-state';
 import { useRouter } from 'next/navigation';
+import { useNavbarSidebarStore } from '@/store/use-navbar-sidebar-state';
+import { NavbarSidebarToggle } from '@/components/alternate-sidebar/navbar-sidebar-toggle';
+
+import { AlternateSidebar } from '@/components/alternate-sidebar/alternate-sidebar';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -34,6 +46,7 @@ export default function Home() {
   const hasFetched = useRef<boolean>(false);
 
   const { fetchModules, modules, loadingModules, assignRandomNetworkAndTags } = useModuleStore();
+  const { isAlternateLayout } = useNavbarSidebarStore();
 
   const filterModules = useCallback(
     (modules: ModuleType[], network: string | null, tag: string | null, search: string) => {
@@ -107,71 +120,164 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
-      <HubNavbar onSearch={handleSearch} moduleData={modules} onFilterChange={handleFilterChange} />
+      {isAlternateLayout ? (
+        <div>
+          <SidebarProvider>
+            <AlternateSidebar />
+            <SidebarInset className="bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+              <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                <div className="flex items-center gap-2 px-4">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink href="#">Modules</BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+              </header>
+              <main className="flex-grow container mx-auto px-4 py-8">
+                <div className="mb-6 flex items-center space-x-2">
+                  <div className="flex-1">
+                    <SearchInput onSearch={handleSearch} />
+                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={handleCreateModule}
+                          className="border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Add New Model</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
 
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="md:hidden mb-6 flex items-center space-x-2">
-          <div className="flex-1">
-            <SearchInput onSearch={handleSearch} />
-          </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCreateModule}
-                  className="border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200"
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
                 >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Add New Model</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                  {isLoading
+                    ? Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+                        <ModuleCardSkeleton key={index} />
+                      ))
+                    : currentItems.map((module, index) => (
+                        <ModuleCard
+                          key={`${module.key}-${index}`}
+                          name={module.name}
+                          mkey={module.key}
+                          network={module.network}
+                          tags={module.tags}
+                          timestamp={module.time.toString()}
+                          description={
+                            module?.description ||
+                            'This is a description of a module.The module takes input from the user and gives the output.'
+                          }
+                        />
+                      ))}
+                </motion.div>
+
+                {!isLoading && filteredModules.length > ITEMS_PER_PAGE && (
+                  <ModulePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+
+                {!isLoading && !loadingModules && filteredModules.length === 0 && (
+                  <div className="text-center text-gray-400 mt-8">No modules found.</div>
+                )}
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
+          <Footer />
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {isLoading
-            ? [...Array(ITEMS_PER_PAGE)].map((_, index) => (
-                <ModuleCardSkeleton key={`skeleton-${index}`} />
-              ))
-            : currentItems.map((module) => (
-                <ModuleCard
-                  key={module.key}
-                  name={module.name}
-                  mkey={module.key}
-                  network={module.network}
-                  tags={module.tags}
-                  timestamp={module.time.toString()}
-                  description={
-                    module.description ??
-                    'This is a description of a module.The module takes input from the user and gives the output.'
-                  }
-                />
-              ))}
-        </motion.div>
-        {!isLoading && filteredModules.length > ITEMS_PER_PAGE && (
-          <ModulePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
+      ) : (
+        <>
+          <HubNavbar
+            onSearch={handleSearch}
+            moduleData={modules}
+            onFilterChange={handleFilterChange}
           />
-        )}
 
-        {!isLoading && !loadingModules && filteredModules.length === 0 && (
-          <div className="text-center text-gray-400 mt-8">No modules found.</div>
-        )}
-      </main>
+          <main className="flex-grow container mx-auto px-4 py-8">
+            <div className="md:hidden mb-6 flex items-center space-x-2">
+              <div className="flex-1">
+                <SearchInput onSearch={handleSearch} />
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleCreateModule}
+                      className="border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Add New Model</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
 
-      <Footer />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+            >
+              {isLoading
+                ? Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+                    <ModuleCardSkeleton key={index} />
+                  ))
+                : currentItems.map((module, index) => (
+                    <ModuleCard
+                      key={`${module.key}-${index}`}
+                      name={module.name}
+                      mkey={module.key}
+                      network={module.network}
+                      tags={module.tags}
+                      timestamp={module.time.toString()}
+                      description={
+                        module?.description ||
+                        'This is a description of a module.The module takes input from the user and gives the output.'
+                      }
+                    />
+                  ))}
+            </motion.div>
+
+            {!isLoading && filteredModules.length > ITEMS_PER_PAGE && (
+              <ModulePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+
+            {!isLoading && !loadingModules && filteredModules.length === 0 && (
+              <div className="text-center text-gray-400 mt-8">No modules found.</div>
+            )}
+          </main>
+          <Footer />
+        </>
+      )}
+      <NavbarSidebarToggle />
     </div>
   );
 }
