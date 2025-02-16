@@ -63,7 +63,6 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       if (modules.length > 0) return;
-
       try {
         setIsLoading(true);
         await fetchModules();
@@ -74,7 +73,6 @@ export default function Home() {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, [assignRandomNetworkAndTags, fetchModules, modules]);
 
