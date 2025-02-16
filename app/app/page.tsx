@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { HubNavbar } from '@/components/navbar/hub-navbar';
-import { SearchInput } from '@/components/search/search-input';
-import { ModuleCard } from '@/components/module/module-card';
-import { ModuleCardSkeleton } from '@/components/skeleton/module-card-skeleton';
-import { ModulePagination } from '@/components/pagination/module-pagination';
-import { Footer } from '@/components/footer/hub-footer';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { motion } from 'framer-motion';
-import { ModuleType, useModuleStore } from '@/store/use-module-state';
-import { useRouter } from 'next/navigation';
-import { useNavbarSidebarStore } from '@/store/use-navbar-sidebar-state';
-import { NavbarSidebarToggle } from '@/components/alternate-sidebar/navbar-sidebar-toggle';
+import { useState, useEffect, useCallback } from "react";
+import { HubNavbar } from "@/components/navbar/hub-navbar";
+import { SearchInput } from "@/components/search/search-input";
+import { ModuleCard } from "@/components/module/module-card";
+import { ModuleCardSkeleton } from "@/components/skeleton/module-card-skeleton";
+import { ModulePagination } from "@/components/pagination/module-pagination";
+import { Footer } from "@/components/footer/hub-footer";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion } from "framer-motion";
+import { ModuleType, useModuleStore } from "@/store/use-module-state";
+import { useRouter } from "next/navigation";
+import { useNavbarSidebarStore } from "@/store/use-navbar-sidebar-state";
+import { NavbarSidebarToggle } from "@/components/alternate-sidebar/navbar-sidebar-toggle";
 
-import { AlternateSidebar } from '@/components/alternate-sidebar/alternate-sidebar';
+import { AlternateSidebar } from "@/components/alternate-sidebar/alternate-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-} from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -36,14 +36,13 @@ interface FilterParams {
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filteredModules, setFilteredModules] = useState<ModuleType[]>([]);
   const [networkFilter, setNetworkFilter] = useState<string | null>(null);
   const [tagFilter, setTagFilter] = useState<string | null>(null);
 
   const router = useRouter();
-  const hasFetched = useRef<boolean>(false);
 
   const { fetchModules, modules, loadingModules, assignRandomNetworkAndTags } = useModuleStore();
   const { isAlternateLayout } = useNavbarSidebarStore();
@@ -62,22 +61,22 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (!hasFetched.current) {
-      const fetchData = async () => {
-        try {
-          setIsLoading(true);
-          await Promise.all([fetchModules()]);
-          assignRandomNetworkAndTags();
-        } catch (err) {
-          console.error('Error fetching modules:', err);
-        } finally {
-          setIsLoading(false);
-          hasFetched.current = true;
-        }
-      };
-      fetchData();
-    }
-  }, [assignRandomNetworkAndTags, fetchModules]);
+    const fetchData = async () => {
+      if (modules.length > 0) return;
+
+      try {
+        setIsLoading(true);
+        await fetchModules();
+        assignRandomNetworkAndTags();
+      } catch (err) {
+        console.error("Error fetching modules:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [assignRandomNetworkAndTags, fetchModules, modules]);
 
   useEffect(() => {
     const filtered = filterModules(modules, networkFilter, tagFilter, searchTerm);
@@ -115,7 +114,7 @@ export default function Home() {
   );
 
   const handleCreateModule = useCallback(() => {
-    router.push('/module/create');
+    router.push("/module/create");
   }, [router]);
 
   return (
@@ -182,7 +181,7 @@ export default function Home() {
                           timestamp={module.time.toString()}
                           description={
                             module?.description ||
-                            'This is a description of a module.The module takes input from the user and gives the output.'
+                            "This is a description of a module.The module takes input from the user and gives the output."
                           }
                         />
                       ))}
@@ -256,7 +255,7 @@ export default function Home() {
                       timestamp={module.time.toString()}
                       description={
                         module?.description ||
-                        'This is a description of a module.The module takes input from the user and gives the output.'
+                        "This is a description of a module.The module takes input from the user and gives the output."
                       }
                     />
                   ))}

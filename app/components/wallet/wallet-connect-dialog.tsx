@@ -1,14 +1,14 @@
-'use client';
-import { connectToMetaMask, connectToPhantom, connectToSubWallet } from '@/utils/wallet';
-import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { AlertCircle, LogIn } from 'lucide-react';
-import Image from 'next/image';
-import { DialogDescription } from '@radix-ui/react-dialog';
-import useWalletStore from '@/store/use-wallet-state';
-import { WalletType } from '@/types/wallet-types';
-import { useRouter } from 'next/navigation';
+"use client";
+import { connectToMetaMask, connectToPhantom, connectToSubWallet } from "@/utils/wallet";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, LogIn } from "lucide-react";
+import Image from "next/image";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import { useWalletStore } from "@/store/use-wallet-state";
+import { WalletType } from "@/types/wallet-types";
+import { useRouter } from "next/navigation";
 
 interface WalletConnectDialogProps {
   isOpen: boolean;
@@ -17,18 +17,18 @@ interface WalletConnectDialogProps {
 
 const WALLET_OPTIONS = [
   {
-    name: 'Metamask',
-    icon: '/metamask.svg',
+    name: "Metamask",
+    icon: "/metamask.svg",
     type: WalletType.METAMASK,
     connect: connectToMetaMask,
   },
   {
-    name: 'Subwallet',
-    icon: '/subwallet.svg',
+    name: "Subwallet",
+    icon: "/subwallet.svg",
     type: WalletType.SUBWALLET,
     connect: connectToSubWallet,
   },
-  { name: 'Phantom', icon: '/phantom.svg', type: WalletType.PHANTOM, connect: connectToPhantom },
+  { name: "Phantom", icon: "/phantom.svg", type: WalletType.PHANTOM, connect: connectToPhantom },
 ];
 
 export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProps) {
@@ -43,7 +43,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
   const handleConnect = async (selectedWallet: WalletType) => {
     const wallet = WALLET_OPTIONS.find((w) => w.type === selectedWallet);
     if (!wallet) {
-      setError('Unsupported wallet type');
+      setError("Unsupported wallet type");
       return;
     }
 
@@ -55,7 +55,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
       onClose();
     } else {
       setError(
-        response.success ? 'Failed to retrieve wallet address or balance' : response.error ?? null
+        response.success ? "Failed to retrieve wallet address or balance" : response.error ?? null
       );
     }
   };
@@ -92,7 +92,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
               >
                 Connect to {name}
                 <Image
-                  src={icon || '/placeholder.svg'}
+                  src={icon || "/placeholder.svg"}
                   alt={`${name} icon`}
                   width={24}
                   height={24}

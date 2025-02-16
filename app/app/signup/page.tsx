@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SimpleHubNavbar } from "@/components/navbar/hub-navbar-simple";
 import { Footer } from "@/components/footer/hub-footer";
@@ -8,97 +7,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Copy, AlertTriangle, Check, ChevronLeft, Loader } from "lucide-react";
-import * as bip39 from "bip39";
-import { Wallet } from "@/utils/local-wallet";
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import useWalletStore from "@/store/use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
+import { useSignupStore } from "@/store/use-signup-state";
+import { useEffect } from "react";
+import { useWalletStore } from "@/store/use-wallet-state";
 
 export default function SignUp() {
-  const [state, setState] = useState({
-    mnemonic: "",
-    copied: false,
-    confirmed: false,
-    walletLoading: false,
-  });
-
+  const {
+    copied,
+    confirmed,
+    walletLoading,
+    getMnemonicWords,
+    generateMnemonic,
+    handleCopyMnemonic,
+    handleSignUp,
+  } = useSignupStore();
+  const { walletConnected } = useWalletStore();
   const router = useRouter();
-  const { setWallet, setWalletConnected } = useWalletStore();
-
-  const wsProvider = useMemo(() => new WsProvider("wss://rpc.polkadot.io"), []);
-
-  const api = useMemo(async () => await ApiPromise.create({ provider: wsProvider }), [wsProvider]);
-
-  const getBalance = useCallback(
-    async (address: string): Promise<string> => {
-      try {
-        const accountInfo = await (await api).query.system.account(address);
-        const {
-          data: { free: balance },
-        } = accountInfo.toHuman() as { data: { free: string } };
-        return balance.toString();
-      } catch (error) {
-        console.error("Error getting balance:", error);
-        throw error;
-      }
-    },
-    [api]
-  );
 
   useEffect(() => {
-    const generateMnemonic = async () => {
-      try {
-        const newMnemonic = bip39.generateMnemonic(256);
-        setState((prev) => ({ ...prev, mnemonic: newMnemonic }));
-      } catch (error) {
-        console.error("Error generating mnemonic:", error);
-      }
-    };
     generateMnemonic();
-  }, []);
+  }, [generateMnemonic]);
 
-  const handleCopyMnemonic = useCallback(() => {
-    navigator.clipboard
-      .writeText(state.mnemonic)
-      .then(() => {
-        setState((prev) => ({ ...prev, copied: true }));
-        setTimeout(() => setState((prev) => ({ ...prev, copied: false })), 2000);
-      })
-      .catch(console.error);
-  }, [state.mnemonic]);
-
-  const handleSignUp = useCallback(async () => {
-    if (!state.confirmed) {
-      setState((prev) => ({ ...prev, confirmed: true }));
-      return;
-    }
-
-    setState((prev) => ({ ...prev, walletLoading: true }));
-    try {
-      const localWallet = new Wallet();
-      const walletData = await localWallet.fromPassword(state.mnemonic);
-      const walletAddress = walletData.address;
-
-      if (!walletAddress || walletAddress === "undefined") {
-        throw new Error("Invalid wallet address");
-      }
-
-      const balance = await getBalance(walletAddress);
-      if (!balance || balance === "undefined") {
-        throw new Error("Invalid balance");
-      }
-
-      setWalletConnected(true);
-      setWallet(WalletType.LOCAL, walletAddress, balance);
+  useEffect(() => {
+    if (walletConnected) {
       router.push("/");
-    } catch (error) {
-      console.error("Error during signup:", error);
-    } finally {
-      setState((prev) => ({ ...prev, walletLoading: false }));
     }
-  }, [state.confirmed, state.mnemonic, getBalance, setWallet, setWalletConnected, router]);
-
-  const mnemonicWords = useMemo(() => state.mnemonic.split(" "), [state.mnemonic]);
+  }, [walletConnected, router]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
@@ -136,7 +70,7 @@ export default function SignUp() {
               <div className="relative">
                 <div className="p-4 bg-[#0D1117] rounded-lg border border-white/10 font-mono text-sm">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 select-none">
-                    {mnemonicWords.map((word, index) => (
+                    {getMnemonicWords().map((word, index) => (
                       <div key={index} className="flex items-center space-x-2 text-gray-300">
                         <span className="text-gray-500">
                           {(index + 1).toString().padStart(2, "0")}.
@@ -151,7 +85,7 @@ export default function SignUp() {
                     onClick={handleCopyMnemonic}
                     className="absolute top-2 right-2 h-8 w-8 p-0 hover:bg-white/10"
                   >
-                    {state.copied ? (
+                    {copied ? (
                       <Check className="h-4 w-4 text-green-400" />
                     ) : (
                       <Copy className="h-4 w-4 text-gray-400" />
@@ -160,7 +94,7 @@ export default function SignUp() {
                 </div>
               </div>
 
-              {!state.confirmed && (
+              {!confirmed && (
                 <Alert
                   variant="destructive"
                   className="bg-yellow-500/10 border-yellow-500/20 text-yellow-200"
@@ -177,17 +111,15 @@ export default function SignUp() {
               <Button
                 onClick={handleSignUp}
                 className={`w-full ${
-                  state.confirmed
-                    ? "bg-blue-500 hover:bg-blue-600"
-                    : "bg-yellow-500 hover:bg-yellow-600"
+                  confirmed ? "bg-blue-500 hover:bg-blue-600" : "bg-yellow-500 hover:bg-yellow-600"
                 } text-white transition-colors`}
-                disabled={state.walletLoading}
+                disabled={walletLoading}
               >
-                {state.confirmed ? "Create Account" : "I've Saved My Mnemonic"}
-                {state.walletLoading && <Loader className="ml-2 h-5 w-5 animate-spin" />}
+                {confirmed ? "Create Account" : "I've Saved My Mnemonic"}
+                {walletLoading && <Loader className="ml-2 h-5 w-5 animate-spin" />}
               </Button>
 
-              {state.copied && (
+              {copied && (
                 <p className="text-center text-sm text-green-400">Mnemonic copied to clipboard!</p>
               )}
             </CardContent>

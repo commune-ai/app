@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Key, ChevronLeft, Loader } from "lucide-react";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Wallet } from "@/utils/local-wallet";
-import useWalletStore from "@/store/use-wallet-state";
+import { useWalletStore } from "@/store/use-wallet-state";
 import { WalletType } from "@/types/wallet-types";
 
 const wsProvider = new WsProvider("wss://rpc.polkadot.io");

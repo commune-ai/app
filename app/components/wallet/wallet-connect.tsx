@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { JSX, useState } from 'react';
-import { Avatar } from '@/components/ui/avatar';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Wallet, Copy, LogOut, Check } from 'lucide-react';
-import { WalletConnectDialog } from './wallet-connect-dialog';
+import { JSX, useState } from "react";
+import { Avatar } from "@/components/ui/avatar";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Wallet, Copy, LogOut, Check } from "lucide-react";
+import { WalletConnectDialog } from "./wallet-connect-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,11 +13,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import useWalletStore from '@/store/use-wallet-state';
-import { WalletType } from '@/types/wallet-types';
-import { usePathname } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+} from "@/components/ui/dropdown-menu";
+import { useWalletStore } from "@/store/use-wallet-state";
+import { WalletType } from "@/types/wallet-types";
+import { usePathname } from "next/navigation";
+import { useCallback, useMemo } from "react";
 
 export function WalletConnect(): JSX.Element {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -25,7 +25,7 @@ export function WalletConnect(): JSX.Element {
   const [copied, setCopied] = useState<boolean>(false);
   const pathname = usePathname();
 
-  const isModulePath = useMemo(() => pathname.startsWith('/module/'), [pathname]);
+  const isModulePath = useMemo(() => pathname.startsWith("/module/"), [pathname]);
 
   const handleOpenDialog = useCallback((): void => {
     setIsDialogOpen(true);
@@ -37,7 +37,7 @@ export function WalletConnect(): JSX.Element {
 
   const handleDisconnect = useCallback((): void => {
     setWalletConnected(false);
-    setWallet(WalletType.METAMASK, '0', '0');
+    setWallet(WalletType.METAMASK, "0", "0");
   }, [setWalletConnected, setWallet]);
 
   const copyToClipboard = useCallback(async (text: string): Promise<void> => {
@@ -46,7 +46,7 @@ export function WalletConnect(): JSX.Element {
       setCopied(true);
       setTimeout(() => setCopied(false), 1000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
     }
   }, []);
 
