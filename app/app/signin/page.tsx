@@ -1,60 +1,77 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { SimpleHubNavbar } from '@/components/navbar/hub-navbar-simple';
-import { Footer } from '@/components/footer/hub-footer';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Key, ChevronLeft, Loader } from 'lucide-react';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Wallet } from '@/utils/local-wallet';
-import useWalletStore from '@/store/use-wallet-state';
-import { WalletType } from '@/types/wallet-types';
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { SimpleHubNavbar } from "@/components/navbar/hub-navbar-simple";
+import { Footer } from "@/components/footer/hub-footer";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Key, ChevronLeft, Loader } from "lucide-react";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { Wallet } from "@/utils/local-wallet";
+import useWalletStore from "@/store/use-wallet-state";
+import { WalletType } from "@/types/wallet-types";
+
+const wsProvider = new WsProvider("wss://rpc.polkadot.io");
+const api = ApiPromise.create({ provider: wsProvider });
 
 export default function SignIn() {
-  const [privateKey, setPrivateKey] = useState('');
+  const [privateKey, setPrivateKey] = useState("");
   const router = useRouter();
   const { setWallet, setWalletConnected } = useWalletStore();
   const [walletLoading, setWalletLoading] = useState(false);
 
-  const getBalance = async (address: string) => {
-    const wsProvider = new WsProvider('wss://rpc.polkadot.io');
-    const api = await ApiPromise.create({ provider: wsProvider });
-
-    const accountInfo = await api.query.system.account(address);
+  const getBalance = useCallback(async (address: string) => {
+    const apiInstance = await api;
+    const accountInfo = await apiInstance.query.system.account(address);
     const {
       data: { free: balance },
     } = accountInfo.toHuman() as { data: { free: string } };
     return balance.toString();
-  };
+  }, []);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setWalletLoading(true);
-      const localWallet = new Wallet();
-      const walletData = await localWallet.fromPassword(privateKey);
-      const walletAddress = walletData.address;
-      if (walletAddress === 'undefined') {
-        throw new Error('Invalid wallet address');
+  const handleSignIn = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!privateKey) return;
+
+      try {
+        setWalletLoading(true);
+        const localWallet = new Wallet();
+        const walletData = await localWallet.fromPassword(privateKey);
+        const walletAddress = walletData.address;
+
+        if (walletAddress === "undefined") {
+          throw new Error("Invalid wallet address");
+        }
+
+        const balance = await getBalance(walletAddress);
+        if (balance === "undefined") {
+          throw new Error("Invalid balance");
+        }
+
+        setWalletConnected(true);
+        setWallet(WalletType.LOCAL, walletAddress, balance);
+        router.push("/");
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setWalletLoading(false);
       }
-      const balance = await getBalance(walletAddress);
-      if (balance === 'undefined') {
-        throw new Error('Invalid balance');
-      }
-      setWalletConnected(true);
-      setWallet(WalletType.LOCAL, walletAddress, balance);
-      setWalletLoading(false);
-      router.push('/');
-    } catch (e) {
-      console.error(e);
-      setWalletLoading(false);
-    }
-  };
+    },
+    [privateKey, getBalance, setWallet, setWalletConnected, router]
+  );
+
+  const handleBack = useCallback(() => {
+    router.push("/");
+  }, [router]);
+
+  const handlePrivateKeyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPrivateKey(e.target.value);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
@@ -63,7 +80,7 @@ export default function SignIn() {
         <Button
           variant="ghost"
           className="mb-8 text-gray-400 hover:text-white hover:bg-transparent"
-          onClick={() => router.push('/')}
+          onClick={handleBack}
         >
           <ChevronLeft className="mr-2 h-4 w-4" />
           Back to Home
@@ -94,7 +111,7 @@ export default function SignIn() {
                       type="password"
                       placeholder="Enter your private key"
                       value={privateKey}
-                      onChange={(e) => setPrivateKey(e.target.value)}
+                      onChange={handlePrivateKeyChange}
                       className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
                     />
                   </div>
