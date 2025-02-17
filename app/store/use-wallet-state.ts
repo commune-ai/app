@@ -7,7 +7,7 @@ interface WalletState {
     name: WalletType | null;
     address: string;
     balance: string;
-  };
+  } | null;
   setWalletConnected: (connectedWallet: boolean) => void;
   setWallet: (name: WalletType, address: string, balance: string) => void;
 }

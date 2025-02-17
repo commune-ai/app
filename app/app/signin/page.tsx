@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SimpleHubNavbar } from "@/components/navbar/hub-navbar-simple";
@@ -10,68 +10,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Key, ChevronLeft, Loader } from "lucide-react";
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import { Wallet } from "@/utils/local-wallet";
-import { useWalletStore } from "@/store/use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
-
-const wsProvider = new WsProvider("wss://rpc.polkadot.io");
-const api = ApiPromise.create({ provider: wsProvider });
+import { useSigninStore } from "@/store/use-signin-state";
 
 export default function SignIn() {
-  const [privateKey, setPrivateKey] = useState("");
+  const { signinSuccess, privateKey, isLoading, handleSignIn, handlePrivateKeyChange } =
+    useSigninStore();
+
   const router = useRouter();
-  const { setWallet, setWalletConnected } = useWalletStore();
-  const [walletLoading, setWalletLoading] = useState(false);
 
-  const getBalance = useCallback(async (address: string) => {
-    const apiInstance = await api;
-    const accountInfo = await apiInstance.query.system.account(address);
-    const {
-      data: { free: balance },
-    } = accountInfo.toHuman() as { data: { free: string } };
-    return balance.toString();
-  }, []);
-
-  const handleSignIn = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!privateKey) return;
-
-      try {
-        setWalletLoading(true);
-        const localWallet = new Wallet();
-        const walletData = await localWallet.fromPassword(privateKey);
-        const walletAddress = walletData.address;
-
-        if (walletAddress === "undefined") {
-          throw new Error("Invalid wallet address");
-        }
-
-        const balance = await getBalance(walletAddress);
-        if (balance === "undefined") {
-          throw new Error("Invalid balance");
-        }
-
-        setWalletConnected(true);
-        setWallet(WalletType.LOCAL, walletAddress, balance);
-        router.push("/");
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setWalletLoading(false);
-      }
-    },
-    [privateKey, getBalance, setWallet, setWalletConnected, router]
-  );
-
-  const handleBack = useCallback(() => {
+  const navigateToHome = useCallback(() => {
     router.push("/");
   }, [router]);
 
-  const handlePrivateKeyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrivateKey(e.target.value);
-  }, []);
+  const handleBack = useCallback(() => {
+    navigateToHome();
+  }, [navigateToHome]);
+
+  useEffect(() => {
+    if (signinSuccess) {
+      navigateToHome();
+    }
+  }, [signinSuccess, navigateToHome]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
@@ -119,9 +78,9 @@ export default function SignIn() {
                 <Button
                   type="submit"
                   className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                  disabled={walletLoading}
+                  disabled={isLoading}
                 >
-                  Sign In {walletLoading && <Loader className="h-5 w-5 animate-spin" />}
+                  Sign In {isLoading && <Loader className="h-5 w-5 animate-spin" />}
                 </Button>
               </form>
 
