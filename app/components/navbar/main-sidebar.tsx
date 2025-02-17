@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useCallback } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { ModuleType } from '@/store/use-module-state';
+import React, { useState, useMemo, useCallback } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { ModuleType } from "@/store/use-module-state";
 
 interface MainSidebarProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ interface FilterState {
 const initialFilterState: FilterState = {
   network: null,
   tag: null,
-  search: '',
+  search: "",
 };
 
 export function MainSidebar({ children, onFilterChange, moduleData }: MainSidebarProps) {
@@ -41,7 +41,7 @@ export function MainSidebar({ children, onFilterChange, moduleData }: MainSideba
   );
 
   const handleFilterChange = useCallback(
-    (type: 'network' | 'tag', value: string) => {
+    (type: "network" | "tag", value: string) => {
       setFilters((prevFilters) => {
         const newFilters = {
           ...prevFilters,
@@ -70,14 +70,14 @@ export function MainSidebar({ children, onFilterChange, moduleData }: MainSideba
   );
 
   const renderBadge = useCallback(
-    (value: string, type: 'network' | 'tag', index?: number) => (
+    (value: string, type: "network" | "tag", index?: number) => (
       <Badge
-        key={type === 'network' ? value + index : value}
+        key={type === "network" ? value + index : value}
         variant="outline"
         className={`cursor-pointer hover:bg-white/10 transition-colors ${
           filters[type] === value
-            ? 'bg-blue-500/20 text-blue-400 border-blue-500/20'
-            : 'bg-white/5 text-gray-300 border-white/10'
+            ? "bg-blue-500/20 text-blue-400 border-blue-500/20"
+            : "bg-white/5 text-gray-300 border-white/10"
         }`}
         onClick={() => handleFilterChange(type, value)}
       >
@@ -115,14 +115,14 @@ export function MainSidebar({ children, onFilterChange, moduleData }: MainSideba
             <div>
               <Label className="text-sm font-medium text-gray-400 mb-3 block">Network</Label>
               <div className="flex flex-wrap gap-2">
-                {networks.map((network, index) => renderBadge(network, 'network', index))}
+                {networks.map((network, index) => renderBadge(network, "network", index))}
               </div>
             </div>
 
             <div>
               <Label className="text-sm font-medium text-gray-400 mb-3 block">Tags</Label>
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => renderBadge(tag, 'tag'))}
+                {tags.map((tag) => renderBadge(tag, "tag"))}
               </div>
             </div>
           </div>

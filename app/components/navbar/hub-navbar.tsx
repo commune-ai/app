@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { WalletConnect } from '@/components/wallet/wallet-connect';
-import { SearchInput } from '@/components/search/search-input';
-import { Menu, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useRouter, usePathname } from 'next/navigation';
-import { MainSidebar } from '@/components/navbar/main-sidebar';
-import { ModuleType } from '@/store/use-module-state';
-import { memo, useCallback } from 'react';
+import { WalletConnect } from "@/components/wallet/wallet-connect";
+import { SearchInput } from "@/components/search/search-input";
+import { Menu, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRouter, usePathname } from "next/navigation";
+import { MainSidebar } from "@/components/navbar/main-sidebar";
+import { ModuleType } from "@/store/use-module-state";
+import { memo, useCallback } from "react";
 
 interface FilterState {
   network: string | null;
@@ -29,10 +29,10 @@ export const HubNavbar = memo(function HubNavbar({
 }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const isRootPage = pathname === '/';
+  const isRootPage = pathname === "/";
 
   const handleAddNewModel = useCallback(() => {
-    router.push('/module/create');
+    router.push("/module/create");
   }, [router]);
 
   const renderSidebarButton = useCallback(
@@ -40,7 +40,7 @@ export const HubNavbar = memo(function HubNavbar({
       <Button
         variant="ghost"
         size="icon"
-        className="text-gray-400 hover:text-white hover:bg-white/10"
+        className="text-green-400 hover:text-green-700 hover:bg-green-700/10"
       >
         <Menu className="h-6 w-6" />
       </Button>
@@ -49,7 +49,7 @@ export const HubNavbar = memo(function HubNavbar({
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter">
+    <nav className="sticky top-0 z-50 border-b border-green-700/10 bg-green-700/5 backdrop-blur-xl backdrop-filter">
       {isRootPage && (
         <div className="hidden md:flex flex-shrink-0 mr-4 absolute top-4 left-9">
           <MainSidebar onFilterChange={onFilterChange} moduleData={moduleData}>
@@ -68,7 +68,7 @@ export const HubNavbar = memo(function HubNavbar({
               </div>
             )}
             <span className="text-2xl font-bold text-white">
-              <span className="text-blue-400">dhub</span>
+              <span className="text-green-400">dhub</span>
             </span>
           </div>
 
