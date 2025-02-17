@@ -116,12 +116,12 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+    <div className="min-h-screen flex flex-col bg-[#03040B]">
       {isAlternateLayout ? (
         <div>
           <SidebarProvider>
             <AlternateSidebar />
-            <SidebarInset className="bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+            <SidebarInset className="bg-[#0F0F0F] ">
               <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                 <div className="flex items-center gap-2 px-4">
                   <SidebarTrigger className="-ml-1" />

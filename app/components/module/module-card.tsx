@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useRef, useCallback, JSX } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Check, Copy, Code, ExternalLink, Key, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState, useRef, useCallback, JSX } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Check, Copy, Code, ExternalLink, Key, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Tag = string;
 
@@ -29,8 +29,8 @@ export function ModuleCard({
   timestamp,
   description,
   imageUrl,
-  network = 'commune',
-  tags = ['LLM', 'Text Conversion', 'LLM', 'Text Conversion', 'LLM', 'Text Conversion'],
+  network = "commune",
+  tags = ["LLM", "Text Conversion", "LLM", "Text Conversion", "LLM", "Text Conversion"],
 }: ModuleCardProps): JSX.Element {
   const router = useRouter();
   const [copied, setCopied] = useState<boolean>(false);
@@ -43,7 +43,7 @@ export function ModuleCard({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
     }
   }, []);
 
@@ -94,7 +94,7 @@ export function ModuleCard({
       transition={{ duration: 0.3 }}
     >
       <Card
-        className="group relative overflow-hidden border-white/10 bg-white/5 backdrop-blur-md backdrop-filter transition-all duration-300 hover:bg-white/10 cursor-pointer"
+        className="group relative overflow-hidden border-white/10 bg-[#0f0f0f] backdrop-blur-md backdrop-filter transition-all duration-300 hover:bg-green-500/10 cursor-pointer"
         onClick={navigateToModule}
       >
         <CardContent className="p-5 flex flex-col">
@@ -102,7 +102,7 @@ export function ModuleCard({
             <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
               <Image
                 src={
-                  !imageError ? imageUrl || '/sample.png' : '/placeholder.svg?height=48&width=48'
+                  !imageError ? imageUrl || "/sample.png" : "/placeholder.svg?height=48&width=48"
                 }
                 alt={name}
                 width={64}
@@ -116,7 +116,7 @@ export function ModuleCard({
               <h3 className="text-lg font-semibold text-white truncate">{name}</h3>
               <Badge
                 variant="outline"
-                className="mt-1 bg-blue-500/10 text-blue-400 border-blue-500/20 font-medium"
+                className="mt-1 bg-green-500/10 text-green-400 border-green-500/20 font-medium"
               >
                 {network}
               </Badge>
@@ -130,9 +130,9 @@ export function ModuleCard({
           <div className="font-mono text-sm space-y-1 mb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Key className="h-4 w-4 text-blue-400" />
-                <span className="text-blue-400">Key:</span>
-                <span className="text-blue-400 truncate max-w-[150px]">{mkey}</span>
+                <Key className="h-4 w-4 text-green-400" />
+                <span className="text-green-400">Key:</span>
+                <span className="text-green-400 truncate max-w-[150px]">{mkey}</span>
               </div>
               <TooltipProvider>
                 <Tooltip>
@@ -156,7 +156,7 @@ export function ModuleCard({
                             <Check className="h-4 w-4 text-green-400" />
                           </motion.span>
                         ) : (
-                          <Copy className="h-4 w-4 text-gray-400" />
+                          <Copy className="h-4 w-4 text-green-400" />
                         )}
                       </AnimatePresence>
                     </Button>
