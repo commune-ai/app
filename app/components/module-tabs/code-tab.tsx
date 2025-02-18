@@ -4,7 +4,13 @@ import { useState, useCallback, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, CopyIcon, Check } from 'lucide-react';
-
+import Prism from "prismjs"
+import "prismjs/themes/prism-tomorrow.css"
+import "prismjs/components/prism-python"
+import "prismjs/components/prism-javascript"
+import "prismjs/components/prism-typescript"
+import "prismjs/components/prism-jsx"
+import "prismjs/components/prism-tsx"
 type CodeContent = Record<string, string>;
 
 interface CodeTabProps {
@@ -44,6 +50,29 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
   const handleFileSelect = useCallback((file: string) => {
     setSelectedFile(file);
   }, []);
+
+  const getLanguage = (filename: string) => {
+    const extension = filename.split(".").pop()
+    switch (extension) {
+      case "py":
+        return "python"
+      case "js":
+        return "javascript"
+      case "ts":
+        return "typescript"
+      case "jsx":
+        return "jsx"
+      case "tsx":
+        return "tsx"
+      default:
+        return "javascript"
+    }
+  }
+
+  const highlightedCode = useMemo(() => {
+    const language = getLanguage(selectedFile)
+    return Prism.highlight(code[selectedFile] || "", Prism.languages[language], language)
+  }, [selectedFile, code])
 
   return (
     <div className="h-full flex flex-col">
@@ -91,10 +120,11 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
               )}
             </Button>
           </div>
-          <pre className="p-6 text-sm font-mono">
-            <code className="text-[#238636]">
-              {code[selectedFile] || '// Select a file to view its contents'}
-            </code>
+          <pre className="p-6 text-sm font-mono overflow-auto">
+            <code
+              className={`language-${getLanguage(selectedFile)}`}
+              dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            />
           </pre>
         </div>
       </div>

@@ -18,7 +18,7 @@ export type ModuleType = {
 };
 
 const getRandomNetworkAndTags = () => {
-  const networks = ['commune', 'bittensor', 'torus'];
+  const networks = ['commune'];
   const tags = [
     'LLM',
     'image generator',
@@ -27,13 +27,29 @@ const getRandomNetworkAndTags = () => {
     'artificial intelligence',
     'chatbot',
     'neural network',
+    'GAN',
+    'NLP',
+    'natural language processing',
+    'computer vision',
+    'blockchain',
+    'web3',
+    'decentralized',
+    'crypto',
+    'cryptocurrency',
+    'solidity',
+    'smart contract',
+    'dapp',
+    'decentralized finance',
+    'defi',
+    'web3',
+    'web3.js',
   ];
 
   const randomNetwork = networks[Math.floor(Math.random() * networks.length)];
   const randomTags = Array.from(
     new Set(
       Array.from(
-        { length: Math.floor(Math.random() * 4) + 1 },
+        { length: Math.floor(Math.random() * 6) + 1 },
         () => tags[Math.floor(Math.random() * tags.length)]
       )
     )

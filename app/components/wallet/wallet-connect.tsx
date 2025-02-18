@@ -50,9 +50,9 @@ export function WalletConnect(): JSX.Element {
     }
   }, []);
 
-  const walletImageSrc = useMemo(() => `/${wallet.name?.toLowerCase()}.svg`, [wallet.name]);
+  const walletImageSrc = useMemo(() => wallet ? `/${wallet.name?.toLowerCase()}.svg` : '', [wallet]);
 
-  const truncatedAddress = useMemo(() => wallet.address.slice(0, 7), [wallet.address]);
+  const truncatedAddress = useMemo(() => wallet ? wallet.address.slice(0, 7) : '', [wallet]);
 
   if (walletConnected) {
     return (
@@ -64,7 +64,7 @@ export function WalletConnect(): JSX.Element {
               width={48}
               height={48}
               className="p-1.5 object-contain"
-              alt={`${wallet.name} preview`}
+              alt={`${wallet?.name} preview`}
               priority
             />
           </Avatar>
@@ -74,11 +74,11 @@ export function WalletConnect(): JSX.Element {
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem className="flex justify-between">
             <span>Name:</span>
-            <span>{wallet.name}</span>
+            <span>{wallet?.name}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             className="flex justify-between cursor-pointer"
-            onClick={() => copyToClipboard(wallet.address)}
+            onClick={() => wallet?.address && copyToClipboard(wallet.address)}
           >
             <span>Address:</span>
             <div className="flex items-center">
@@ -88,7 +88,7 @@ export function WalletConnect(): JSX.Element {
           </DropdownMenuItem>
           <DropdownMenuItem className="flex justify-between">
             <span>Balance:</span>
-            <span>{wallet.balance}</span>
+            <span>{wallet?.balance}</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem
