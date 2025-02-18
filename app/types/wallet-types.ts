@@ -2,5 +2,6 @@ export enum WalletType {
   METAMASK = 'Metamask',
   SUBWALLET = 'Subwallet',
   PHANTOM = 'Phantom',
-  LOCAL = 'Local',
+  POLKADOT = 'Polkadot',
+  ETHEREUM = 'Ethereum',
 }

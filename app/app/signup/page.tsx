@@ -10,6 +10,20 @@ import { Copy, AlertTriangle, Check, ChevronLeft, Loader } from "lucide-react";
 import { useSignupStore } from "@/store/use-signup-state";
 import { useEffect } from "react";
 import { useWalletStore } from "@/store/use-wallet-state";
+import { WalletType } from "@/types/wallet-types";
+import { Label } from "@/components/ui/label";
+import { LocalWalletSelector } from "@/components/wallet/local-wallet-selector";
+
+interface WalletOption {
+  id: string
+  name: string
+  icon: string
+}
+
+const walletOptions: WalletOption[] = [
+  { id: WalletType.POLKADOT, name: "Polkadot", icon: "/polkadot.svg" },
+  { id: WalletType.ETHEREUM, name: "Ethereum", icon: "/ethereum.svg" },
+]
 
 export default function SignUp() {
   const {
@@ -20,6 +34,8 @@ export default function SignUp() {
     generateMnemonic,
     handleCopyMnemonic,
     handleSignUp,
+    setWalletSelected,
+    walletSelected,
   } = useSignupStore();
   const { walletConnected } = useWalletStore();
   const router = useRouter();
@@ -67,6 +83,14 @@ export default function SignUp() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+            <div className="space-y-4">
+                  <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
+                  <LocalWalletSelector
+                    options={walletOptions}
+                    selectedWallet={walletSelected}
+                    onSelect={(walletId: string) => setWalletSelected(walletId as WalletType)}
+                  />
+                </div>
               <div className="relative">
                 <div className="p-4 bg-[#0D1117] rounded-lg border border-white/10 font-mono text-sm">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 select-none">

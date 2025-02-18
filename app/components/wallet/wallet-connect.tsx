@@ -2,7 +2,6 @@
 
 import { JSX, useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Wallet, Copy, LogOut, Check, ChevronDown } from "lucide-react";
 import { WalletConnectDialog } from "./wallet-connect-dialog";
@@ -19,6 +18,7 @@ import { WalletType } from "@/types/wallet-types";
 import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { AvatarImage } from "@radix-ui/react-avatar";
 
 export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -67,7 +67,7 @@ export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
             <div className={cn("flex items-center w-full gap-2", { "md:flex-col": onSidebar })}>
               <div className="flex items-center">
                 <Avatar className="h-6 w-6 mr-2">
-                  <Image src={`${walletImageSrc}`} alt={`${wallet?.name} preview`} priority className="p-[2px] object-contain" width={60} height={60} />
+                  <AvatarImage src={`${walletImageSrc}`} alt={`${wallet?.name} preview`} className="p-[2px] object-contain" width={60} height={60} />
                   <AvatarFallback className="bg-white/5 text-blue-400 text-xs">{wallet?.address.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 {!isModulePath && <h3 className="hidden md:flex" >{wallet?.name}</h3>}

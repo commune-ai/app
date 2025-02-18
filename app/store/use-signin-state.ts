@@ -15,6 +15,8 @@ interface SigninActions {
   setPrivateKey: (privateKey: string) => void;
   setIsLoading: (isLoading: boolean) => void;
   setSigninSuccess: (success: boolean) => void;
+  walletSelected:WalletType;
+  setWalletSelected: (walletSelected: WalletType) => void;
   handlePrivateKeyChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSignIn: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -25,7 +27,8 @@ export const useSigninStore = create<SigninState & SigninActions>((set) => ({
   privateKey: "",
   isLoading: false,
   signinSuccess: false,
-
+  walletSelected:WalletType.POLKADOT,
+  setWalletSelected: (walletSelected: WalletType) => set({ walletSelected }),
   setPrivateKey: (privateKey: string) => set({ privateKey }),
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   setSigninSuccess: (success: boolean) => set({ signinSuccess: success }),
@@ -47,7 +50,7 @@ export const useSigninStore = create<SigninState & SigninActions>((set) => ({
     if (!privateKey) return;
 
     try {
-      set({ isLoading: true });
+      set({ isLoading: true, signinSuccess: false });
       const localWallet = new Wallet();
       const walletData = await localWallet.fromPassword(privateKey);
       const walletAddress = walletData.address;
@@ -61,8 +64,9 @@ export const useSigninStore = create<SigninState & SigninActions>((set) => ({
         throw new Error("Invalid balance");
       }
 
+      const { walletSelected } = useSigninStore.getState();
+      useWalletStore.getState().setWallet(walletSelected, walletAddress, balance);
       useWalletStore.getState().setWalletConnected(true);
-      useWalletStore.getState().setWallet(WalletType.LOCAL, walletAddress, balance);
       set({ signinSuccess: true });
     } catch (error) {
       console.error("Sign in error:", error);
