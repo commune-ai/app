@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, type ChangeEvent } from 'react';
+import { useState, useRef, type ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -62,7 +62,7 @@ export default function CreateModulePage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState('https://example.com/');
   const [codeLocation, setCodeLocation] = useState('https://github.com/');
   const [network, setNetwork] = useState('commune');
   const [description, setDescription] = useState('');
@@ -72,6 +72,20 @@ export default function CreateModulePage() {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Helper function to extract module name from the codeLocation URL
+  const extractModuleName = (url: string): string => {
+    const match = url.match(/github\.com\/[^\/]+\/([^\/]+)/);
+    return match ? match[1] : '';
+  };
+
+  // Update name whenever codeLocation changes
+  useEffect(() => {
+    if (codeLocation.trim() !== '') {
+      const moduleName = extractModuleName(codeLocation);
+      setName(moduleName);
+    }
+  }, [codeLocation]);
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && currentTag.trim() !== '') {
@@ -139,8 +153,6 @@ export default function CreateModulePage() {
         image,
       };
       console.log('New module created:', newModule);
-      // Here you would typically send this data to your backend
-      // For now, we'll just redirect to the home page
       router.push('/');
     }
   };
@@ -151,6 +163,27 @@ export default function CreateModulePage() {
         return (
           <>
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="codeLocation" className="text-sm font-medium text-gray-200">
+                  Code Location:
+                </Label>
+                <div className="relative">
+                  <Code
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="codeLocation"
+                    value={codeLocation}
+                    onChange={(e) => setCodeLocation(e.target.value)}
+                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                    placeholder="https://github.com/username/repo"
+                  />
+                </div>
+                {errors.codelocation && (
+                  <p className="text-red-500 text-xs mt-1">{errors.codelocation}</p>
+                )}
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="image" className="text-sm font-medium text-gray-200">
                   Module Image:
@@ -230,28 +263,6 @@ export default function CreateModulePage() {
                 </div>
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="codeLocation" className="text-sm font-medium text-gray-200">
-                  Code Location:
-                </Label>
-                <div className="relative">
-                  <Code
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                  <Input
-                    id="codeLocation"
-                    value={codeLocation}
-                    defaultValue={'https://github.com/'}
-                    onChange={(e) => setCodeLocation(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="https://github.com/username/repo"
-                  />
-                </div>
-                {errors.codelocation && (
-                  <p className="text-red-500 text-xs mt-1">{errors.codelocation}</p>
-                )}
-              </div>
             </div>
           </>
         );
@@ -261,7 +272,7 @@ export default function CreateModulePage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="url" className="text-sm font-medium text-gray-200">
-                  URL:
+                  API URL:
                 </Label>
                 <div className="relative">
                   <Link
@@ -412,8 +423,8 @@ export default function CreateModulePage() {
                           step > index
                             ? 'bg-blue-500 text-white'
                             : step === index + 1
-                            ? 'bg-blue-200 text-blue-800'
-                            : 'bg-gray-200 text-gray-400'
+                              ? 'bg-blue-200 text-blue-800'
+                              : 'bg-gray-200 text-gray-400'
                         )}
                       >
                         <s.icon className="w-5 h-5" />
