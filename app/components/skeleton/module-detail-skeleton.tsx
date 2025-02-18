@@ -13,7 +13,7 @@ export default function ModuleDetailSkeleton() {
           </span>
         </div>
         <div className="flex items-center justify-center">
-          <WalletConnect />
+          <WalletConnect/>
         </div>
       </div>
 
