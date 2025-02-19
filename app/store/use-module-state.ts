@@ -18,7 +18,7 @@ export type ModuleType = {
 };
 
 const getRandomNetworkAndTags = () => {
-  const networks = ['commune', 'bittensor', 'torus'];
+  const networks = ['commune'];
   const tags = [
     'LLM',
     'image generator',
@@ -27,13 +27,29 @@ const getRandomNetworkAndTags = () => {
     'artificial intelligence',
     'chatbot',
     'neural network',
+    'GAN',
+    'NLP',
+    'natural language processing',
+    'computer vision',
+    'blockchain',
+    'web3',
+    'decentralized',
+    'crypto',
+    'cryptocurrency',
+    'solidity',
+    'smart contract',
+    'dapp',
+    'decentralized finance',
+    'defi',
+    'web3',
+    'web3.js',
   ];
 
   const randomNetwork = networks[Math.floor(Math.random() * networks.length)];
   const randomTags = Array.from(
     new Set(
       Array.from(
-        { length: Math.floor(Math.random() * 4) + 1 },
+        { length: Math.floor(Math.random() * 6) + 1 },
         () => tags[Math.floor(Math.random() * tags.length)]
       )
     )
@@ -58,8 +74,15 @@ export const useModuleStore = create<ModuleStore>((set) => ({
     set({ loadingModules: true });
     try {
       const client = new Client();
-      const data = await client.call('modules');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data:any = await client.call('modules');
+      if (data.success === false) {
+        console.error('Failed to fetch modules:', data);
+        set({ modules: [], loadingModules: false });
+        return;
+      }
       set({ modules: Array.isArray(data) ? data : [], loadingModules: false });
+      return;
     } catch (error) {
       console.error('Failed to fetch modules:', error);
       set({ modules: [], loadingModules: false });

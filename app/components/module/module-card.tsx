@@ -36,6 +36,7 @@ export function ModuleCard({
   const [copied, setCopied] = useState<boolean>(false);
   const [imageError, setImageError] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState<boolean>(false)
 
   const copyToClipboard = useCallback(async (text: string): Promise<void> => {
     try {
@@ -84,8 +85,15 @@ export function ModuleCard({
     setImageError(true);
   }, []);
 
-  const truncatedDescription =
-    description.length > 80 ? `${description.slice(0, 80)}...` : description;
+  const truncateKey = (key: string) => {
+    if (key.length <= 6) return key
+    return `${key.slice(0, 3)}...${key.slice(-3)}`
+  }
+
+  const truncateName = (name: string) => {
+    if (name.length <= 18) return name
+    return `${name.slice(0, 15)}...`
+  }
 
   return (
     <motion.div
@@ -96,6 +104,8 @@ export function ModuleCard({
       <Card
         className="group relative overflow-hidden border-white/10 bg-[#0f0f0f] backdrop-blur-md backdrop-filter transition-all duration-300 hover:bg-green-500/10 cursor-pointer"
         onClick={navigateToModule}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <CardContent className="p-5 flex flex-col">
           <div className="flex items-center space-x-3 mb-3">
@@ -112,67 +122,71 @@ export function ModuleCard({
                 priority
               />
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-white truncate">{name}</h3>
-              <Badge
-                variant="outline"
-                className="mt-1 bg-green-500/10 text-green-400 border-green-500/20 font-medium"
-              >
-                {network}
-              </Badge>
-            </div>
-          </div>
-
-          <div className="mb-3 h-[40px]">
-            <p className="text-sm text-gray-300 line-clamp-2">{truncatedDescription}</p>
-          </div>
-
-          <div className="font-mono text-sm space-y-1 mb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Key className="h-4 w-4 text-green-400" />
-                <span className="text-green-400">Key:</span>
-                <span className="text-green-400 truncate max-w-[150px]">{mkey}</span>
+            <div className="flex-1 min-w-0 flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-semibold text-white truncate">{truncateName(name)}</h3>
+                <Badge
+                  variant="outline"
+                  className="mt-1 bg-green-500/10 text-green-400 border-green-500/20 font-medium"
+                >
+                  {network}
+                </Badge>
               </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyToClipboard(mkey);
-                      }}
-                      className="h-8 w-8 rounded-md hover:bg-[#30363D] transition-all duration-200"
-                    >
-                      <AnimatePresence>
-                        {copied ? (
-                          <motion.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                          >
-                            <Check className="h-4 w-4 text-green-400" />
-                          </motion.span>
-                        ) : (
-                          <Copy className="h-4 w-4 text-green-400" />
-                        )}
-                      </AnimatePresence>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Copy module ID</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-400">Time:</span>
-              <span className="text-gray-300">{timestamp}</span>
+              <div className="text-right">
+                <div className="flex items-center justify-start space-x-2 mb-1">
+                  <div className="flex items-center justify-between space-x-1">
+                    <Key className="h-3 w-3 text-green-400" />
+                    <span className="text-xs text-green-400">Key: {truncateKey(mkey)}</span>
+                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            copyToClipboard(mkey)
+                          }}
+                          className="h-5 w-5 rounded-md hover:bg-[#30363D] transition-all duration-200"
+                        >
+                          <AnimatePresence>
+                            {copied ? (
+                              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                <Check className="h-3 w-3 text-green-400" />
+                              </motion.span>
+                            ) : (
+                              <Copy className="h-3 w-3 text-green-400" />
+                            )}
+                          </AnimatePresence>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Copy module ID</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="flex items-center justify-end space-x-1">
+                  <Clock className="h-3 w-3 text-gray-400" />
+                  <span className="text-xs text-gray-300">Time:{new Date(Number(timestamp)*1000).toLocaleString()}</span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-3 overflow-hidden"
+              >
+                <p className="text-sm text-gray-300">{description}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div ref={cardRef} className="h-[30px]">
             <ScrollArea className="h-full w-full">

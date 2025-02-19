@@ -11,10 +11,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Key, ChevronLeft, Loader } from "lucide-react";
 import { useSigninStore } from "@/store/use-signin-state";
+import { useWalletStore } from "@/store/use-wallet-state";
+import { WalletType } from "@/types/wallet-types";
+import { Label } from "@/components/ui/label"
+import { LocalWalletSelector } from "@/components/wallet/local-wallet-selector";
+
+interface WalletOption {
+  id: string
+  name: string
+  icon: string
+}
+
+const walletOptions: WalletOption[] = [
+  { id: WalletType.POLKADOT, name: "Polkadot", icon: "/polkadot.svg" },
+  { id: WalletType.ETHEREUM, name: "Ethereum", icon: "/ethereum.svg" },
+]
 
 export default function SignIn() {
-  const { signinSuccess, privateKey, isLoading, handleSignIn, handlePrivateKeyChange } =
+  const { privateKey, isLoading, handleSignIn, handlePrivateKeyChange, setWalletSelected, walletSelected } =
     useSigninStore();
+
+  const {walletConnected}=useWalletStore();
+  
 
   const router = useRouter();
 
@@ -27,10 +45,10 @@ export default function SignIn() {
   }, [navigateToHome]);
 
   useEffect(() => {
-    if (signinSuccess) {
+    if (walletConnected) {
       navigateToHome();
     }
-  }, [signinSuccess, navigateToHome]);
+  }, [walletConnected, navigateToHome]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
@@ -60,6 +78,14 @@ export default function SignIn() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignIn} className="space-y-6">
+              <div className="space-y-4">
+                  <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
+                  <LocalWalletSelector
+                    options={walletOptions}
+                    selectedWallet={walletSelected}
+                    onSelect={(walletId: string) => setWalletSelected(walletId as WalletType)}
+                  />
+                </div>
                 <div className="space-y-2">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

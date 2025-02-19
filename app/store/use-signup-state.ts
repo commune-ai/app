@@ -14,6 +14,8 @@ interface State {
 
 type StoreType = State & {
   setMnemonic: (value: string) => void;
+  walletSelected:WalletType;
+  setWalletSelected: (walletSelected: WalletType) => void;
   setCopied: (value: boolean) => void;
   setConfirmed: (value: boolean) => void;
   setWalletLoading: (value: boolean) => void;
@@ -72,7 +74,8 @@ export const useSignupStore = create<StoreType>((set) => {
       }
 
       useWalletStore.getState().setWalletConnected(true);
-      useWalletStore.getState().setWallet(WalletType.LOCAL, walletAddress, balance);
+      const {walletSelected}=useSignupStore.getState();
+      useWalletStore.getState().setWallet(walletSelected, walletAddress, balance);
     } catch (error) {
       console.error("Error during signup:", error);
     } finally {
@@ -91,6 +94,8 @@ export const useSignupStore = create<StoreType>((set) => {
     walletLoading: false,
     setMnemonic: (value: string) => set({ mnemonic: value }),
     setCopied: (value: boolean) => set({ copied: value }),
+    walletSelected: WalletType.POLKADOT,
+    setWalletSelected: (walletSelected: WalletType) => set({ walletSelected }),
     setConfirmed: (value: boolean) => set({ confirmed: value }),
     setWalletLoading: (value: boolean) => set({ walletLoading: value }),
     getBalance: async (address: string): Promise<string> => {

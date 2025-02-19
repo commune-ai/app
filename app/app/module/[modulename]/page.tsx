@@ -107,16 +107,16 @@ export default function ModuleDetailPage() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#03040B] md:pl-16">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#03040B] md:pl-20">
       {/* Left Sidebar */}
-      <div className="w-full md:w-16 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-4 md:fixed md:h-screen md:left-0">
+      <div className="w-full md:w-20 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-4 md:fixed md:h-screen md:left-0">
         <div>
           <span className="text-xl font-bold text-white">
             <span className="text-blue-400">dhub</span>
           </span>
         </div>
         <div className="flex items-center justify-center">
-          <WalletConnect />
+          <WalletConnect onSidebar={true}/>
         </div>
       </div>
 
@@ -287,7 +287,7 @@ export default function ModuleDetailPage() {
             </TabsList>
           </div>
 
-          <TabsContent value="code" className="flex-1 p-0 overflow-hidden">
+          <TabsContent value="code" className="flex-1 p-0 overflow-auto">
             <CodeTab code={moduleDetail[0]?.code} />
           </TabsContent>
 

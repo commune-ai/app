@@ -44,7 +44,7 @@ export default function Home() {
 
   const router = useRouter();
 
-  const { fetchModules, modules, loadingModules, assignRandomNetworkAndTags } = useModuleStore();
+  const { fetchModules, modules, loadingModules } = useModuleStore();
   const { isAlternateLayout } = useNavbarSidebarStore();
 
   const filterModules = useCallback(
@@ -62,11 +62,10 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (modules.length > 0) return;
+      // if (modules.length > 0) return;
       try {
         setIsLoading(true);
         await fetchModules();
-        assignRandomNetworkAndTags();
       } catch (err) {
         console.error("Error fetching modules:", err);
       } finally {
@@ -74,7 +73,7 @@ export default function Home() {
       }
     };
     fetchData();
-  }, [assignRandomNetworkAndTags, fetchModules, modules]);
+  }, [fetchModules]);
 
   useEffect(() => {
     const filtered = filterModules(modules, networkFilter, tagFilter, searchTerm);

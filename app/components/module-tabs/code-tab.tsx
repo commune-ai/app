@@ -4,7 +4,13 @@ import { useState, useCallback, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, CopyIcon, Check } from 'lucide-react';
-
+import Prism from "prismjs"
+import "prismjs/themes/prism-tomorrow.css"
+import "prismjs/components/prism-python"
+import "prismjs/components/prism-javascript"
+import "prismjs/components/prism-typescript"
+import "prismjs/components/prism-jsx"
+import "prismjs/components/prism-tsx"
 type CodeContent = Record<string, string>;
 
 interface CodeTabProps {
@@ -45,6 +51,29 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
     setSelectedFile(file);
   }, []);
 
+  const getLanguage = (filename: string) => {
+    const extension = filename.split(".").pop()
+    switch (extension) {
+      case "py":
+        return "python"
+      case "js":
+        return "javascript"
+      case "ts":
+        return "typescript"
+      case "jsx":
+        return "jsx"
+      case "tsx":
+        return "tsx"
+      default:
+        return "javascript"
+    }
+  }
+
+  const highlightedCode = useMemo(() => {
+    const language = getLanguage(selectedFile)
+    return Prism.highlight(code[selectedFile] || "", Prism.languages[language], language)
+  }, [selectedFile, code])
+
   return (
     <div className="h-full flex flex-col">
       <div className="p-4">
@@ -66,9 +95,8 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
             <button
               key={file}
               onClick={() => handleFileSelect(file)}
-              className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${
-                selectedFile === file ? 'bg-blue-500 text-white' : 'text-gray-300'
-              }`}
+              className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${selectedFile === file ? 'bg-blue-500 text-white' : 'text-gray-300'
+                }`}
             >
               {file}
             </button>
@@ -76,7 +104,7 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
         </div>
 
         {/* Code Viewer */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           <div className="absolute right-4 top-4">
             <Button
               variant="ghost"
@@ -91,13 +119,14 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
               )}
             </Button>
           </div>
-          <pre className="p-6 text-sm font-mono">
-            <code className="text-[#238636]">
-              {code[selectedFile] || '// Select a file to view its contents'}
-            </code>
+          <pre className="text-sm font-mono p-4 overflow-x-auto">
+            <code
+              className={`language-${getLanguage(selectedFile)}`}
+              dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            />
           </pre>
-        </div>
       </div>
     </div>
+    </div >
   );
 }

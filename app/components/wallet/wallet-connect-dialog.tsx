@@ -3,12 +3,14 @@ import { connectToMetaMask, connectToPhantom, connectToSubWallet } from "@/utils
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, LogIn } from "lucide-react";
+import { AlertCircle, Loader2, LogIn } from "lucide-react";
 import Image from "next/image";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useWalletStore } from "@/store/use-wallet-state";
 import { WalletType } from "@/types/wallet-types";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { Card, CardContent } from "../ui/card";
 
 interface WalletConnectDialogProps {
   isOpen: boolean;
@@ -33,7 +35,8 @@ const WALLET_OPTIONS = [
 
 export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProps) {
   const [error, setError] = useState<string | null>(null);
-  const { setWallet, setWalletConnected } = useWalletStore();
+  const [walletSelected, setWalletSelected] = useState<WalletType | null>(null);
+  const { setWallet, setWalletConnected,connectingWallet,setConnectingWallet } = useWalletStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -46,17 +49,22 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
       setError("Unsupported wallet type");
       return;
     }
-
+    setConnectingWallet(true);
+    setWalletSelected(selectedWallet);
     const response = await wallet.connect();
 
     if (response.success && response.address && response.balance) {
       setWallet(selectedWallet, response.address, response.balance);
       setWalletConnected(true);
+      setConnectingWallet(false);
+      setWalletSelected(null);
       onClose();
     } else {
       setError(
         response.success ? "Failed to retrieve wallet address or balance" : response.error ?? null
       );
+      setConnectingWallet(false);
+      setWalletSelected(null);
     }
   };
 
@@ -89,6 +97,7 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
                 variant="outline"
                 onClick={() => handleConnect(type)}
                 className="w-full justify-center text-center font-normal bg-white/5 border-white/10 hover:bg-white/30 text-white transition-all duration-200"
+                disabled={connectingWallet}
               >
                 Connect to {name}
                 <Image
@@ -103,11 +112,39 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
             <Button
               onClick={() => router.push("/signin")}
               className="w-full justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all duration-200"
+              disabled={connectingWallet}
             >
               <LogIn className="h-4 w-4 mr-3" />
               Sign in with Local Wallet Account
             </Button>
           </div>
+          <AnimatePresence>
+            {connectingWallet && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
+              >
+                <Card className="bg-white/5 border-white/10">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="bg-blue-500/20 p-3 rounded-full">
+                        <Loader2 className="h-6 w-6 text-blue-400 animate-spin" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-white">Connecting to {walletSelected}</h4>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Please wait while we establish a secure connection...
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <div className="px-6 py-4 bg-white/5 border-t border-white/10">
           <p className="text-xs text-gray-400 text-center">

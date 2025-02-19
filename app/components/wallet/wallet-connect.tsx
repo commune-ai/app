@@ -1,10 +1,9 @@
 "use client";
 
 import { JSX, useState } from "react";
-import { Avatar } from "@/components/ui/avatar";
-import Image from "next/image";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Wallet, Copy, LogOut, Check } from "lucide-react";
+import { Wallet, Copy, LogOut, Check, ChevronDown } from "lucide-react";
 import { WalletConnectDialog } from "./wallet-connect-dialog";
 import {
   DropdownMenu,
@@ -18,8 +17,10 @@ import { useWalletStore } from "@/store/use-wallet-state";
 import { WalletType } from "@/types/wallet-types";
 import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { AvatarImage } from "@radix-ui/react-avatar";
 
-export function WalletConnect(): JSX.Element {
+export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const { walletConnected, setWalletConnected, setWallet, wallet } = useWalletStore();
   const [copied, setCopied] = useState<boolean>(false);
@@ -50,35 +51,44 @@ export function WalletConnect(): JSX.Element {
     }
   }, []);
 
-  const walletImageSrc = useMemo(() => `/${wallet.name?.toLowerCase()}.svg`, [wallet.name]);
+  const walletImageSrc = useMemo(() => wallet ? `/${wallet.name?.toLowerCase()}.svg` : '', [wallet]);
 
-  const truncatedAddress = useMemo(() => wallet.address.slice(0, 7), [wallet.address]);
+  const truncatedAddress = useMemo(() => wallet ? wallet.address.slice(0, 7) : '', [wallet]);
 
   if (walletConnected) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-transparent cursor-pointer h-11 w-11">
-            <Image
-              src={walletImageSrc}
-              width={48}
-              height={48}
-              className="p-1.5 object-contain"
-              alt={`${wallet.name} preview`}
-              priority
-            />
-          </Avatar>
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn("border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-gray-300 transition-colors",{"md:h-auto":onSidebar})}
+          >
+            <div className={cn("flex items-center w-full gap-2", { "md:flex-col": onSidebar })}>
+              <div className="flex items-center">
+                <Avatar className="h-6 w-6 mr-2">
+                  <AvatarImage src={`${walletImageSrc}`} alt={`${wallet?.name} preview`} className="p-[2px] object-contain" width={60} height={60} />
+                  <AvatarFallback className="bg-white/5 text-blue-400 text-xs">{wallet?.address.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                {!isModulePath && <h3 className="hidden md:flex" >{wallet?.name}</h3>}
+              </div>
+              <div className="flex-1 flex items-center justify-between mr-2">
+                <span className="font-mono text-sm text-gray-300">$:{wallet?.balance}</span>
+              </div>
+              <ChevronDown className="h-4 w-4 text-gray-400" />
+            </div>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 bg-white/5 border border-white/10 backdrop-blur-xl backdrop-filter text-white">
           <DropdownMenuLabel>Wallet</DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem className="flex justify-between">
             <span>Name:</span>
-            <span>{wallet.name}</span>
+            <span>{wallet?.name}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             className="flex justify-between cursor-pointer"
-            onClick={() => copyToClipboard(wallet.address)}
+            onClick={() => wallet?.address && copyToClipboard(wallet.address)}
           >
             <span>Address:</span>
             <div className="flex items-center">
@@ -88,7 +98,7 @@ export function WalletConnect(): JSX.Element {
           </DropdownMenuItem>
           <DropdownMenuItem className="flex justify-between">
             <span>Balance:</span>
-            <span>{wallet.balance}</span>
+            <span>{wallet?.balance}</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem
