@@ -74,8 +74,15 @@ export const useModuleStore = create<ModuleStore>((set) => ({
     set({ loadingModules: true });
     try {
       const client = new Client();
-      const data = await client.call('modules');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data:any = await client.call('modules');
+      if (data.success === false) {
+        console.error('Failed to fetch modules:', data);
+        set({ modules: [], loadingModules: false });
+        return;
+      }
       set({ modules: Array.isArray(data) ? data : [], loadingModules: false });
+      return;
     } catch (error) {
       console.error('Failed to fetch modules:', error);
       set({ modules: [], loadingModules: false });

@@ -66,7 +66,6 @@ export default function Home() {
       try {
         setIsLoading(true);
         await fetchModules();
-        assignRandomNetworkAndTags();
       } catch (err) {
         console.error("Error fetching modules:", err);
       } finally {
