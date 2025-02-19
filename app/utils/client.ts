@@ -1,93 +1,115 @@
-import config from '@/config.json';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import config from '@/config.json';
+
+type Params = Record<string, unknown> | FormData;
+
+type RequestData = {
+  params: Params;
+  headers: Record<string, string>;
+};
 
 export class Client {
   public url: string;
+  public key?: any;
 
-  constructor(url: string = config.url, mode: string = 'http') {
-    if (!url.startsWith(`${mode}://`)) {
-      url = `${mode}://${url}`;
-    }
-    this.url = url;
+  constructor(
+    module: string = 'module',
+    key?: any,
+    network: string = 'local',
+    mode: string = 'http'
+  ) {
+    this.key = key;
+    this.url = config.url
   }
 
   public async call(
     fn: string = 'info',
-    params: Record<string, unknown> = {},
-    headers: Record<string, string> = {}
+    params: Params = {},
+    module?: string,
+    network: string = 'local',
+    key?: any,
+    timeout: number = 40,
+    extraHeaders: Record<string, string> = {}
   ): Promise<unknown> {
-    headers = {
-      ...headers,
-      'Content-Type': 'application/json',
-      time: new Date().getTime().toString(),
-    };
-
-    try {
-      return await this.async_forward(fn, params, headers);
-    } catch (error) {
-      console.error('Request failed:', error);
-      return null; // Return null if the request fails
-    }
+    return new Client(module || fn, key, network).forward(
+      fn,
+      params,
+      timeout,
+      extraHeaders
+    );
   }
 
-  private async async_forward(
-    fn: string,
-    params: Record<string, unknown> | FormData,
-    headers: Record<string, string>
+  private getUrl(fn: string, mode: string): string {
+    if (fn.startsWith('http')) return fn;
+    return `${mode}://${fn}`;
+  }
+
+  private getRequest(params: Params): RequestData {
+    const timeStr = (Date.now() / 1000).toFixed(7);
+    const headers: Record<string, string> = {
+      'key': "5CJhiA6fEJWV8DtyqbnV4MVpWMW1dHMoMm2eRZMw164mFuRw",
+      'crypto_type': "sr25519",
+      'time': timeStr,
+      'signature': Buffer.from(JSON.stringify({'params': params, 'time': timeStr})).toString('hex'),
+      'Content-Type': params instanceof FormData ? 'multipart/form-data' : 'application/json',
+    };
+
+    return { params, headers };
+  }
+
+  public async forward(
+    fn: string = 'info',
+    params: Params = {},
+    timeout: number = 40,
+    extraHeaders: Record<string, string> = {}
   ): Promise<unknown> {
-    let requestHeaders: Record<string, string> = {};
-    let data: string | FormData;
-
-    if (params instanceof FormData) {
-      data = params;
-    } else {
-      data = JSON.stringify(params);
-      requestHeaders['Content-Type'] = 'application/json';
-    }
-
-    requestHeaders = { ...requestHeaders, ...headers };
-    const url: string = `${this.url}/${fn}`;
-
+    const url = `${this.url}/${fn}`;
+    const request = this.getRequest(params);
     const config: AxiosRequestConfig = {
       method: 'post',
-      url: url,
-      headers: requestHeaders,
-      data: data,
+      url,
+      headers: { ...request.headers, ...extraHeaders },
+      data: request.params,
+      timeout: timeout * 1000,
     };
 
     try {
       const response = await axios(config);
-      const contentType = response.headers['content-type'];
-
-      if (contentType?.includes('text/event-stream')) {
-        return this.handleStream(response);
-      }
-
-      if (contentType?.includes('application/json')) {
-        return response.data;
-      }
-
-      return response.data;
+      return this.processResponse(response);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('Request failed:', error.message);
-      } else {
-        console.log('Unexpected error:', error);
-      }
+      console.error('Request failed:', error);
       return null;
     }
   }
 
-  private async handleStream(response: AxiosResponse): Promise<void> {
-    const reader = (response.data as ReadableStream).getReader();
-    const decoder = new TextDecoder();
+  private processResponse(response: AxiosResponse): unknown {
+    const contentType = response.headers['content-type'];
 
+    if (contentType?.includes('application/json')) {
+      return response.data;
+    }
+
+    if (contentType?.includes('text/event-stream')) {
+      return this.handleStream(response);
+    }
+
+    return response.data;
+  }
+
+  private async handleStream(response: AxiosResponse): Promise<void> {
+    const reader = response.data?.getReader?.();
+    if (!reader) {
+      console.error('Streaming not supported in this environment');
+      return;
+    }
+
+    const decoder = new TextDecoder();
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
-      const chunk = decoder.decode(value);
-      console.log(chunk);
+      console.log(decoder.decode(value));
     }
   }
 }
