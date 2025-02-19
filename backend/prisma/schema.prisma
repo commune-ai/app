@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  profile_image_url String?
+  email             String   @unique
+  name              String?
+  password          String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  modules           Module[]
+
+  @@map("users")
+}
+
+model Module {
+  id                   String               @id @default(cuid())
+  module_image_url     String?
+  name                 String
+  description          String
+  network              String
+  tags                 String[]
+  key                  String
+  founder              String?
+  hash                 String?
+  codelocation         String
+  appurl               String
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  userId               String
+  user                 User                 @relation(fields: [userId], references: [id])
+  moduleCodes          ModuleCode[]
+  transactionHistories TransactionHistory[]
+
+  @@map("modules")
+}
+
+model ModuleCode {
+  id        String   @id @default(cuid())
+  code      Json
+  schema    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  moduleId  String
+  module    Module   @relation(fields: [moduleId], references: [id])
+
+  @@map("module_codes")
+}
+
+model TransactionHistory {
+  id        String   @id @default(cuid())
+  endpoint  String
+  input     Json
+  output    Json
+  moduleId  String
+  module    Module   @relation(fields: [moduleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("transaction_histories")
+}
