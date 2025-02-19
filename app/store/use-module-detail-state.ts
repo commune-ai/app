@@ -49,7 +49,7 @@ export const useModuleDetailStore = create<ModuleDetailStore>((set) => ({
     try {
       console.log('Fetching modules...');
       const client = new Client();
-      const data = await client.call('get_module', { module: module_name });
+      const data = await client.call('info',{},module_name as string);
       if (Array.isArray(data)) {
         set({ moduleDetail: data, loadingModuleDetail: false });
       } else {
