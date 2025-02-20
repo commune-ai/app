@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { WalletConnect } from '@/components/wallet/wallet-connect';
+import { WalletConnect } from '@/wallet/wallet-connect';
 import { Button } from '@/components/ui/button';
 import {
   Breadcrumb,

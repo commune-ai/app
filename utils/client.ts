@@ -15,10 +15,7 @@ export class Client {
   public key?: any;
 
   constructor(
-    module: string = 'module',
     key?: any,
-    network: string = 'local',
-    mode: string = 'http'
   ) {
     this.key = key;
     this.url = config.url
@@ -39,11 +36,6 @@ export class Client {
       timeout,
       extraHeaders
     );
-  }
-
-  private getUrl(fn: string, mode: string): string {
-    if (fn.startsWith('http')) return fn;
-    return `${mode}://${fn}`;
   }
 
   private getRequest(params: Params): RequestData {

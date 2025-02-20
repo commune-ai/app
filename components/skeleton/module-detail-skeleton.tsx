@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import { WalletConnect } from '@/components/wallet/wallet-connect';
+import { WalletConnect } from '@/wallet/wallet-connect';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function ModuleDetailSkeleton() {

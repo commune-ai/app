@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { useWalletStore } from "@/store/use-wallet-state";
 import { WalletType } from "@/types/wallet-types";
 import { Label } from "@/components/ui/label";
-import { LocalWalletSelector } from "@/components/wallet/local-wallet-selector";
+import { LocalWalletSelector } from "@/wallet/local-wallet-selector";
 
 interface WalletOption {
   id: string

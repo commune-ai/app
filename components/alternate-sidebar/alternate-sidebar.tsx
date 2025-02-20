@@ -8,7 +8,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { WalletConnect } from '../wallet/wallet-connect';
+import { WalletConnect } from '/wallet/wallet-connect';
 
 export function AlternateSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

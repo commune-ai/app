@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { WalletConnect } from "@/components/wallet/wallet-connect";
+import { WalletConnect } from "@/wallet/wallet-connect";
 
 export const SimpleHubNavbar = memo(function SimpleHubNavbar() {
   return (

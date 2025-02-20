@@ -1,6 +1,6 @@
 "use client";
 
-import { WalletConnect } from "@/components/wallet/wallet-connect";
+import { WalletConnect } from "@/wallet/wallet-connect";
 import { SearchInput } from "@/components/search/search-input";
 import { Menu, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";

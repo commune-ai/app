@@ -10,7 +10,7 @@ import { useWalletStore } from "@/store/use-wallet-state";
 import { WalletType } from "@/types/wallet-types";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface WalletConnectDialogProps {
   isOpen: boolean;
