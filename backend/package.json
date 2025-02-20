@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@polkadot/util-crypto": "^13.4.3",
     "@prisma/client": "^6.4.0",
     "@types/morgan": "^1.9.9",
     "bcrypt": "^5.1.1",

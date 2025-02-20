@@ -14,7 +14,9 @@ export class UserValidator {
             body('address')
                 .notEmpty().withMessage('address is required'),
             body('signature')
-                .notEmpty().withMessage('Signature is required')
+                .notEmpty().withMessage('Signature is required'),
+            body('type')
+                .notEmpty().withMessage('Type is required')
         ];
     }
 }
