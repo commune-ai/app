@@ -10,6 +10,7 @@ class UserRoute {
     }
     getRoutes() {
         this.router.get("/nonce/:address", UserController.createUserNonce);
+        this.router.get("/logout", GlobalMiddleware.CheckAuth, UserController.logout);
     }
     postRoutes() {
         this.router.post("/verify", UserValidator.verifyUser(), GlobalMiddleware.CheckValidationResult, UserController.verifyUser);

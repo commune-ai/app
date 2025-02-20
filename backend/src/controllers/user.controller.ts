@@ -44,4 +44,13 @@ export class UserController {
             next(e);
         }
     }
+    
+    static async logout(req: Request, res: Response, next: NextFunction) {
+        try {
+            res.clearCookie("token");
+            return ResponseService.CreateSuccessResponse("Logout", 200, res);
+        } catch (e) {
+            next(e);
+        }
+    }
 }

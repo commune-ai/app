@@ -16,7 +16,7 @@ export class GlobalMiddleware {
         try {
             const token = req.cookies.usertoken;
             if (!token) {
-                res.clearCookie("usertoken");
+                res.clearCookie("token");
                 next(ResponseService.CreateErrorResponse("Unauthorized", 401));
             }
             try {
@@ -25,13 +25,13 @@ export class GlobalMiddleware {
                     process.env.JWT_SECRET as string
                 )) as IDecodedToken;
                 if (!decodedToken) {
-                    res.clearCookie("usertoken");
+                    res.clearCookie("token");
                     next(ResponseService.CreateErrorResponse("Invalid token", 401));
                 }
                 req.body.userID = decodedToken.userID;
                 next();
             } catch (e) {
-                res.clearCookie("usertoken");
+                res.clearCookie("token");
                 next(ResponseService.CreateErrorResponse("Invalid token", 401));
             }
         } catch (error) {
