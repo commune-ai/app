@@ -6,4 +6,7 @@ export class UserService {
     static async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
         return await bcrypt.compare(password, hashedPassword);
     }
+    static async generateNonce(): Promise<string> {
+        return Math.random().toString(36).substring(2, 15);
+    }
 }

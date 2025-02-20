@@ -5,6 +5,7 @@ import cors from "cors";
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import path from "path";
+import { UserRoutes } from "./routes";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ export class MainServer {
         this.app.use(cookieParser());
         this.app.use(bodyParser.json({ limit: '50mb' }));
         this.app.use(cors({
-            origin: [process.env.ORIGIN_URL as string],
+            origin: [process.env.ORIGIN_URL as string,"http://localhost:3002"],
             credentials: true,
         }));
         this.app.use(
@@ -35,6 +36,7 @@ export class MainServer {
     }
 
     setRoutes() {
+        this.app.use("/api/auth", UserRoutes);
     }
 
     handle404Error() {

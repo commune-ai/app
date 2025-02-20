@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
-export class TransactionHistoryValidator {
-    static createTransactionHistory() {
+export class ApiTransactionHistoryValidator {
+    static createApiTransactionHistory() {
         return [
             body('endpoint')
                 .notEmpty().withMessage('Endpoint is required')

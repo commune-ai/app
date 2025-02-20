@@ -6,6 +6,7 @@ async function main() {
   await prisma.moduleCode.deleteMany({});
   await prisma.module.deleteMany({});
   await prisma.user.deleteMany({});
+  await prisma.
 
   console.log("All data deleted successfully!");
 }

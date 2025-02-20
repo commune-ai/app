@@ -14,36 +14,39 @@ datasource db {
 }
 
 model User {
-  id                String   @id @default(cuid())
-  profile_image_url String?
-  email             String   @unique
-  name              String?
-  password          String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  modules           Module[]
+  id                      String                  @id @default(cuid())
+  profile_image_url       String?
+  walletPublicKey         String                  @unique
+  nonce                   String                  @default("")
+  name                    String?
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  modules                 Module[]
+  APPTransactionHistory   AppTransactionHistory[]
+  apitransactionHistories ApiTransactionHistory[]
 
   @@map("users")
 }
 
 model Module {
-  id                   String               @id @default(cuid())
-  module_image_url     String?
-  name                 String
-  description          String
-  network              String
-  tags                 String[]
-  key                  String
-  founder              String?
-  hash                 String?
-  codelocation         String
-  appurl               String
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
-  userId               String
-  user                 User                 @relation(fields: [userId], references: [id])
-  moduleCodes          ModuleCode[]
-  transactionHistories TransactionHistory[]
+  id                      String                  @id @default(cuid())
+  module_image_url        String?
+  name                    String
+  description             String
+  network                 String
+  tags                    String[]
+  key                     String
+  founder                 String?
+  hash                    String?
+  codelocation            String
+  appurl                  String
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  userId                  String
+  user                    User                    @relation(fields: [userId], references: [id])
+  moduleCodes             ModuleCode[]
+  apitransactionHistories ApiTransactionHistory[]
+  appTransactionHistories AppTransactionHistory[]
 
   @@map("modules")
 }
@@ -60,14 +63,32 @@ model ModuleCode {
   @@map("module_codes")
 }
 
-model TransactionHistory {
+model ApiTransactionHistory {
   id        String   @id @default(cuid())
   endpoint  String
   input     Json
   output    Json
   moduleId  String
   module    Module   @relation(fields: [moduleId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@map("transaction_histories")
+
+  @@map("api_transaction_histories")
+}
+
+model AppTransactionHistory {
+  id                String   @id @default(cuid())
+  moduleworking     Boolean
+  evidenceImage_url String
+  moduleid          String
+  module            Module   @relation(fields: [moduleid], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  checkedByDOA      Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("app_transaction_histories")
 }
