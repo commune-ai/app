@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import * as solanaWeb3 from '@solana/web3.js';
 import { Connection } from '@solana/web3.js';
+import { fetchNonce, verifySignature } from './backend-login';
 
 interface SubWalletResponse {
   success: boolean;
@@ -41,6 +42,12 @@ async function connectToMetaMask(): Promise<{
     const signer = await provider.getSigner();
     const address = signer.address;
     const balance = await provider.getBalance(address);
+    const nonce = await fetchNonce(address);
+    const signature = await signer.signMessage(nonce);
+    const response = await verifySignature(address, signature, 'metamask');
+    if (!response.success) {
+      throw new Error('Signature verification failed');
+    }
     return {
       success: true,
       address,
@@ -74,7 +81,7 @@ const connectToSubWallet = async (): Promise<SubWalletResponse> => {
       error: 'Subwallet is not installed',
     };
   }
-  const { web3Enable, web3Accounts } = await import('@subwallet/extension-dapp');
+  const { web3Enable, web3Accounts, web3FromAddress } = await import('@subwallet/extension-dapp');
   try {
     const extensions = await web3Enable('SubWallet Connect');
     if (extensions.length === 0) {
@@ -100,6 +107,21 @@ const connectToSubWallet = async (): Promise<SubWalletResponse> => {
     const {
       data: { free: balance },
     } = accountInfo.toHuman() as { data: { free: string } };
+
+    const nonce = await fetchNonce(address);
+    const injector = await web3FromAddress(address);
+    if (!injector.signer || !injector.signer.signRaw) {
+      throw new Error('Signer or signRaw method is undefined');
+    }
+    const { signature } = await injector.signer.signRaw({
+      address: address,
+      data: nonce,
+      type: 'bytes',
+    });
+    const response = await verifySignature(address, signature, 'subwallet');
+    if (!response.success) {
+      throw new Error('Signature verification failed');
+    }
 
     return {
       success: true,
