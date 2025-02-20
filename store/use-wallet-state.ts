@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { WalletType } from "@/types/wallet-types";
+import { WalletType } from "@/wallet/types";
 
 interface WalletState {
   walletConnected: boolean;

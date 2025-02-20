@@ -1,6 +1,7 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
+
 export function ModuleCardSkeleton() {
   return (
     <Card className="overflow-hidden border-white/10 bg-white/5 backdrop-blur-md backdrop-filter">

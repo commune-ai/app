@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SimpleHubNavbar } from "@/components/navbar/hub-navbar-simple";
-import { Footer } from "@/components/footer/hub-footer";
+import { Footer } from "@/components/footer/footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,20 +12,9 @@ import { Separator } from "@/components/ui/separator";
 import { Key, ChevronLeft, Loader } from "lucide-react";
 import { useSigninStore } from "@/store/use-signin-state";
 import { useWalletStore } from "@/store/use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
+import { WalletType, WalletOption, walletOptions } from "@/wallet/types";
 import { Label } from "@/components/ui/label"
-import { LocalWalletSelector } from "@/components/local-wallet-selector";
-
-interface WalletOption {
-  id: string
-  name: string
-  icon: string
-}
-
-const walletOptions: WalletOption[] = [
-  { id: WalletType.POLKADOT, name: "Polkadot", icon: "/polkadot.svg" },
-  { id: WalletType.ETHEREUM, name: "Ethereum", icon: "/ethereum.svg" },
-]
+import { LocalWalletSelector } from "@/wallet/local";
 
 export default function SignIn() {
   const { privateKey, isLoading, handleSignIn, handlePrivateKeyChange, setWalletSelected, walletSelected } =

@@ -22,6 +22,7 @@ class Hub:
                 'remove', 
                 'update', 
                 'test', 
+                'get_module'
                 'info', 
                 'functions']
     modules_path = __file__.replace(__file__.split('/')[-1], 'modules')
@@ -55,6 +56,7 @@ class Hub:
         return [m['name'] for m in self.modules()]
 
     def get_module(self, module:str, **kwargs):
+        kwargs['lite'] = False
         info =  c.info(module, **kwargs)
         prefix = info['name'].split('.')[0]
         return info

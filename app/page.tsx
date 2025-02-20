@@ -6,7 +6,7 @@ import { SearchInput } from "@/components/search/search-input";
 import { ModuleCard } from "@/components/module/module-card";
 import { ModuleCardSkeleton } from "@/components/skeleton/module-card-skeleton";
 import { ModulePagination } from "@/components/pagination/module-pagination";
-import { Footer } from "@/components/footer/hub-footer";
+import { Footer } from "@/components/footer/footer";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,9 +14,8 @@ import { motion } from "framer-motion";
 import { ModuleType, useModuleStore } from "@/store/use-module-state";
 import { useRouter } from "next/navigation";
 import { useNavbarSidebarStore } from "@/store/use-navbar-sidebar-state";
-import { NavbarSidebarToggle } from "@/components/alternate-sidebar/navbar-sidebar-toggle";
-
-import { AlternateSidebar } from "@/components/alternate-sidebar/alternate-sidebar";
+import { NavbarSidebarToggle } from "@/components/sidebar/navbar-sidebar-toggle";
+import { AlternateSidebar } from "@/components/footer/footer";
 import {
   Breadcrumb,
   BreadcrumbItem,

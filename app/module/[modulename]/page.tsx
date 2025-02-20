@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { WalletConnect } from '@/wallet/wallet-connect';
+import { WalletConnect } from '@/wallet/connect';
 import { Button } from '@/components/ui/button';
 import {
   Breadcrumb,
@@ -27,11 +27,11 @@ import {
   ThumbsDown,
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CodeTab } from '@/components/module-tabs/code-tab';
-import { ApiTab } from '@/components/module-tabs/api-tab';
-import { AppTab } from '@/components/module-tabs/app-tab';
+import { CodeTab } from '@/components/module/tabs/code-tab';
+import { ApiTab } from '@/components/module/tabs/api-tab';
+import { AppTab } from '@/components/module/tabs/app-tab';
 import ModuleDetailSkeleton from '@/components/skeleton/module-detail-skeleton';
-import { DiscussionTab } from '@/components/module-tabs/discussion-tab';
+import { DiscussionTab } from '@/components/module/tabs/discussion-tab';
 import { useModuleDetailStore } from '@/store/use-module-detail-state';
 import { ModuleReportDialog } from '@/components/module/module-report-dialog';
 
@@ -296,7 +296,7 @@ export default function ModuleDetailPage() {
           </TabsContent>
 
           <TabsContent value="app" className="flex-1 p-6 overflow-auto">
-            <AppTab />
+            <AppTab module={moduleDetail[0]}/>
           </TabsContent>
 
           <TabsContent value="discussion" className="flex-1 p-6 overflow-auto">

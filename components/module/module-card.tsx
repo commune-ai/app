@@ -136,7 +136,7 @@ export function ModuleCard({
                 <div className="flex items-center justify-start space-x-2 mb-1">
                   <div className="flex items-center justify-between space-x-1">
                     <Key className="h-3 w-3 text-green-400" />
-                    <span className="text-xs text-green-400">Key: {truncateKey(mkey)}</span>
+                    <span className="text-xs text-green-400">{truncateKey(mkey)}</span>
                   </div>
                   <TooltipProvider>
                     <Tooltip>
@@ -169,7 +169,7 @@ export function ModuleCard({
                 </div>
                 <div className="flex items-center justify-end space-x-1">
                   <Clock className="h-3 w-3 text-gray-400" />
-                  <span className="text-xs text-gray-300">Time:{new Date(Number(timestamp)*1000).toLocaleString()}</span>
+                  <span className="text-s text-gray-300">{new Date(Number(timestamp)*1000).toLocaleString()}</span>
                 </div>
               </div>
             </div>

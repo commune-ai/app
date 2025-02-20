@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Footer } from '@/components/footer/hub-footer';
+import { Footer } from '@/components/footer/footer';
 import {
   Upload,
   X,
@@ -24,7 +24,7 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/lib';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { SimpleHubNavbar } from '@/components/navbar/hub-navbar-simple';
 import {

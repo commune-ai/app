@@ -90,7 +90,7 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
       <div className="rounded-lg border border-[#30363D] bg-[#0D1117] overflow-hidden">
         <div className="p-6 space-y-6">
           <div className="space-y-2">
-            <label className="text-sm text-gray-400">Select Function</label>
+            <label className="text-sm text-gray-400">Function</label>
             <Select value={selectedFunction} onValueChange={setSelectedFunction}>
               <SelectTrigger className="w-full bg-[#0D1117] border-[#30363D] text-gray-300">
                 <SelectValue />

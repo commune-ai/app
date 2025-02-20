@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { SimpleHubNavbar } from "@/components/navbar/hub-navbar-simple";
-import { Footer } from "@/components/footer/hub-footer";
+import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -10,20 +10,9 @@ import { Copy, AlertTriangle, Check, ChevronLeft, Loader } from "lucide-react";
 import { useSignupStore } from "@/store/use-signup-state";
 import { useEffect } from "react";
 import { useWalletStore } from "@/store/use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
+import { WalletType, walletOptions } from "@/wallet/types";
 import { Label } from "@/components/ui/label";
-import { LocalWalletSelector } from "@/wallet/local-wallet-selector";
-
-interface WalletOption {
-  id: string
-  name: string
-  icon: string
-}
-
-const walletOptions: WalletOption[] = [
-  { id: WalletType.POLKADOT, name: "Polkadot", icon: "/polkadot.svg" },
-  { id: WalletType.ETHEREUM, name: "Ethereum", icon: "/ethereum.svg" },
-]
+import { LocalWalletSelector } from "@/wallet/local/selector";
 
 export default function SignUp() {
   const {

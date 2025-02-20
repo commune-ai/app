@@ -4,7 +4,7 @@ import { JSX, useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Wallet, Copy, LogOut, Check, ChevronDown } from "lucide-react";
-import { WalletConnectDialog } from "./wallet-connect-dialog";
+import { WalletConnectDialog } from "./dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,10 +14,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useWalletStore } from "@/store/use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
+import { WalletType } from "@/wallet/types";
 import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/lib";
 import { AvatarImage } from "@radix-ui/react-avatar";
 
 export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {

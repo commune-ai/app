@@ -1,8 +1,8 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { create } from "zustand";
 import * as bip39 from "bip39";
-import { Wallet } from "@/utils/local-wallet";
-import { WalletType } from "@/types/wallet-types";
+import { Wallet } from "@/wallet/local/wallet";
+import { WalletType } from "@/wallet/types";
 import { useWalletStore } from "./use-wallet-state";
 
 interface State {

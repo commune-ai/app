@@ -7,7 +7,7 @@ import { AlertCircle, Loader2, LogIn } from "lucide-react";
 import Image from "next/image";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { useWalletStore } from "@/store/use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
+import { WalletType } from "@/wallet/types";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";

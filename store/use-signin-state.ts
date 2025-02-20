@@ -1,8 +1,8 @@
-import { Wallet } from "@/utils/local-wallet";
+import { Wallet } from "@/wallet/local/wallet";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { create } from "zustand";
 import { useWalletStore } from "./use-wallet-state";
-import { WalletType } from "@/types/wallet-types";
+import { WalletType } from "@/wallet/types";
 
 interface SigninState {
   privateKey: string;
