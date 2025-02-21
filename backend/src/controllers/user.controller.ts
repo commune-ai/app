@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import { JwtService, ResponseService, UserService } from "../services";
 import { signatureVerify } from '@polkadot/util-crypto';
 import { ethers } from 'ethers';
+
+const JWT_SECRET = process.env.JWT_SECRET as string
 export class UserController {
 
     static async createUserNonce(req: Request, res: Response, next: NextFunction) {
@@ -37,14 +39,14 @@ export class UserController {
             } else {
                 return ResponseService.CreateErrorResponse("Invalid type", 400);
             }
-            const token = await JwtService.sign(res, { userID: user.id }, process.env.JWT_SECRET as string, { expiresIn: "1d" });
+            const token = await JwtService.sign(res, { userID: user.id }, JWT_SECRET, { expiresIn: "1d" });
             await UserRepository.resetNonce(address);
             return ResponseService.CreateSuccessResponse({ message: "Login Successful", token: token }, 200, res);
         } catch (e) {
             next(e);
         }
     }
-    
+
     static async logout(req: Request, res: Response, next: NextFunction) {
         try {
             res.clearCookie("token");

@@ -65,4 +65,16 @@ export class UserRepository {
             throw new Error("Database Error: User Update Failed");
         }
     }
+
+    static async findUserExistById(id: string) {
+        try {
+            return await prisma.user.findUnique({
+                where: {
+                    id: id
+                }
+            })
+        } catch (e) {
+            throw new Error("Database Error: Finding User By Id Failed")
+        }
+    }
 }

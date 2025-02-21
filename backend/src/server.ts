@@ -5,7 +5,7 @@ import cors from "cors";
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import path from "path";
-import { UserRoutes } from "./routes";
+import { UserRoutes,ModuleRoutes,AppTransactionHistoryRoutes } from "./routes";
 
 dotenv.config();
 
@@ -37,6 +37,8 @@ export class MainServer {
 
     setRoutes() {
         this.app.use("/api/auth", UserRoutes);
+        this.app.use("/api/module",ModuleRoutes);
+        this.app.use("/api/app-history",AppTransactionHistoryRoutes);
     }
 
     handle404Error() {

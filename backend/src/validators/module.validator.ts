@@ -16,7 +16,7 @@ export class ModuleValidator {
             body('tags')
                 .isArray().withMessage('Tags must be an array of strings'),
             body('key')
-                .notEmpty().withMessage('Key is required')
+                .optional()
                 .isString().withMessage('Key must be a string'),
             body('founder')
                 .optional()

@@ -31,15 +31,17 @@ model User {
 model Module {
   id                      String                  @id @default(cuid())
   module_image_url        String?
-  name                    String
+  name                    String                  @unique
   description             String
   network                 String
   tags                    String[]
-  key                     String
+  key                     String?
   founder                 String?
   hash                    String?
   codelocation            String
   appurl                  String
+  ipfs_cid                String
+  deregistered            Boolean                 @default(false)
   createdAt               DateTime                @default(now())
   updatedAt               DateTime                @updatedAt
   userId                  String
@@ -53,8 +55,7 @@ model Module {
 
 model ModuleCode {
   id        String   @id @default(cuid())
-  code      Json
-  schema    Json
+  ipfs_cid  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   moduleId  String
@@ -81,6 +82,7 @@ model ApiTransactionHistory {
 model AppTransactionHistory {
   id                String   @id @default(cuid())
   moduleworking     Boolean
+  description       String
   evidenceImage_url String
   moduleid          String
   module            Module   @relation(fields: [moduleid], references: [id])

@@ -2,7 +2,7 @@ import { prisma } from "../model";
 
 export class ModuleRepository {
 
-    static async createModule(name: string, description: string, network: string, tags: string[], key: string, codelocation: string, appurl: string, userId: string, module_image_url?: string, founder?: string, hash?: string) {
+    static async createModule(name: string, description: string, network: string, tags: string[], codelocation: string, appurl: string, ipfs_cid: string, userId: string, module_image_url?: string, key?: string, founder?: string, hash?: string) {
         try {
             return await prisma.module.create({
                 data: {
@@ -16,6 +16,7 @@ export class ModuleRepository {
                     hash: hash,
                     codelocation: codelocation,
                     appurl: appurl,
+                    ipfs_cid: ipfs_cid,
                     userId: userId
                 }
             });
@@ -36,5 +37,25 @@ export class ModuleRepository {
             throw new Error("Database Error: Module Finding Failed");
         }
     }
-    
+
+    static async findAllModules() {
+        try {
+            return await prisma.module.findMany();
+        } catch (e) {
+            throw new Error("Database Error: Module Finding Failed");
+        }
+    }
+
+    static async findExistingModuleName(name: string) {
+        try {
+            return await prisma.module.findFirst({
+                where: {
+                    name: name
+                }
+            });
+        } catch (e) {
+            throw new Error("Database Error: Module Finding Failed");
+        }
+    }
+
 }
