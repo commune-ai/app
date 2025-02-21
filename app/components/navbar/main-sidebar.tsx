@@ -74,11 +74,10 @@ export function MainSidebar({ children, onFilterChange, moduleData }: MainSideba
       <Badge
         key={type === "network" ? value + index : value}
         variant="outline"
-        className={`cursor-pointer hover:bg-white/10 transition-colors ${
-          filters[type] === value
-            ? "bg-blue-500/20 text-blue-400 border-blue-500/20"
-            : "bg-white/5 text-gray-300 border-white/10"
-        }`}
+        className={`cursor-pointer hover:bg-white/10 transition-colors ${filters[type] === value
+          ? "bg-green-500/20 text-green-400 border-green-500/20"
+          : "bg-white/5 text-gray-300 border-white/10"
+          }`}
         onClick={() => handleFilterChange(type, value)}
       >
         {value}

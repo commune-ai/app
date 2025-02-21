@@ -78,7 +78,7 @@ export function ModuleReportDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            className="bg-blue-500 text-white hover:bg-blue-600"
+            className="bg-green-500 text-white hover:bg-green-600"
             disabled={!problem.trim()}
           >
             Submit Report

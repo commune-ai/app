@@ -358,7 +358,7 @@ export default function CreateModulePage() {
                   {tags.map((tag, index) => (
                     <div
                       key={index}
-                      className="flex items-center bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full text-sm"
+                      className="flex items-center bg-green-500/20 text-blue-300 px-2 py-1 rounded-full text-sm"
                     >
                       {tag}
                       <button
@@ -421,9 +421,9 @@ export default function CreateModulePage() {
                         className={cn(
                           'w-10 h-10 rounded-full flex items-center justify-center mb-2',
                           step > index
-                            ? 'bg-blue-500 text-white'
+                            ? 'bg-green-500 text-white'
                             : step === index + 1
-                              ? 'bg-blue-200 text-blue-800'
+                              ? 'bg-green-200 text-green-800'
                               : 'bg-gray-200 text-gray-400'
                         )}
                       >
@@ -435,7 +435,7 @@ export default function CreateModulePage() {
                 </div>
                 <div className="mt-4 h-2 bg-gray-200 rounded-full">
                   <div
-                    className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-in-out"
+                    className="h-full bg-green-500 rounded-full transition-all duration-300 ease-in-out"
                     style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
                   ></div>
                 </div>
@@ -460,7 +460,7 @@ export default function CreateModulePage() {
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="bg-blue-500 text-white hover:bg-blue-600 ml-auto"
+                  className="bg-green-500 text-white hover:bg-green-600 ml-auto"
                 >
                   Next
                   <ChevronRight className="w-4 h-4 ml-2" />
@@ -469,7 +469,7 @@ export default function CreateModulePage() {
                 <Button
                   type="submit"
                   onClick={handleCreate}
-                  className="bg-blue-500 text-white hover:bg-blue-600 ml-auto"
+                  className="bg-green-500 text-white hover:bg-green-600 ml-auto"
                 >
                   Create Module
                 </Button>

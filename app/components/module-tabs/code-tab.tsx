@@ -83,7 +83,7 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
             placeholder="Search in files..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full bg-[#0D1117] border-[#30363D] pl-10 text-gray-300 placeholder:text-gray-500"
+            className="w-full bg-[#0F0F0F] border-[#30363D] pl-10 text-gray-300 placeholder:text-gray-500"
           />
         </div>
       </div>
@@ -95,7 +95,7 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
             <button
               key={file}
               onClick={() => handleFileSelect(file)}
-              className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${selectedFile === file ? 'bg-blue-500 text-white' : 'text-gray-300'
+              className={`w-full flex items-center px-4 py-2 text-sm hover:bg-[#30363D] rounded-sm ${selectedFile === file ? 'bg-green-500 text-white' : 'text-gray-300'
                 }`}
             >
               {file}
@@ -110,7 +110,7 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
               variant="ghost"
               size="icon"
               onClick={() => handleCopyCode(code[selectedFile] || '')}
-              className="h-8 w-8 rounded-md border border-[#30363D] bg-[#0D1117] hover:bg-[#30363D] transition-all duration-200"
+              className="h-8 w-8 rounded-md border border-[#30363D] bg-[#0F0F0F] hover:bg-[#30363D] transition-all duration-200"
             >
               {copied ? (
                 <Check className="h-4 w-4 text-blue-500" />
@@ -125,8 +125,8 @@ export function CodeTab({ code = defaultCode }: CodeTabProps) {
               dangerouslySetInnerHTML={{ __html: highlightedCode }}
             />
           </pre>
+        </div>
       </div>
-    </div>
     </div >
   );
 }

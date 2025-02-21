@@ -31,8 +31,8 @@ export default function SignIn() {
   const { privateKey, isLoading, handleSignIn, handlePrivateKeyChange, setWalletSelected, walletSelected } =
     useSigninStore();
 
-  const {walletConnected}=useWalletStore();
-  
+  const { walletConnected } = useWalletStore();
+
 
   const router = useRouter();
 
@@ -78,7 +78,7 @@ export default function SignIn() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignIn} className="space-y-6">
-              <div className="space-y-4">
+                <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
                   <LocalWalletSelector
                     options={walletOptions}
@@ -103,7 +103,7 @@ export default function SignIn() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                  className="w-full bg-green-500 text-white hover:bg-green-600"
                   disabled={isLoading}
                 >
                   Sign In {isLoading && <Loader className="h-5 w-5 animate-spin" />}
@@ -125,7 +125,7 @@ export default function SignIn() {
                 <div className="mt-6 text-center">
                   <Link
                     href="/signup"
-                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                    className="text-sm text-green-400 hover:text-green-300 transition-colors"
                   >
                     Create new account
                   </Link>

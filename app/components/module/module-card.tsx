@@ -3,12 +3,11 @@
 import { useState, useRef, useCallback, JSX } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Check, Copy, Code, ExternalLink, Key, Clock } from "lucide-react";
+import { Code, ExternalLink, Key, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Tag = string;
@@ -33,28 +32,13 @@ export function ModuleCard({
   tags = ["LLM", "Text Conversion", "LLM", "Text Conversion", "LLM", "Text Conversion"],
 }: ModuleCardProps): JSX.Element {
   const router = useRouter();
-  const [copied, setCopied] = useState<boolean>(false);
   const [imageError, setImageError] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
-  const copyToClipboard = useCallback(async (text: string): Promise<void> => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  }, []);
-
-  const navigateToModule = useCallback(
-    (e: React.MouseEvent): void => {
-      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
-        router.push(`/module/${encodeURIComponent(name.toLowerCase())}`);
-      }
-    },
-    [router, name]
+  const navigateToModule = useCallback(() => {
+    router.push(`/module/${encodeURIComponent(name.toLowerCase())}`);
+  }, [router, name]
   );
 
   const handleCodeClick = useCallback(
@@ -95,6 +79,11 @@ export function ModuleCard({
     return `${name.slice(0, 15)}...`
   }
 
+  const getDateOnly = (timestamp: string): string => {
+    const date = new Date(Number(timestamp) * 1000);
+    return `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -108,103 +97,76 @@ export function ModuleCard({
         onMouseLeave={() => setIsHovered(false)}
       >
         <CardContent className="p-5 flex flex-col">
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
-              <Image
-                src={
-                  !imageError ? imageUrl || "/sample.png" : "/placeholder.svg?height=48&width=48"
-                }
-                alt={name}
-                width={64}
-                height={64}
-                className="object-cover"
-                onError={handleImageError}
-                priority
-              />
-            </div>
-            <div className="flex-1 min-w-0 flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-semibold text-white truncate">{truncateName(name)}</h3>
-                <Badge
-                  variant="outline"
-                  className="mt-1 bg-green-500/10 text-green-400 border-green-500/20 font-medium"
-                >
-                  {network}
-                </Badge>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center justify-start space-x-2 mb-1">
-                  <div className="flex items-center justify-between space-x-1">
-                    <Key className="h-3 w-3 text-green-400" />
-                    <span className="text-xs text-green-400">Key: {truncateKey(mkey)}</span>
-                  </div>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            copyToClipboard(mkey)
-                          }}
-                          className="h-5 w-5 rounded-md hover:bg-[#30363D] transition-all duration-200"
-                        >
-                          <AnimatePresence>
-                            {copied ? (
-                              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                <Check className="h-3 w-3 text-green-400" />
-                              </motion.span>
-                            ) : (
-                              <Copy className="h-3 w-3 text-green-400" />
-                            )}
-                          </AnimatePresence>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Copy module ID</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div className="flex items-center justify-end space-x-1">
-                  <Clock className="h-3 w-3 text-gray-400" />
-                  <span className="text-xs text-gray-300">Time:{new Date(Number(timestamp)*1000).toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <AnimatePresence>
-            {isHovered && (
+            {isHovered ? (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-3 overflow-hidden"
+                initial={{ opacity: 0, }}
+                animate={{ opacity: 1, }}
+                exit={{ opacity: 0 }}
+                className="mb-3 overflow-hidden h-28"
               >
-                <p className="text-sm text-gray-300">{description}</p>
+                <h1 className="text-white font-bold text-xl">{name}</h1>
+                <p className="text-sm text-gray-300 h-full">{description}</p>
               </motion.div>
-            )}
+            ) :
+              <>
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
+                    <Image
+                      src={
+                        !imageError ? imageUrl || "/sample.png" : "/placeholder.svg?height=48&width=48"
+                      }
+                      alt={name}
+                      width={64}
+                      height={64}
+                      className="object-cover"
+                      onError={handleImageError}
+                      priority
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0 flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white truncate">{truncateName(name)}</h3>
+                      <Badge
+                        variant="outline"
+                        className="mt-1 bg-green-500/10 text-green-400 border-green-500/20 font-medium"
+                      >
+                        {network}
+                      </Badge>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center justify-start space-x-2 mb-1">
+                        <div className="flex items-center justify-between space-x-1">
+                          <Key className="h-3 w-3 text-green-400" />
+                          <span className="text-xs text-green-400">Key: {truncateKey(mkey)}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-end space-x-1">
+                        <Clock className="h-3 w-3 text-gray-400" />
+                        <span className="text-xs text-gray-300">Time: {getDateOnly(timestamp)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div ref={cardRef} className="h-[50px]">
+                  <ScrollArea className="h-full w-full">
+                    <div className="flex flex-wrap gap-1 pr-4">
+                      {tags.map((tag, index) => (
+                        <Badge
+                          key={`${tag}-${index}`}
+                          variant="outline"
+                          className="flex-shrink-0 bg-white/5 text-gray-300 border-white/10"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </>
+            }
           </AnimatePresence>
-
-          <div ref={cardRef} className="h-[30px]">
-            <ScrollArea className="h-full w-full">
-              <div className="flex flex-wrap gap-1 pr-4">
-                {tags.map((tag, index) => (
-                  <Badge
-                    key={`${tag}-${index}`}
-                    variant="outline"
-                    className="flex-shrink-0 bg-white/5 text-gray-300 border-white/10"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
         </CardContent>
-
         <CardFooter className="grid grid-cols-3 border-t border-white/10 p-0">
           <Button
             variant="ghost"

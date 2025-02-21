@@ -15,10 +15,9 @@ export function ModulePagination({ currentPage, totalPages, onPageChange }: Pagi
   const handlePageClick = (page: number) => onPageChange(page);
 
   const getButtonClass = (isCurrentPage: boolean) =>
-    `w-8 h-8 ${
-      isCurrentPage
-        ? 'bg-blue-500 text-white'
-        : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
+    `w-8 h-8 ${isCurrentPage
+      ? 'bg-green-500 text-white'
+      : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
     }`;
 
   return (

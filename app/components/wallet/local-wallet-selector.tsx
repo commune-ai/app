@@ -42,8 +42,8 @@ function WalletOption({
     return (
         <motion.div
             className={`relative flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer transition-all duration-300 ${isSelected
-                    ? "bg-blue-500/20 border-2 border-blue-500"
-                    : "bg-white/5 border-2 border-transparent hover:border-blue-500/50"
+                ? "bg-green-500/20 border-2 border-green-500"
+                : "bg-white/5 border-2 border-transparent hover:border-green-500/50"
                 }`}
             onClick={onSelect}
             onMouseEnter={() => setIsHovered(true)}
@@ -61,7 +61,7 @@ function WalletOption({
                     style={{ opacity: isSelected || isHovered ? 1 : 0.7 }}
                 />
             </div>
-            <span className={`text-sm font-medium ${isSelected ? "text-blue-400" : "text-gray-300"}`}>{wallet.name}</span>
+            <span className={`text-sm font-medium ${isSelected ? "text-green-400" : "text-gray-300"}`}>{wallet.name}</span>
             {isSelected && (
                 <motion.div
                     className="absolute top-2 right-2"
@@ -69,7 +69,7 @@ function WalletOption({
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 >
-                    <CheckCircle2 className="w-5 h-5 text-blue-500" />
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
                 </motion.div>
             )}
         </motion.div>
