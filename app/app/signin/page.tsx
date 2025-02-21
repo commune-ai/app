@@ -56,24 +56,23 @@ export default function SignIn() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <Button
           variant="ghost"
-          className="mb-8 text-gray-400 hover:text-white hover:bg-transparent"
+          className="mb-8 text-green-400 hover:text-white hover:bg-transparent"
           onClick={handleBack}
         >
           <ChevronLeft className="mr-2 h-4 w-4" />
           Back to Home
         </Button>
-
         <div className="max-w-md mx-auto space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white">Welcome back</h2>
-            <p className="mt-2 text-sm text-gray-400">
+            <h2 className="text-3xl font-bold text-green-500">Welcome back</h2>
+            <p className="mt-2 text-sm text-green-400">
               Sign in to your account using your private key
             </p>
           </div>
 
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="text-xl text-white">Sign In</CardTitle>
+              <CardTitle className="text-xl text-green-500">Sign In</CardTitle>
               <CardDescription>Enter your private key to continue</CardDescription>
             </CardHeader>
             <CardContent>

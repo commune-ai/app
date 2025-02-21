@@ -380,7 +380,7 @@ export default function CreateModulePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#03040B] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+    <div className="min-h-screen flex flex-col bg-[#0F0F0F] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
       <SimpleHubNavbar />
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="w-full max-w-2xl mx-auto">
