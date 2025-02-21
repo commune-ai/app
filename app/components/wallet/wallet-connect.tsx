@@ -19,12 +19,12 @@ import { usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { AvatarImage } from "@radix-ui/react-avatar";
-import useSidebarStore from "@/store/use-sidebar-state";
+import { useSidebar } from "../ui/sidebar";
 
 export function WalletConnect({ onSidebar }: { onSidebar?: boolean }): JSX.Element {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const { walletConnected, setWalletConnected, setWallet, wallet } = useWalletStore();
-  const { isCollapsed } = useSidebarStore();
+  const { open } = useSidebar();
 
   const [copied, setCopied] = useState<boolean>(false);
   const pathname = usePathname();
@@ -125,7 +125,7 @@ export function WalletConnect({ onSidebar }: { onSidebar?: boolean }): JSX.Eleme
         onClick={handleOpenDialog}
       >
         <Wallet className="mr-2 h-4 w-4" />
-        {!isModulePath && !isCollapsed && <span className="hidden sm:inline">Connect Wallet</span>}
+        {!isModulePath && open && <span className="hidden sm:inline">Connect Wallet</span>}
       </Button>
       <WalletConnectDialog isOpen={isDialogOpen} onClose={handleCloseDialog} />
     </>

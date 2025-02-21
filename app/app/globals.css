@@ -37,10 +37,6 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --sidebar-background: #0f0f0f;
-    --sidebar-foreground: #ffffff;
-    --sidebar-border: 0, 0%, 20%;
-    --sidebar-ring: 242, 50%, 62%, 80%;
   }
   .dark {
     --background: 0 0% 6%;

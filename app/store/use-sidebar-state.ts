@@ -1,8 +1,6 @@
 import { create } from "zustand";
 
 interface SidebarStore {
-  isCollapsed: boolean;
-  setIsCollapsed: (data: boolean) => void;
   selectedNetworks: string[];
   setSelectedNetworks: (networks: string) => void;
   selectedTags: string[];
@@ -10,10 +8,8 @@ interface SidebarStore {
 }
 
 const useSidebarStore = create<SidebarStore>((set) => ({
-  isCollapsed: false,
   selectedNetworks: [],
   selectedTags: [],
-  setIsCollapsed: (data) => set({ isCollapsed: data }),
   setSelectedNetworks: (network: string) =>
     set((state) => ({
       selectedNetworks: state.selectedNetworks.includes(network)

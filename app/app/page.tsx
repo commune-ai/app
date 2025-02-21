@@ -18,7 +18,6 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import useSearchStore from "@/store/use-search-state";
 import useSidebarStore from "@/store/use-sidebar-state";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -27,25 +26,25 @@ export default function Home() {
 
   const { fetchModules, modules, loadingModules, isLoading, assignRandomNetworkAndTags } = useModuleStore();
   const { searchTerm, currentPage, setCurrentPage } = useSearchStore();
-  const { isCollapsed, setIsCollapsed, selectedNetworks, selectedTags } = useSidebarStore()
+  const { selectedNetworks, selectedTags } = useSidebarStore()
 
   const filterModules = useCallback(
     (modules: ModuleType[], search: string) => {
       return modules.filter((module) => {
+        setCurrentPage(1);
         const matchesSearch = !search || module.name.toLowerCase().includes(search.toLowerCase());
         const matchesNetwork = selectedNetworks.length === 0 || selectedNetworks.includes(module.network);
         const matchesTags = selectedTags.length === 0 || module.tags.some(tag => selectedTags.includes(tag));
         return matchesSearch && matchesNetwork && matchesTags;
       });
     },
-    [selectedNetworks, selectedTags]
+    [selectedNetworks, selectedTags, setCurrentPage]
   );
 
   useEffect(() => {
     const filtered = filterModules(modules, searchTerm);
     setFilteredModules(filtered);
   }, [searchTerm, modules, filterModules, selectedNetworks, selectedTags]);
-
 
   const fetchData = useCallback(async () => {
     if (modules.length > 0) return;
@@ -66,13 +65,6 @@ export default function Home() {
     setCurrentPage(pageNumber);
   }, [setCurrentPage]);
 
-  const isMobile = useIsMobile();
-
-  const handleSidebarCollapse = useCallback(() => {
-    if (isMobile) return;
-    setIsCollapsed(!isCollapsed);
-  }, [isCollapsed, setIsCollapsed, isMobile]);
-
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -87,11 +79,11 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-[#0F0F0F]">
       <div>
         <SidebarProvider>
-          <AlternateSidebar className="p-2 bg-[#0F0F0F]" />
+          <AlternateSidebar className="p-2 bg-[#0F0F0F] border-r border-gray-500/10" />
           <SidebarInset className="bg-[#0F0F0F]">
             <header className="flex">
               <div className="flex items-center gap-2 px-4 py-8">
-                <SidebarTrigger onClick={handleSidebarCollapse} className="-ml-1" />
+                <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <Breadcrumb>
                   <BreadcrumbList>

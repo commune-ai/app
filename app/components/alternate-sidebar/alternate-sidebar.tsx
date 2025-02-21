@@ -6,11 +6,12 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { WalletConnect } from '../wallet/wallet-connect';
 import { SearchInput } from '../search/search-input';
 import { Button } from '../ui/button';
-import { Plus } from 'lucide-react';
+import { NetworkIcon, Plus, TagIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import useSearchStore from '@/store/use-search-state';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -19,10 +20,12 @@ import { useModuleStore } from '@/store/use-module-state';
 import { Badge } from '../ui/badge';
 import Link from 'next/link';
 
-export function AlternateSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AlternateSidebar({ ...props }) {
   const { setSearchTerm, setCurrentPage } = useSearchStore();
   const { modules } = useModuleStore();
-  const { isCollapsed, selectedNetworks, setSelectedNetworks, selectedTags, setSelectedTags } = useSidebarStore();
+  const { selectedNetworks, setSelectedNetworks, selectedTags, setSelectedTags } = useSidebarStore();
+  const { open, setOpen } = useSidebar();
+
   const router = useRouter();
 
   const handleCreateModule = useCallback(() => {
@@ -48,6 +51,7 @@ export function AlternateSidebar({ ...props }: React.ComponentProps<typeof Sideb
     <Sidebar
       collapsible="icon"
       {...props}
+
     >
       <SidebarHeader>
         <Link href="/" className="text-green-500 text-2xl font-bold">dhub</Link>
@@ -55,7 +59,7 @@ export function AlternateSidebar({ ...props }: React.ComponentProps<typeof Sideb
       <SidebarContent className='pl-2'>
         <WalletConnect />
         <div className="flex items-center w-full space-x-2 container mx-auto">
-          {!!!isCollapsed && <SearchInput onSearch={handleSearch} />}
+          {!!!!open && <SearchInput onSearch={handleSearch} />}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -63,9 +67,9 @@ export function AlternateSidebar({ ...props }: React.ComponentProps<typeof Sideb
                   variant="outline"
                   size="icon"
                   onClick={handleCreateModule}
-                  className={`${isCollapsed ? "w-full" : 'w-14'} border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200`}
+                  className={`${!open ? "w-full" : 'w-14'} border-white/10 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors duration-200`}
                 >
-                  <Plus className={`${isCollapsed ? "w-full" : "w-4"} h-4`} />
+                  <Plus className={`${!open ? "w-full" : "w-4"} h-4`} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -75,16 +79,23 @@ export function AlternateSidebar({ ...props }: React.ComponentProps<typeof Sideb
           </TooltipProvider>
         </div>
         <h1>NetWorks</h1>
-        <div>{!isCollapsed && networks.map((network, index) => <Badge
+        {!open && <Button onClick={(() => setOpen(!open))}>
+          <NetworkIcon className='text-green-500' />
+        </Button>}
+        <div>{!!open && networks.map((network, index) => <Badge
           key={index + 1}
           variant="outline"
           onClick={() => setSelectedNetworks(network)}
           className={`m-1 ${selectedNetworks.includes(network) ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-white'} border-green-500/20 font-medium text-md cursor-pointer`}
         >
           {network}
-        </Badge>)}</div>
+        </Badge>)}
+        </div>
         <h1>Tags</h1>
-        <div>{!isCollapsed && tags.map((tag, index) => <Badge
+        {!open && <Button onClick={() => setOpen(!open)}>
+          <TagIcon className='text-green-500' />
+        </Button>}
+        <div>{!!open && tags.map((tag, index) => <Badge
           key={index + 1}
           variant="outline"
           onClick={() => setSelectedTags(tag)}
