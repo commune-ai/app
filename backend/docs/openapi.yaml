@@ -1,0 +1,162 @@
+openapi: 3.0.0
+info:
+  title: AI Model Marketplace API
+  description: API for user authentication, module management, and transaction history.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+paths:
+  /auth/nonce/{address}:
+    get:
+      summary: Generate a nonce for user authentication
+      parameters:
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nonce generated successfully
+        '400':
+          description: Invalid address
+
+  /auth/logout:
+    get:
+      summary: Logout the authenticated user
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+        '401':
+          description: Unauthorized
+
+  /auth/verify:
+    post:
+      summary: Verify user using address and signature
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                signature:
+                  type: string
+                type:
+                  type: string
+      responses:
+        '200':
+          description: Verification successful
+        '400':
+          description: Invalid request parameters
+
+  /module:
+    get:
+      summary: Get all registered modules
+      responses:
+        '200':
+          description: List of modules
+
+  /module/create:
+    post:
+      summary: Create a new module
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                network:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                key:
+                  type: string
+                founder:
+                  type: string
+                hash:
+                  type: string
+                codelocation:
+                  type: string
+                appurl:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Module created successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+
+  /app-history/{moduleid}:
+    get:
+      summary: Get transaction history of a module
+      parameters:
+        - name: moduleid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction history fetched successfully
+        '404':
+          description: Module not found
+
+  /app-history/create:
+    post:
+      summary: Create a transaction history entry
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                moduleworking:
+                  type: boolean
+                description:
+                  type: string
+                moduleid:
+                  type: string
+                signature:
+                  type: string
+                type:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Transaction history created
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
