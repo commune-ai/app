@@ -14,6 +14,10 @@ export class AppTransactionHistoryValidator {
                 .isString()
                 .notEmpty()
                 .withMessage("moduleid is required"),
+            body('signature')
+                .notEmpty().withMessage('Signature is required'),
+            body('type')
+                .notEmpty().withMessage('Type is required')
         ];
     }
 }
