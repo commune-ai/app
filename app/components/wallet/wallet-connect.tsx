@@ -22,7 +22,7 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 
 export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const { walletConnected, setWalletConnected, setWallet, wallet } = useWalletStore();
+  const { walletConnected, setWalletConnected, setWallet, wallet,setConnectingWallet } = useWalletStore();
   const [copied, setCopied] = useState<boolean>(false);
   const pathname = usePathname();
 
@@ -33,8 +33,9 @@ export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
   }, []);
 
   const handleCloseDialog = useCallback((): void => {
+    setConnectingWallet(false);
     setIsDialogOpen(false);
-  }, []);
+  }, [setConnectingWallet]);
 
   const handleDisconnect = useCallback((): void => {
     setWalletConnected(false);
