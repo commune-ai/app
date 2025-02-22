@@ -19,7 +19,7 @@ export const verifySignature = async (address: string, signature: string, type: 
             withCredentials: true
         });
         return { success: true };
-    } catch (error) {
+    } catch {
         return { success: false, error: "failed to get value" };
     }
 };

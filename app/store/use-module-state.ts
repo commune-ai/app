@@ -1,5 +1,10 @@
 import { create } from "zustand";
 import { Client } from "@/utils/client";
+type Params = Record<string, unknown> | FormData;
+import getBackendUrl from "@/utils/get-backend-url";
+const apiBase = await getBackendUrl();
+import axios, { AxiosError } from "axios";
+import { IErrorResponse } from "@/types/backend-error-types";
 
 export type ModuleType = {
   description: string;
@@ -16,7 +21,6 @@ export type ModuleType = {
   owner: string;
   time: number;
 };
-
 const getRandomNetworkAndTags = () => {
   const networks = ["commune"];
   const tags = [
@@ -62,6 +66,8 @@ interface ModuleStore {
   isLoading: boolean;
   modules: ModuleType[];
   fetchModules: () => Promise<void>;
+  createModules: (data: Params) => Promise<{ success: boolean, error?: string }>;
+  addModuleInIpfs: (data: FormData) => Promise<{ success: boolean, error?: string }>;
   loadingModules: boolean;
   setLoadingModules: (loading: boolean) => void;
   assignRandomNetworkAndTags: () => void;
@@ -91,7 +97,47 @@ export const useModuleStore = create<ModuleStore>((set) => ({
       set({ isLoading: false });
     }
   },
-
+  createModules: async (data) => {
+    set({ isLoading: true });
+    try {
+      const client = new Client();
+      const response = (await client.call("add_module", data)) as { success: boolean };
+      if (response.success === false) {
+        console.error("Failed to create module:", response);
+        set({ isLoading: false });
+        return { success: false, error: "Failed to create module" };
+      }
+      set({ isLoading: false });
+      return { success: true };
+    } catch (error) {
+      console.error("Failed to create module:", error);
+      set({ isLoading: false });
+      return { success: false, error: "Failed to create module" };
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  addModuleInIpfs: async (data) => {
+    try {
+      await axios.post(
+        `${apiBase}/api/module/create`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true
+        }
+      );
+      return { success: true };
+    } catch (error) {
+      const { response } = error as AxiosError<IErrorResponse>;
+      set({
+        isLoading: false,
+      });
+      return { success: false, error: response?.data.errorMessage ?? "Server is not connected" };
+    }
+  },
   assignRandomNetworkAndTags: () => {
     set((state) => ({
       modules: state.modules.map((module) => {

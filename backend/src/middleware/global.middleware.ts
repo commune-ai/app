@@ -14,7 +14,7 @@ export class GlobalMiddleware {
     }
     static async CheckAuth(req: Request, res: Response, next: NextFunction) {
         try {
-            const token = req.cookies.usertoken;
+            const token = req.cookies.token;
             if (!token) {
                 res.clearCookie("token");
                 next(ResponseService.CreateErrorResponse("Unauthorized", 401));

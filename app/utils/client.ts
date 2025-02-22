@@ -5,6 +5,7 @@ import config from '@/config.json';
 
 type Params = Record<string, unknown> | FormData;
 
+
 type RequestData = {
   params: Params;
   headers: Record<string, string>;

@@ -15,12 +15,11 @@ export class ModuleController {
             if (!userExist) {
                 return ResponseService.CreateErrorResponse("User of given token does not exist,logout of the system and try again", 400);
             }
-            const walletAddress = userExist.walletPublicKey;
             const existingModule = await ModuleRepository.findExistingModuleName(name);
             if (existingModule) {
                 return ResponseService.CreateErrorResponse("Module name already exists", 400);
             }
-            const jsonData = { name, description, network, tags, codelocation, appurl, key, walletAddress, founder, hash }
+            const jsonData = { name, description, network, tags, codelocation, appurl, key, founder, hash }
             const lighthouseResponse = await lighthouse.uploadText(JSON.stringify(jsonData), LIGHTHOUSE_API_KEY);
             if (!lighthouseResponse || !lighthouseResponse.data || !lighthouseResponse.data.Hash) {
                 return ResponseService.CreateErrorResponse("Adding to web3 storage failed", 400);

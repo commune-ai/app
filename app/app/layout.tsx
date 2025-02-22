@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Pixelify_Sans } from 'next/font/google';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const pixelifySans = Pixelify_Sans({
@@ -25,7 +26,12 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body className={`${pixelifySans.className} antialiased`}>{children}</body>
+      <body className={`${pixelifySans.className} antialiased`}>
+        <main>
+        {children}
+        </main>
+        <Toaster position="bottom-right" richColors/>
+        </body>
     </html>
   );
 }

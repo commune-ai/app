@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState, useRef, type ChangeEvent, useEffect } from 'react';
@@ -33,15 +34,20 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
 } from '@/components/ui/breadcrumb';
+import { useModuleStore } from '@/store/use-module-state';
+import { toast } from 'sonner';
+import { useWalletStore } from '@/store/use-wallet-state';
 
-interface NewModule {
+type Params = Record<string, unknown> | FormData;
+export interface NewModule {
   name: string;
   url: string;
   codeLocation: string;
   network: string;
   description: string;
   tags: string[];
-  image: File | null;
+  image?: File | null;
+  signature: string;
 }
 
 interface FormErrors {
@@ -73,13 +79,14 @@ export default function CreateModulePage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper function to extract module name from the codeLocation URL
+  const { createModules, addModuleInIpfs } = useModuleStore();
+  const { walletConnected, wallet } = useWalletStore();
+
   const extractModuleName = (url: string): string => {
     const match = url.match(/github\.com\/[^\/]+\/([^\/]+)/);
     return match ? match[1] : '';
   };
 
-  // Update name whenever codeLocation changes
   useEffect(() => {
     if (codeLocation.trim() !== '') {
       const moduleName = extractModuleName(codeLocation);
@@ -140,19 +147,67 @@ export default function CreateModulePage() {
     setStep(step - 1);
   };
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!walletConnected) {
+      toast.error('Please connect your wallet');
+      return;
+    }
     if (validateStep(step)) {
-      const newModule: NewModule = {
+      const newModule: Params = {
         name,
         url,
         codeLocation,
         network,
         description,
         tags,
-        image,
+        key: wallet?.address,
+        signature: wallet?.address,
       };
-      console.log('New module created:', newModule);
+      try {
+        const { success, error } = await createModules(newModule);
+        if (success) {
+          toast.success('Module created successfully');
+          const data = new FormData();
+          data.append('name', name);
+          data.append('description', description);
+          data.append('network', network);
+          tags.forEach(tag => {
+            data.append('tags[]', tag);
+          });
+          data.append('codelocation', codeLocation);
+          data.append('appurl', url);
+          if (wallet?.address) {
+            data.append('key', wallet.address);
+          }
+          if (wallet?.address) {
+            data.append('founder', wallet.address);
+          }
+          data.append('hash', 'hash');
+          if (image) {
+            data.append('image', image);
+          }
+          try {
+            const { success, error } = await addModuleInIpfs(data);
+            if (success) {
+              toast.success('Module added in IPFS');
+              router.push('/');
+            }
+            if(error) {
+              toast.error(error);
+              return;
+            }
+          } catch {
+            toast.error('Error adding module in IPFS');
+          }
+          return;
+        }
+        toast.error(error);
+        return;
+      } catch (e) {
+        toast.error('Error creating module');
+        return;
+      }
       router.push('/');
     }
   };
@@ -378,7 +433,6 @@ export default function CreateModulePage() {
         );
     }
   };
-
   return (
     <div className="min-h-screen flex flex-col bg-[#0F0F0F] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
       <SimpleHubNavbar />
@@ -482,3 +536,5 @@ export default function CreateModulePage() {
     </div>
   );
 }
+
+
