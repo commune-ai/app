@@ -31,8 +31,8 @@ export default function SignIn() {
   const { privateKey, isLoading, handleSignIn, handlePrivateKeyChange, setWalletSelected, walletSelected } =
     useSigninStore();
 
-  const {walletConnected}=useWalletStore();
-  
+  const { walletConnected } = useWalletStore();
+
 
   const router = useRouter();
 
@@ -56,29 +56,28 @@ export default function SignIn() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <Button
           variant="ghost"
-          className="mb-8 text-gray-400 hover:text-white hover:bg-transparent"
+          className="mb-8 text-green-400 hover:text-white hover:bg-transparent"
           onClick={handleBack}
         >
           <ChevronLeft className="mr-2 h-4 w-4" />
           Back to Home
         </Button>
-
         <div className="max-w-md mx-auto space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white">Welcome back</h2>
-            <p className="mt-2 text-sm text-gray-400">
+            <h2 className="text-3xl font-bold text-green-500">Welcome back</h2>
+            <p className="mt-2 text-sm text-green-400">
               Sign in to your account using your private key
             </p>
           </div>
 
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="text-xl text-white">Sign In</CardTitle>
+              <CardTitle className="text-xl text-green-500">Sign In</CardTitle>
               <CardDescription>Enter your private key to continue</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignIn} className="space-y-6">
-              <div className="space-y-4">
+                <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
                   <LocalWalletSelector
                     options={walletOptions}
@@ -103,7 +102,7 @@ export default function SignIn() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                  className="w-full bg-green-500 text-white hover:bg-green-600"
                   disabled={isLoading}
                 >
                   Sign In {isLoading && <Loader className="h-5 w-5 animate-spin" />}
@@ -125,7 +124,7 @@ export default function SignIn() {
                 <div className="mt-6 text-center">
                   <Link
                     href="/signup"
-                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                    className="text-sm text-green-400 hover:text-green-300 transition-colors"
                   >
                     Create new account
                   </Link>

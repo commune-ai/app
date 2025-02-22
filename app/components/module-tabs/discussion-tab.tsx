@@ -57,8 +57,8 @@ export function DiscussionTab({ moduleName }: DiscussionTabProps): JSX.Element {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white">Discussion about {moduleName}</h2>
-      <ScrollArea className="h-[calc(100vh-300px)] pr-4">
-        <div className="space-y-6">
+      <ScrollArea className="h-full pr-4">
+        <div className="space-y-6 ">
           {comments.map((comment) => (
             <div key={comment.id} className="flex space-x-4">
               <Avatar>
@@ -83,7 +83,7 @@ export function DiscussionTab({ moduleName }: DiscussionTabProps): JSX.Element {
           onChange={(e) => setNewComment(e.target.value)}
           className="min-h-[100px] bg-white/5 border-white/10 text-white placeholder-gray-400"
         />
-        <Button onClick={handleCommentSubmit} className="bg-blue-500 text-white hover:bg-blue-600">
+        <Button onClick={handleCommentSubmit} className="bg-green-500 text-white hover:bg-green-600">
           Post Comment
         </Button>
       </div>

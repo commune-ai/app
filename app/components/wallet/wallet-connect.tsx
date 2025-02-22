@@ -20,7 +20,8 @@ import { useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { AvatarImage } from "@radix-ui/react-avatar";
 
-export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
+
+export function WalletConnect({ onSidebar }: { onSidebar?: boolean }): JSX.Element {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const { walletConnected, setWalletConnected, setWallet, wallet,setConnectingWallet } = useWalletStore();
   const [copied, setCopied] = useState<boolean>(false);
@@ -63,7 +64,7 @@ export function WalletConnect({onSidebar}:{onSidebar?:boolean}): JSX.Element {
           <Button
             variant="outline"
             size="sm"
-            className={cn("border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-gray-300 transition-colors",{"md:h-auto":onSidebar})}
+            className={cn("border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-gray-300 transition-colors", { "md:h-auto": onSidebar })}
           >
             <div className={cn("flex items-center w-full gap-2", { "md:flex-col": onSidebar })}>
               <div className="flex items-center">

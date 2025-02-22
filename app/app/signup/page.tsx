@@ -83,14 +83,14 @@ export default function SignUp() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-            <div className="space-y-4">
-                  <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
-                  <LocalWalletSelector
-                    options={walletOptions}
-                    selectedWallet={walletSelected}
-                    onSelect={(walletId: string) => setWalletSelected(walletId as WalletType)}
-                  />
-                </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
+                <LocalWalletSelector
+                  options={walletOptions}
+                  selectedWallet={walletSelected}
+                  onSelect={(walletId: string) => setWalletSelected(walletId as WalletType)}
+                />
+              </div>
               <div className="relative">
                 <div className="p-4 bg-[#0D1117] rounded-lg border border-white/10 font-mono text-sm">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 select-none">
@@ -134,9 +134,8 @@ export default function SignUp() {
 
               <Button
                 onClick={handleSignUp}
-                className={`w-full ${
-                  confirmed ? "bg-blue-500 hover:bg-blue-600" : "bg-yellow-500 hover:bg-yellow-600"
-                } text-white transition-colors`}
+                className={`w-full ${confirmed ? "bg-green-500 hover:bg-green-600" : "bg-yellow-500 hover:bg-yellow-600"
+                  } text-white transition-colors`}
                 disabled={walletLoading}
               >
                 {confirmed ? "Create Account" : "I've Saved My Mnemonic"}

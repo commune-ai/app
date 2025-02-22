@@ -87,15 +87,15 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
 
   return (
     <div className="flex flex-col space-y-6">
-      <div className="rounded-lg border border-[#30363D] bg-[#0D1117] overflow-hidden">
+      <div className="rounded-lg border border-[#30363D] bg-[#0F0F0F] overflow-hidden">
         <div className="p-6 space-y-6">
           <div className="space-y-2">
             <label className="text-sm text-gray-400">Select Function</label>
             <Select value={selectedFunction} onValueChange={setSelectedFunction}>
-              <SelectTrigger className="w-full bg-[#0D1117] border-[#30363D] text-gray-300">
+              <SelectTrigger className="w-full bg-[#0F0F0F] border-[#30363D] text-gray-300">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-[#0D1117] border-[#30363D]">
+              <SelectContent className="bg-[#0F0F0F] border-[#30363D]">
                 {Object.keys(schema).map((func) => (
                   <SelectItem key={func} value={func} className="text-gray-300 hover:bg-[#30363D]">
                     {func}
@@ -116,7 +116,7 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
                   placeholder={`Enter ${param}`}
                   value={params[param] || field.value || ''}
                   onChange={(e) => handleParamChange(param, e.target.value)}
-                  className="bg-[#0D1117] border-[#30363D] text-gray-300 placeholder:text-gray-600"
+                  className="bg-[#0F0F0F] border-[#30363D] text-gray-300 placeholder:text-gray-600"
                 />
               </div>
             ))}
@@ -125,7 +125,7 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
           <Button
             onClick={handleExecute}
             disabled={isExecuting}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+            className="w-full bg-green-500 hover:bg-green-600 text-white transition-colors"
           >
             Execute Function
           </Button>
@@ -133,7 +133,7 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
       </div>
 
       {executionResult && (
-        <div className="rounded-lg border border-[#30363D] bg-[#0D1117] overflow-hidden">
+        <div className="rounded-lg border border-[#30363D] bg-[#0F0F0F] overflow-hidden">
           <div className="border-b border-[#30363D] p-4">
             <Tabs defaultValue="preview" className="w-full">
               <TabsList className="bg-transparent border-b border-[#30363D]">
@@ -153,7 +153,7 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
               <TabsContent value="preview" className="mt-4">
                 <div className="min-h-[300px] flex flex-col items-center justify-center text-gray-400">
                   <div className="text-center space-y-4">
-                    <Terminal className="w-12 h-12 mx-auto text-blue-500" />
+                    <Terminal className="w-12 h-12 mx-auto text-green-500" />
                     <div className="text-lg">Ready to Drop In</div>
                     <Button
                       variant="outline"

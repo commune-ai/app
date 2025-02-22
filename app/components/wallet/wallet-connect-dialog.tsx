@@ -36,7 +36,7 @@ const WALLET_OPTIONS = [
 export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProps) {
   const [error, setError] = useState<string | null>(null);
   const [walletSelected, setWalletSelected] = useState<WalletType | null>(null);
-  const { setWallet, setWalletConnected,connectingWallet,setConnectingWallet } = useWalletStore();
+  const { setWallet, setWalletConnected, connectingWallet, setConnectingWallet } = useWalletStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -130,8 +130,8 @@ export function WalletConnectDialog({ isOpen, onClose }: WalletConnectDialogProp
                 <Card className="bg-white/5 border-white/10">
                   <CardContent className="p-4">
                     <div className="flex items-center space-x-4">
-                      <div className="bg-blue-500/20 p-3 rounded-full">
-                        <Loader2 className="h-6 w-6 text-blue-400 animate-spin" />
+                      <div className="bg-green-500/20 p-3 rounded-full">
+                        <Loader2 className="h-6 w-6 text-green-400 animate-spin" />
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-white">Connecting to {walletSelected}</h4>

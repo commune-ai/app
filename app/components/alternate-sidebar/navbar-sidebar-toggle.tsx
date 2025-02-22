@@ -14,7 +14,7 @@ export function NavbarSidebarToggle() {
           <Button
             variant="outline"
             size="icon"
-            className="fixed bottom-8 right-8 z-50 rounded-full h-12 w-12 bg-blue-500 border-blue-400 text-white hover:bg-blue-600 hover:border-blue-500 shadow-lg"
+            className="fixed bottom-8 right-8 z-50 rounded-full h-12 w-12 bg-green-500 border-green-400 text-white hover:bg-green-600 hover:border-green-500 shadow-lg"
             onClick={onToggle}
           >
             {isAlternateLayout ? (

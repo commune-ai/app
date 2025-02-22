@@ -34,6 +34,7 @@ import ModuleDetailSkeleton from '@/components/skeleton/module-detail-skeleton';
 import { DiscussionTab } from '@/components/module-tabs/discussion-tab';
 import { useModuleDetailStore } from '@/store/use-module-detail-state';
 import { ModuleReportDialog } from '@/components/module/module-report-dialog';
+import Link from 'next/link';
 
 export default function ModuleDetailPage() {
   const params = useParams();
@@ -107,21 +108,19 @@ export default function ModuleDetailPage() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#03040B] md:pl-20">
-      {/* Left Sidebar */}
-      <div className="w-full md:w-20 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-4 md:fixed md:h-screen md:left-0">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#0F0F0F] md:pl-20">
+      <div className="w-full md:w-20 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-[#0F0F0Fs] backdrop-blur-xl backdrop-filter p-4 md:fixed md:h-screen md:left-0">
         <div>
-          <span className="text-xl font-bold text-white">
-            <span className="text-blue-400">dhub</span>
-          </span>
+          <div className="text-xl font-bold text-white">
+            <Link href="/" className="text-green-400">dhub</Link>
+          </div>
         </div>
         <div className="flex items-center justify-center">
-          <WalletConnect onSidebar={true}/>
+          <WalletConnect onSidebar={true} />
         </div>
       </div>
 
-      {/* Middle Column - Module Details */}
-      <div className="w-full md:w-[400px] border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-6">
+      <div className="w-full md:w-[400px] border-b md:border-b-0 md:border-r border-white/10 bg-[#0F0F0F] backdrop-blur-xl backdrop-filter p-6">
         <div className="space-y-6">
           <Breadcrumb>
             <BreadcrumbList>
@@ -174,10 +173,10 @@ export default function ModuleDetailPage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-white/10 bg-[#0D1117] p-4 space-y-4">
+          <div className="rounded-lg border border-white/10 bg-[#0F0F0F] p-4 space-y-4">
             <div>
               <label className="text-sm text-gray-500 block mb-2">Module Key</label>
-              <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/10">
+              <div className="flex items-center justify-between p-2 rounded bg-[#0F0F0F] border border-white/10">
                 <code className="text-sm text-gray-300 font-mono truncate">
                   {moduleDetail[0]?.key}
                 </code>
@@ -185,7 +184,7 @@ export default function ModuleDetailPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => handleCopy(moduleData.key, 'key')}
-                  className="h-8 w-8 rounded-md hover:bg-[#30363D] transition-all duration-200"
+                  className="h-8 w-8 rounded-md hover:bg-[#0F0F0F] transition-all duration-200"
                 >
                   {copied.key ? (
                     <Check className="h-4 w-4 text-green-400" />
@@ -198,7 +197,7 @@ export default function ModuleDetailPage() {
 
             <div>
               <label className="text-sm text-gray-500 block mb-2">Hash</label>
-              <div className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/10">
+              <div className="flex items-center justify-between p-2 rounded bg-[#0F0F0F] border border-white/10">
                 <code className="text-sm text-gray-300 font-mono truncate">
                   {moduleDetail[0]?.hash}
                 </code>
@@ -220,20 +219,20 @@ export default function ModuleDetailPage() {
 
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Button className="w-full bg-blue-500 text-white hover:bg-blue-600">
+              <Button className="w-full bg-green-500 text-white hover:bg-green-600">
                 <Rocket className="mr-2 h-4 w-4" />
                 Deploy
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+                className="w-full border-white/10 bg-[#0F0F0F] text-white hover:bg-white/10"
               >
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+                className="w-full border-white/10 bg-[#0F0F0F] text-white hover:bg-white/10"
               >
                 <Coins className="mr-2 h-4 w-4" />
                 Stake on Module
@@ -254,32 +253,32 @@ export default function ModuleDetailPage() {
       </div>
 
       {/* Right Column - Tabs */}
-      <div className="flex-1 bg-[#0D1117] backdrop-blur-xl backdrop-filter">
+      <div className="flex-1 bg-[#0F0F0F] backdrop-blur-xl backdrop-filter">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full flex flex-col">
           <div className="border-b border-white/10">
-            <TabsList className="h-16 w-full justify-start bg-transparent">
+            <TabsList className="h-16 w-full justify-start bg-[#0F0F0F]">
               <TabsTrigger
                 value="code"
-                className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-gray-400"
+                className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-400"
               >
                 <Code className="mr-2 h-4 w-4" />
                 CODE
               </TabsTrigger>
               <TabsTrigger
                 value="api"
-                className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-gray-400"
+                className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-400"
               >
                 API
               </TabsTrigger>
               <TabsTrigger
                 value="app"
-                className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-gray-400"
+                className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-400"
               >
                 APP
               </TabsTrigger>
               <TabsTrigger
                 value="discussion"
-                className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-gray-400"
+                className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-400"
               >
                 <MessageCircle className="mr-2 h-4 w-4" />
                 DISCUSSION
@@ -287,19 +286,19 @@ export default function ModuleDetailPage() {
             </TabsList>
           </div>
 
-          <TabsContent value="code" className="flex-1 p-0 overflow-auto">
+          <TabsContent value="code" className="flex-1 p-0 overflow-auto bg-[#0F0F0F]">
             <CodeTab code={moduleDetail[0]?.code} />
           </TabsContent>
 
-          <TabsContent value="api" className="flex-1 p-6 overflow-auto">
+          <TabsContent value="api" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
             <ApiTab schema={moduleDetail[0]?.schema} />
           </TabsContent>
 
-          <TabsContent value="app" className="flex-1 p-6 overflow-auto">
+          <TabsContent value="app" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
             <AppTab />
           </TabsContent>
 
-          <TabsContent value="discussion" className="flex-1 p-6 overflow-auto">
+          <TabsContent value="discussion" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
             <DiscussionTab moduleName={moduleDetail[0]?.name} />
           </TabsContent>
         </Tabs>

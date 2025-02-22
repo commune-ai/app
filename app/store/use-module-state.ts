@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { Client } from '@/utils/client';
+import { create } from "zustand";
+import { Client } from "@/utils/client";
 
 export type ModuleType = {
   description: string;
@@ -18,31 +18,31 @@ export type ModuleType = {
 };
 
 const getRandomNetworkAndTags = () => {
-  const networks = ['commune'];
+  const networks = ["commune"];
   const tags = [
-    'LLM',
-    'image generator',
-    'data science',
-    'AI',
-    'artificial intelligence',
-    'chatbot',
-    'neural network',
-    'GAN',
-    'NLP',
-    'natural language processing',
-    'computer vision',
-    'blockchain',
-    'web3',
-    'decentralized',
-    'crypto',
-    'cryptocurrency',
-    'solidity',
-    'smart contract',
-    'dapp',
-    'decentralized finance',
-    'defi',
-    'web3',
-    'web3.js',
+    "LLM",
+    "image generator",
+    "data science",
+    "AI",
+    "artificial intelligence",
+    "chatbot",
+    "neural network",
+    "GAN",
+    "NLP",
+    "natural language processing",
+    "computer vision",
+    "blockchain",
+    "web3",
+    "decentralized",
+    "crypto",
+    "cryptocurrency",
+    "solidity",
+    "smart contract",
+    "dapp",
+    "decentralized finance",
+    "defi",
+    "web3",
+    "web3.js",
   ];
 
   const randomNetwork = networks[Math.floor(Math.random() * networks.length)];
@@ -59,6 +59,7 @@ const getRandomNetworkAndTags = () => {
 };
 
 interface ModuleStore {
+  isLoading: boolean;
   modules: ModuleType[];
   fetchModules: () => Promise<void>;
   loadingModules: boolean;
@@ -67,25 +68,27 @@ interface ModuleStore {
 }
 
 export const useModuleStore = create<ModuleStore>((set) => ({
+  isLoading: false,
   modules: [],
   loadingModules: true,
   setLoadingModules: (loading) => set({ loadingModules: loading }),
   fetchModules: async () => {
-    set({ loadingModules: true });
+    set({ loadingModules: true, isLoading: true });
     try {
       const client = new Client();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const data:any = await client.call('modules');
+      const data = (await client.call("modules")) as { success: boolean; modules: ModuleType[] };
       if (data.success === false) {
-        console.error('Failed to fetch modules:', data);
-        set({ modules: [], loadingModules: false });
+        console.error("Failed to fetch modules:", data);
+        set({ modules: [], loadingModules: false, isLoading: false });
         return;
       }
       set({ modules: Array.isArray(data) ? data : [], loadingModules: false });
       return;
     } catch (error) {
-      console.error('Failed to fetch modules:', error);
+      console.error("Failed to fetch modules:", error);
       set({ modules: [], loadingModules: false });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
