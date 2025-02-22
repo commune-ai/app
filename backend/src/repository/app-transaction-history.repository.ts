@@ -2,31 +2,31 @@ import { prisma } from "../model";
 
 export class AppTransactionHistoryRepository {
 
-    static async createHistory(moduleworking:boolean,description:string,evidenceImage_url:string,moduleid:string,userId:string){
-        try{
+    static async createHistory(moduleworking: boolean, description: string, evidenceImage_url: string, modulename: string, userId: string) {
+        try {
             return await prisma.appTransactionHistory.create({
-                data:{
-                    moduleworking:moduleworking,
-                    description:description,
-                    evidenceImage_url:evidenceImage_url,
-                    moduleid:moduleid,
-                    userId:userId
+                data: {
+                    moduleworking: moduleworking,
+                    description: description,
+                    evidenceImage_url: evidenceImage_url,
+                    modulename: modulename,
+                    userId: userId
                 }
             })
-            
-        }catch(e){
+
+        } catch (e) {
             throw new Error("Database Error: AppHistory Creation Failed");
         }
     }
 
-    static async getAppHistoryByModuleId(moduleid:string){
-        try{
+    static async getAppHistoryByModuleName(modulename: string) {
+        try {
             return await prisma.appTransactionHistory.findMany({
-                where:{
-                    moduleid:moduleid
+                where: {
+                    modulename: modulename
                 }
             })
-        }catch(e){
+        } catch (e) {
 
         }
     }

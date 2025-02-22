@@ -48,7 +48,6 @@ model Module {
   user                    User                    @relation(fields: [userId], references: [id])
   moduleCodes             ModuleCode[]
   apitransactionHistories ApiTransactionHistory[]
-  appTransactionHistories AppTransactionHistory[]
 
   @@map("modules")
 }
@@ -84,8 +83,7 @@ model AppTransactionHistory {
   moduleworking     Boolean
   description       String
   evidenceImage_url String
-  moduleid          String
-  module            Module   @relation(fields: [moduleid], references: [id])
+  modulename        String
   userId            String
   user              User     @relation(fields: [userId], references: [id])
   checkedByDOA      Boolean  @default(false)

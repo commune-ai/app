@@ -8,7 +8,7 @@ __pycache__/**
 env/
 
 .next/
-
+api/modules/
 # benchmark results
 benchmarks/results/
 benchmarks/results/*

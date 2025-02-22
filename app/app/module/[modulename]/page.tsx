@@ -295,7 +295,7 @@ export default function ModuleDetailPage() {
           </TabsContent>
 
           <TabsContent value="app" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
-            <AppTab />
+            <AppTab name={Array.isArray(params.modulename) ? params.modulename[0] : params.modulename ?? ""} />
           </TabsContent>
 
           <TabsContent value="discussion" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">

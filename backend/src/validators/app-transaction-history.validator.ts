@@ -10,7 +10,7 @@ export class AppTransactionHistoryValidator {
                 .isString()
                 .notEmpty()
                 .withMessage("moduleid is required"),
-            body("moduleid")
+            body("modulename")
                 .isString()
                 .notEmpty()
                 .withMessage("moduleid is required"),
