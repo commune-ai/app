@@ -123,12 +123,12 @@ export const AppTab = ({ name }: { name: string }) => {
         <DialogTrigger asChild>
           <Button variant="outline" className="w-full">
             <AlertCircle className="mr-2 h-4 w-4" />
-            Report App Issue
+            Proof of Interaction(App)
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-[300px] md:max-w-[500px] bg-[#0F0F0F] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Report App Issue</DialogTitle>
+            <DialogTitle>Proof of Interaction(App)</DialogTitle>
             <DialogDescription>
               Please provide details about the issue you&apos;re experiencing with the app. All fields are required.
             </DialogDescription>

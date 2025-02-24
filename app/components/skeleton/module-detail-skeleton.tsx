@@ -4,12 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 
 export default function ModuleDetailSkeleton() {
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#03040B]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#0F0F0F]">
       {/* Left Sidebar */}
-      <div className="w-full md:w-16 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-4">
+      <div className="w-full md:w-20 flex md:flex-col bg-[#0F0F0F] justify-between items-center border-b md:border-b-0 md:border-r border-gray-500/10 backdrop-blur-xl backdrop-filter p-4">
         <div>
           <span className="text-xl font-bold text-white">
-            <span className="text-blue-400">dhub</span>
+            <span className="text-green-500">dhub</span>
           </span>
         </div>
         <div className="flex items-center justify-center">
@@ -18,7 +18,7 @@ export default function ModuleDetailSkeleton() {
       </div>
 
       {/* Middle Column - Module Details */}
-      <div className="w-full md:w-[400px] border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-6">
+      <div className="w-full md:w-[400px] bg-[#0F0F0F] border-b md:border-b-0 md:border-r border-white/10 backdrop-blur-xl backdrop-filter p-6">
         <div className="space-y-6">
           <Skeleton className="h-4 w-32 bg-white/5" />
           <div className="space-y-4">
@@ -57,7 +57,7 @@ export default function ModuleDetailSkeleton() {
       </div>
 
       {/* Right Column - Tabs */}
-      <div className="flex-1 bg-[#0D1117] backdrop-blur-xl backdrop-filter">
+      <div className="flex-1 bg-[#0F0F0F] backdrop-blur-xl backdrop-filter">
         <div className="h-16 border-b border-white/10">
           <div className="flex gap-2 p-4">
             {Array(4)

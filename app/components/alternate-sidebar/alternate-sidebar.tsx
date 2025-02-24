@@ -8,7 +8,6 @@ import {
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { WalletConnect } from '../wallet/wallet-connect';
 import { SearchInput } from '../search/search-input';
 import { Button } from '../ui/button';
 import { NetworkIcon, Plus, TagIcon } from 'lucide-react';
@@ -57,9 +56,8 @@ export function AlternateSidebar({ ...props }) {
         <Link href="/" className="text-green-500 text-2xl font-bold">dhub</Link>
       </SidebarHeader>
       <SidebarContent className='pl-2'>
-        <WalletConnect />
         <div className="flex items-center w-full space-x-2 container mx-auto">
-          {!!!!open && <SearchInput onSearch={handleSearch} />}
+          {open && <SearchInput onSearch={handleSearch} />}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -78,7 +76,7 @@ export function AlternateSidebar({ ...props }) {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <h1>NetWorks</h1>
+        {open && <h1>Network</h1>}
         {!open && <Button onClick={(() => setOpen(!open))}>
           <NetworkIcon className='text-green-500' />
         </Button>}
@@ -91,7 +89,7 @@ export function AlternateSidebar({ ...props }) {
           {network}
         </Badge>)}
         </div>
-        <h1>Tags</h1>
+        {open && <h1>Tags</h1>}
         {!open && <Button onClick={() => setOpen(!open)}>
           <TagIcon className='text-green-500' />
         </Button>}

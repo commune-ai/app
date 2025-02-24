@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import useSearchStore from "@/store/use-search-state";
 import useSidebarStore from "@/store/use-sidebar-state";
+import { WalletConnect } from "@/components/wallet/wallet-connect";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -80,63 +81,66 @@ export default function Home() {
       <div>
         <SidebarProvider>
           <AlternateSidebar className="p-2 bg-[#0F0F0F] border-r border-gray-500/10" />
-          <SidebarInset className="bg-[#0F0F0F]">
-            <header className="flex">
-              <div className="flex items-center gap-2 px-4 py-8">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink href="#">
-                        <h1 className="text-green-500 text-lg">Modules</h1>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </div>
-            </header>
-            <main className="flex-grow container mx-auto px-4 py-8">
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3"
-              >
-                {
-                  isLoading
-                    ? Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-                      <ModuleCardSkeleton key={index} />
-                    ))
-                    : currentItems.map((module, index) => (
-                      <ModuleCard
-                        key={`${module.key}-${index}`}
-                        name={module.name}
-                        mkey={module.key}
-                        network={module.network}
-                        tags={module.tags}
-                        timestamp={module.time.toString()}
-                        description={
-                          module?.description ||
-                          "This is a description of a module.The module takes input from the user and gives the output."
-                        }
-                      />
-                    ))}
-              </motion.div>
-              {!isLoading && filteredModules.length > ITEMS_PER_PAGE && (
-                <ModulePagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              )}
-              {!isLoading && !loadingModules && filteredModules.length === 0 && (
-                <div className="text-center text-gray-400 mt-8">No modules found.</div>
-              )}
-            </main>
-          </SidebarInset>
+          <div className="flex flex-col flex-grow">
+            <SidebarInset className="bg-[#0F0F0F] flex-grow">
+              <header className="flex justify-between items-center pr-4">
+                <div className="flex items-center gap-2 px-4 py-8">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href="#">
+                          <h1 className="text-green-500 text-lg">Modules</h1>
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+                <WalletConnect />
+              </header>
+              <main className="flex-grow container mx-auto px-4 py-8">
+                <motion.div
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                  className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3"
+                >
+                  {
+                    isLoading
+                      ? Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+                        <ModuleCardSkeleton key={index} />
+                      ))
+                      : currentItems.map((module, index) => (
+                        <ModuleCard
+                          key={`${module.key}-${index}`}
+                          name={module.name}
+                          mkey={module.key}
+                          network={module.network}
+                          tags={module.tags}
+                          timestamp={module.time.toString()}
+                          description={
+                            module?.description ||
+                            "This is a description of a module.The module takes input from the user and gives the output."
+                          }
+                        />
+                      ))}
+                </motion.div>
+                {!isLoading && filteredModules.length > ITEMS_PER_PAGE && (
+                  <ModulePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+                {!isLoading && !loadingModules && filteredModules.length === 0 && (
+                  <div className="text-center text-gray-400 mt-8">No modules found.</div>
+                )}
+              </main>
+            </SidebarInset>
+            <Footer />
+          </div>
         </SidebarProvider>
-        <Footer />
       </div>
     </div>
   );
