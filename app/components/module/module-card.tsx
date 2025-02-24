@@ -32,7 +32,6 @@ export function ModuleCard({
   tags = ["LLM", "Text Conversion", "LLM", "Text Conversion", "LLM", "Text Conversion"],
 }: ModuleCardProps): JSX.Element {
   const router = useRouter();
-  const [imageError, setImageError] = useState<boolean>(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
@@ -65,9 +64,6 @@ export function ModuleCard({
     [router, name]
   );
 
-  const handleImageError = useCallback((): void => {
-    setImageError(true);
-  }, []);
 
   const truncateKey = (key: string) => {
     if (key.length <= 6) return key
@@ -77,11 +73,6 @@ export function ModuleCard({
   const truncateName = (name: string) => {
     if (name.length <= 18) return name
     return `${name.slice(0, 15)}...`
-  }
-
-  const getDateOnly = (timestamp: string): string => {
-    const date = new Date(Number(timestamp) * 1000);
-    return `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
   }
 
   return (
@@ -111,16 +102,16 @@ export function ModuleCard({
             ) :
               <>
                 <div className="flex items-center space-x-3 mb-3">
-                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg ">
                     <Image
                       src={
-                        !imageError ? imageUrl || "/sample.png" : "/placeholder.svg?height=48&width=48"
+                        `${process.env.NEXT_PUBLIC_API_URL}/uploads/images/${imageUrl}` ||
+                        "/sample.png"
                       }
                       alt={name}
                       width={64}
                       height={64}
                       className="object-cover"
-                      onError={handleImageError}
                       priority
                     />
                   </div>
@@ -143,7 +134,7 @@ export function ModuleCard({
                       </div>
                       <div className="flex items-center justify-end space-x-1">
                         <Clock className="h-3 w-3 text-gray-400" />
-                        <span className="text-xs text-gray-300">Time: {getDateOnly(timestamp)}</span>
+                        <span className="text-xs text-gray-300">Time:{timestamp}</span>
                       </div>
                     </div>
                   </div>

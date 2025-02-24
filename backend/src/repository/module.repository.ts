@@ -2,7 +2,7 @@ import { prisma } from "../model";
 
 export class ModuleRepository {
 
-    static async createModule(name: string, description: string, network: string, tags: string[], codelocation: string, appurl: string, ipfs_cid: string, userId: string, module_image_url?: string, key?: string, founder?: string, hash?: string) {
+    static async createModule(name: string, description: string, network: string, tags: string[], codelocation: string, appurl: string, ipfs_cid: string, userId: string, module_image_url?: string, key?: string, founder?: string) {
         try {
             return await prisma.module.create({
                 data: {
@@ -13,7 +13,6 @@ export class ModuleRepository {
                     tags: tags,
                     key: key,
                     founder: founder,
-                    hash: hash,
                     codelocation: codelocation,
                     appurl: appurl,
                     ipfs_cid: ipfs_cid,
@@ -55,6 +54,19 @@ export class ModuleRepository {
             });
         } catch (e) {
             throw new Error("Database Error: Module Finding Failed");
+        }
+    }
+
+    static async getUniqueNetworksAndTags() {
+        try {
+            return await prisma.module.findMany({
+                select: {
+                    network: true,
+                    tags: true,
+                },
+            });
+        } catch (e) {
+            throw new Error("Database Error: Unique Network and Tags Finding Failed");
         }
     }
 

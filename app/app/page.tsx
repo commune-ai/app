@@ -25,7 +25,7 @@ const ITEMS_PER_PAGE = 12;
 export default function Home() {
   const [filteredModules, setFilteredModules] = useState<ModuleType[]>([]);
 
-  const { fetchModules, modules, loadingModules, isLoading, assignRandomNetworkAndTags } = useModuleStore();
+  const { fetchModules, modules, loadingModules, isLoading } = useModuleStore();
   const { searchTerm, currentPage, setCurrentPage } = useSearchStore();
   const { selectedNetworks, selectedTags } = useSidebarStore()
 
@@ -50,8 +50,7 @@ export default function Home() {
   const fetchData = useCallback(async () => {
     if (modules.length > 0) return;
     await fetchModules();
-    assignRandomNetworkAndTags();
-  }, [modules.length, fetchModules, assignRandomNetworkAndTags]);
+  }, [modules.length, fetchModules]);
 
   useEffect(() => {
     fetchData();
@@ -117,8 +116,9 @@ export default function Home() {
                           name={module.name}
                           mkey={module.key}
                           network={module.network}
+                          imageUrl={module.module_image_url}
                           tags={module.tags}
-                          timestamp={module.time.toString()}
+                          timestamp={new Date(module.updatedAt).toLocaleDateString()}
                           description={
                             module?.description ||
                             "This is a description of a module.The module takes input from the user and gives the output."

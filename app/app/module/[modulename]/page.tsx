@@ -129,7 +129,7 @@ export default function ModuleDetailPage() {
                   onClick={() => {
                     router.push('/');
                   }}
-                  className="text-sm text-gray-400 hover:text-white"
+                  className="text-sm text-gray-400 hover:text-white cursor-pointer"
                 >
                   Modules
                 </BreadcrumbLink>
@@ -138,7 +138,7 @@ export default function ModuleDetailPage() {
                 <ChevronRight className="h-4 w-4" />
               </BreadcrumbSeparator>
               <BreadcrumbItem>
-                <BreadcrumbLink className="text-sm text-white">
+                <BreadcrumbLink className="text-sm text-white cursor-pointer">
                   {moduleDetail[0]?.name}
                 </BreadcrumbLink>
               </BreadcrumbItem>

@@ -21,9 +21,6 @@ export class ModuleValidator {
             body('founder')
                 .optional()
                 .isString().withMessage('Founder must be a string'),
-            body('hash')
-                .optional()
-                .isString().withMessage('Hash must be a string'),
             body('codelocation')
                 .notEmpty().withMessage('Code location is required')
                 .isString().withMessage('Code location must be a string'),

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +21,7 @@ import Link from 'next/link';
 
 export function AlternateSidebar({ ...props }) {
   const { setSearchTerm, setCurrentPage } = useSearchStore();
-  const { modules } = useModuleStore();
+  const { networks, tags } = useModuleStore();
   const { selectedNetworks, setSelectedNetworks, selectedTags, setSelectedTags } = useSidebarStore();
   const { open, setOpen } = useSidebar();
 
@@ -36,15 +36,6 @@ export function AlternateSidebar({ ...props }) {
     setCurrentPage(1);
   }, [setCurrentPage, setSearchTerm]);
 
-  const networks = useMemo(
-    () => [...new Set(modules.map((module) => module.network))],
-    [modules]
-  );
-
-  const tags = useMemo(
-    () => [...new Set(modules.flatMap((module) => module.tags || []))],
-    [modules]
-  );
 
   return (
     <Sidebar
@@ -55,7 +46,7 @@ export function AlternateSidebar({ ...props }) {
       <SidebarHeader>
         <Link href="/" className="text-green-500 text-2xl font-bold">dhub</Link>
       </SidebarHeader>
-      <SidebarContent className='pl-2'>
+      <SidebarContent className='pl-2 flex flex-col gap-y-4'>
         <div className="flex items-center w-full space-x-2 container mx-auto">
           {open && <SearchInput onSearch={handleSearch} />}
           <TooltipProvider>
@@ -76,31 +67,41 @@ export function AlternateSidebar({ ...props }) {
             </Tooltip>
           </TooltipProvider>
         </div>
-        {open && <h1>Network</h1>}
-        {!open && <Button onClick={(() => setOpen(!open))}>
-          <NetworkIcon className='text-green-500' />
-        </Button>}
-        <div>{!!open && networks.map((network, index) => <Badge
-          key={index + 1}
-          variant="outline"
-          onClick={() => setSelectedNetworks(network)}
-          className={`m-1 ${selectedNetworks.includes(network) ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-white'} border-green-500/20 font-medium text-md cursor-pointer`}
-        >
-          {network}
-        </Badge>)}
+        <div>
+          {open && <h1>Network</h1>}
+          {!open && <Button onClick={(() => setOpen(!open))}>
+            <NetworkIcon className='text-green-500' />
+          </Button>}
+          <div>
+            {open && (networks.length > 0 ? networks.map((network, index) => (
+              <Badge
+                key={index + 1}
+                variant="outline"
+                onClick={() => setSelectedNetworks(network)}
+                className={`m-1 ${selectedNetworks.includes(network) ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-white'} border-green-500/20 font-medium text-md cursor-pointer`}
+              >
+                {network}
+              </Badge>
+            )) : <p className='font-normal text-sm text-gray-400'>No network available</p>)}
+          </div>
         </div>
-        {open && <h1>Tags</h1>}
-        {!open && <Button onClick={() => setOpen(!open)}>
-          <TagIcon className='text-green-500' />
-        </Button>}
-        <div>{!!open && tags.map((tag, index) => <Badge
-          key={index + 1}
-          variant="outline"
-          onClick={() => setSelectedTags(tag)}
-          className={`m-1 ${selectedTags.includes(tag) ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-white'}  border-green-500/20 font-medium text-md cursor-pointer`}
-        >
-          {tag}
-        </Badge>)}
+        <div>
+          {open && <h1>Tags</h1>}
+          {!open && <Button onClick={(() => setOpen(!open))}>
+            <TagIcon className='text-green-500' />
+          </Button>}
+          <div>
+            {open && (tags.length > 0 ? tags.map((tag, index) => (
+              <Badge
+                key={index + 1}
+                variant="outline"
+                onClick={() => setSelectedTags(tag)}
+                className={`m-1 ${selectedTags.includes(tag) ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-white'} border-green-500/20 font-medium text-md cursor-pointer`}
+              >
+                {tag}
+              </Badge>
+            )) : <p className='font-normal text-sm text-gray-400'>No tags available</p>)}
+          </div>
         </div>
       </SidebarContent>
       <SidebarRail />

@@ -37,7 +37,6 @@ model Module {
   tags                    String[]
   key                     String?
   founder                 String?
-  hash                    String?
   codelocation            String
   appurl                  String
   ipfs_cid                String

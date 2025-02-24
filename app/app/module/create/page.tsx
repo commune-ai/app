@@ -79,7 +79,7 @@ export default function CreateModulePage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { createModules, addModuleInIpfs } = useModuleStore();
+  const { addModuleInIpfs,isLoading } = useModuleStore();
   const { walletConnected, wallet } = useWalletStore();
 
   const extractModuleName = (url: string): string => {
@@ -154,387 +154,373 @@ export default function CreateModulePage() {
       return;
     }
     if (validateStep(step)) {
-      const newModule: Params = {
-        name,
-        url,
-        codeLocation,
-        network,
-        description,
-        tags,
-        key: wallet?.address,
-        signature: wallet?.address,
-      };
+      const data = new FormData();
+      data.append('name', name);
+      data.append('description', description);
+      data.append('network', network);
+      tags.forEach(tag => {
+        data.append('tags[]', tag);
+      });
+      data.append('codelocation', codeLocation);
+      data.append('appurl', url);
+      if (wallet?.address) {
+        data.append('key', wallet.address);
+      }
+      if (wallet?.address) {
+        data.append('founder', wallet.address);
+      }
+      data.append('hash', 'hash');
+      if (image) {
+        data.append('image', image);
+      }
       try {
-        const { success, error } = await createModules(newModule);
+        const { success, error } = await addModuleInIpfs(data);
         if (success) {
-          toast.success('Module created successfully');
-          const data = new FormData();
-          data.append('name', name);
-          data.append('description', description);
-          data.append('network', network);
-          tags.forEach(tag => {
-            data.append('tags[]', tag);
-          });
-          data.append('codelocation', codeLocation);
-          data.append('appurl', url);
-          if (wallet?.address) {
-            data.append('key', wallet.address);
-          }
-          if (wallet?.address) {
-            data.append('founder', wallet.address);
-          }
-          data.append('hash', 'hash');
-          if (image) {
-            data.append('image', image);
-          }
-          try {
-            const { success, error } = await addModuleInIpfs(data);
-            if (success) {
-              toast.success('Module added in IPFS');
-              router.push('/');
-            }
-            if(error) {
-              toast.error(error);
-              return;
-            }
-          } catch {
-            toast.error('Error adding module in IPFS');
-          }
+          toast.success('Module added in IPFS');
+          router.push('/');
+        }
+        if (error) {
+          toast.error(error);
           return;
         }
-        toast.error(error);
-        return;
-      } catch (e) {
-        toast.error('Error creating module');
-        return;
+      } catch {
+        toast.error('Error adding module in IPFS');
       }
-      router.push('/');
+      return;
     }
+
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="codeLocation" className="text-sm font-medium text-gray-200">
-                  Code Location:
-                </Label>
-                <div className="relative">
-                  <Code
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                  <Input
-                    id="codeLocation"
-                    value={codeLocation}
-                    onChange={(e) => setCodeLocation(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="https://github.com/username/repo"
-                  />
-                </div>
-                {errors.codelocation && (
-                  <p className="text-red-500 text-xs mt-1">{errors.codelocation}</p>
-                )}
+const renderStep = () => {
+  switch (step) {
+    case 1:
+      return (
+        <>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="codeLocation" className="text-sm font-medium text-gray-200">
+                Code Location:
+              </Label>
+              <div className="relative">
+                <Code
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  id="codeLocation"
+                  value={codeLocation}
+                  onChange={(e) => setCodeLocation(e.target.value)}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                  placeholder="https://github.com/username/repo"
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="image" className="text-sm font-medium text-gray-200">
-                  Module Image:
-                </Label>
-                <div className="flex items-center space-x-4">
-                  <label
-                    htmlFor="image"
-                    className="flex flex-col items-center justify-center w-32 h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white/5 hover:bg-white/10 transition-colors duration-200"
-                  >
-                    {imagePreview ? (
-                      <div className="relative w-full h-full">
-                        <Image
-                          src={imagePreview || '/placeholder.svg'}
-                          alt="Module Image preview"
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-lg"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                        <p className="text-xs text-gray-400">Upload image</p>
-                      </div>
-                    )}
-                    <input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                      ref={fileInputRef}
-                    />
-                  </label>
-                  {imagePreview && (
-                    <div className="flex items-center space-x-4">
-                      <div className="flex flex-col items-center">
-                        <Avatar className="w-20 h-20">
-                          <AvatarImage src={imagePreview} alt="Circular preview" />
-                          <AvatarFallback>CP</AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs text-gray-400 mt-2">Circular</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <div className="w-20 h-20 rounded-lg overflow-hidden">
-                          <Image
-                            src={imagePreview || '/placeholder.svg'}
-                            alt="Rectangular preview"
-                            width={80}
-                            height={80}
-                            objectFit="cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-400 mt-2">Rectangular</span>
-                      </div>
+              {errors.codelocation && (
+                <p className="text-red-500 text-xs mt-1">{errors.codelocation}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="image" className="text-sm font-medium text-gray-200">
+                Module Image:
+              </Label>
+              <div className="flex items-center space-x-4">
+                <label
+                  htmlFor="image"
+                  className="flex flex-col items-center justify-center w-32 h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white/5 hover:bg-white/10 transition-colors duration-200"
+                >
+                  {imagePreview ? (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={imagePreview || '/placeholder.svg'}
+                        alt="Module Image preview"
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Upload className="w-8 h-8 mb-2 text-gray-400" />
+                      <p className="text-xs text-gray-400">Upload image</p>
                     </div>
                   )}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium text-gray-200">
-                  Name:
-                </Label>
-                <div className="relative">
-                  <User
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
+                  <input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                    ref={fileInputRef}
                   />
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="Enter module name"
-                    required
-                  />
-                </div>
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-              </div>
-            </div>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="url" className="text-sm font-medium text-gray-200">
-                  API URL:
-                </Label>
-                <div className="relative">
-                  <Link
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                  <Input
-                    id="url"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="https://example.com"
-                    required
-                  />
-                </div>
-                {errors.url && <p className="text-red-500 text-xs mt-1">{errors.url}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="network" className="text-sm font-medium text-gray-200">
-                  Network:
-                </Label>
-                <div className="relative">
-                  <Network
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                  <Input
-                    id="network"
-                    value={network}
-                    onChange={(e) => setNetwork(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="Enter network name"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium text-gray-200">
-                  Description:
-                </Label>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="Describe your module's capabilities and purpose"
-                    required
-                  />
-                </div>
-                {errors.description && (
-                  <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                </label>
+                {imagePreview && (
+                  <div className="flex items-center space-x-4">
+                    <div className="flex flex-col items-center">
+                      <Avatar className="w-20 h-20">
+                        <AvatarImage src={imagePreview} alt="Circular preview" />
+                        <AvatarFallback>CP</AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs text-gray-400 mt-2">Circular</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden">
+                        <Image
+                          src={imagePreview || '/placeholder.svg'}
+                          alt="Rectangular preview"
+                          width={80}
+                          height={80}
+                          objectFit="cover"
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400 mt-2">Rectangular</span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="tags" className="text-sm font-medium text-gray-200">
-                    Tags:
-                  </Label>
-                </div>
-                <div className="relative">
-                  <Tag
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
-                  <Input
-                    id="tags"
-                    value={currentTag}
-                    onChange={(e) => setCurrentTag(e.target.value)}
-                    onKeyDown={handleAddTag}
-                    placeholder="Press Enter to add tag"
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {tags.map((tag, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center bg-green-500/20 text-blue-300 px-2 py-1 rounded-full text-sm"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag)}
-                        className="ml-2 text-blue-300 hover:text-red-300 transition-colors"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                {errors.tags && <p className="text-red-500 text-xs mt-1">{errors.tags}</p>}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium text-gray-200">
+                Name:
+              </Label>
+              <div className="relative">
+                <User
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                  placeholder="Enter module name"
+                  required
+                />
+              </div>
+              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+            </div>
+          </div>
+        </>
+      );
+    case 2:
+      return (
+        <>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="url" className="text-sm font-medium text-gray-200">
+                API URL:
+              </Label>
+              <div className="relative">
+                <Link
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  id="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                  placeholder="https://example.com"
+                  required
+                />
+              </div>
+              {errors.url && <p className="text-red-500 text-xs mt-1">{errors.url}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="network" className="text-sm font-medium text-gray-200">
+                Network:
+              </Label>
+              <div className="relative">
+                <Network
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  id="network"
+                  value={network}
+                  onChange={(e) => setNetwork(e.target.value)}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                  placeholder="Enter network name"
+                />
               </div>
             </div>
-          </>
-        );
-    }
-  };
-  return (
-    <div className="min-h-screen flex flex-col bg-[#0F0F0F] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
-      <SimpleHubNavbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="w-full max-w-2xl mx-auto">
-          {Object.keys(errors).length > 0 && (
-            <Alert
-              variant="destructive"
-              className="mb-4 bg-red-500/10 border-red-500/20 text-red-400"
-            >
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                Please correct the errors in the form before proceeding.
-              </AlertDescription>
-            </Alert>
-          )}
-          <Card className="bg-white/5 border-white/10 text-white">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink
-                    onClick={() => router.push('/')}
-                    className="cursor-pointer text-sm text-gray-400 hover:text-white my-2 flex items-center gap-1 ml-2"
-                  >
-                    <ChevronLeft className="h-4 w-4" /> Back to Modules
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">Create New Module</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-8">
-                <div className="flex justify-between items-center">
-                  {steps.map((s, index) => (
-                    <div key={index} className="flex flex-col items-center">
-                      <div
-                        className={cn(
-                          'w-10 h-10 rounded-full flex items-center justify-center mb-2',
-                          step > index
-                            ? 'bg-green-500 text-white'
-                            : step === index + 1
-                              ? 'bg-green-200 text-green-800'
-                              : 'bg-gray-200 text-gray-400'
-                        )}
-                      >
-                        <s.icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-xs text-gray-400">{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 h-2 bg-gray-200 rounded-full">
-                  <div
-                    className="h-full bg-green-500 rounded-full transition-all duration-300 ease-in-out"
-                    style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-                  ></div>
-                </div>
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-sm font-medium text-gray-200">
+                Description:
+              </Label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-3 text-gray-400" size={18} />
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                  placeholder="Describe your module's capabilities and purpose"
+                  required
+                />
               </div>
-              <form onSubmit={handleCreate} className="space-y-6">
-                {renderStep()}
-              </form>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              {step > 1 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handlePrevious}
-                  className="border-white/10 bg-white/5 text-white hover:bg-white/10"
-                >
-                  <ChevronLeft className="w-4 h-4 mr-2" />
-                  Previous
-                </Button>
+              {errors.description && (
+                <p className="text-red-500 text-xs mt-1">{errors.description}</p>
               )}
-              {step < steps.length ? (
-                <Button
-                  type="button"
-                  onClick={handleNext}
-                  className="bg-green-500 text-white hover:bg-green-600 ml-auto"
+            </div>
+          </div>
+        </>
+      );
+    case 3:
+      return (
+        <>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="tags" className="text-sm font-medium text-gray-200">
+                  Tags:
+                </Label>
+              </div>
+              <div className="relative">
+                <Tag
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  id="tags"
+                  value={currentTag}
+                  onChange={(e) => setCurrentTag(e.target.value)}
+                  onKeyDown={handleAddTag}
+                  placeholder="Press Enter to add tag"
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder-gray-400"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {tags.map((tag, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center bg-green-500/20 text-blue-300 px-2 py-1 rounded-full text-sm"
+                  >
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="ml-2 text-blue-300 hover:text-red-300 transition-colors"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {errors.tags && <p className="text-red-500 text-xs mt-1">{errors.tags}</p>}
+            </div>
+          </div>
+        </>
+      );
+  }
+};
+return (
+  <div className="min-h-screen flex flex-col bg-[#0F0F0F]">
+    <SimpleHubNavbar />
+    <main className="flex-grow container mx-auto px-4 py-8">
+      <div className="w-full max-w-2xl mx-auto">
+        {Object.keys(errors).length > 0 && (
+          <Alert
+            variant="destructive"
+            className="mb-4 bg-red-500/10 border-red-500/20 text-red-400"
+          >
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              Please correct the errors in the form before proceeding.
+            </AlertDescription>
+          </Alert>
+        )}
+        <Card className="bg-white/5 border-white/10 text-white">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  onClick={() => router.push('/')}
+                  className="cursor-pointer text-sm text-gray-400 hover:text-white my-2 flex items-center gap-1 ml-2"
                 >
-                  Next
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  onClick={handleCreate}
-                  className="bg-green-500 text-white hover:bg-green-600 ml-auto"
-                >
-                  Create Module
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
+                  <ChevronLeft className="h-4 w-4" /> Back to Modules
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Create New Module</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-8">
+              <div className="flex justify-between items-center">
+                {steps.map((s, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div
+                      className={cn(
+                        'w-10 h-10 rounded-full flex items-center justify-center mb-2',
+                        step > index
+                          ? 'bg-green-500 text-white'
+                          : step === index + 1
+                            ? 'bg-green-200 text-green-800'
+                            : 'bg-gray-200 text-gray-400'
+                      )}
+                    >
+                      <s.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs text-gray-400">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 h-2 bg-gray-200 rounded-full">
+                <div
+                  className="h-full bg-green-500 rounded-full transition-all duration-300 ease-in-out"
+                  style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+            <form onSubmit={handleCreate} className="space-y-6">
+              {renderStep()}
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            {step > 1 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={isLoading}
+                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+            )}
+            {step < steps.length ? (
+              <Button
+                type="button"
+                onClick={handleNext}
+                disabled={isLoading}
+                className="bg-green-500 text-white hover:bg-green-600 ml-auto"
+              >
+                {isLoading ? 'Creating...' : (
+                  <>
+                    Next
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                onClick={handleCreate}
+                disabled={isLoading}
+                className="bg-green-500 text-white hover:bg-green-600 ml-auto"
+              >
+                {isLoading ? 'Creating...' : 'Create Module'}
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
+      </div>
+    </main>
+    <Footer />
+  </div>
+);
 }
 
 
