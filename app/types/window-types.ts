@@ -13,6 +13,7 @@ interface SolanaProvider {
   };
   connect: () => Promise<{ publicKey: { toString: () => string } }>;
   disconnect: () => Promise<void>;
+  signMessage: (message: Uint8Array, encoding: string) => Promise<{ signature: Uint8Array; publicKey: { toString: () => string } }>;
 }
 
 declare global {

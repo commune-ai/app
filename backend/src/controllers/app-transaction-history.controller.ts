@@ -1,8 +1,7 @@
 import { AppTransactionHistoryRepository, ModuleRepository, UserRepository } from "../repository";
 import { Request, Response, NextFunction } from "express";
-import { ResponseService } from "../services";
-import { ethers } from "ethers";
-import { signatureVerify } from "@polkadot/util-crypto";
+import { ResponseService, UserService } from "../services";
+
 
 
 export class AppTransactionHistoryController {
@@ -19,21 +18,11 @@ export class AppTransactionHistoryController {
             if (!evidenceImage_url) {
                 return ResponseService.CreateErrorResponse("Evidence Image file is required", 400);
             }
-            let recoveredAddress: string;
-            if (type === "metamask") {
-                recoveredAddress = ethers.verifyMessage(userExist.nonce, signature);
-                if (recoveredAddress.toLowerCase() !== userExist.walletPublicKey.toLowerCase()) {
-                    return ResponseService.CreateErrorResponse("Invalid Signature", 400);
-                }
-            } else if (type === "subwallet") {
-                const { isValid } = signatureVerify(userExist.nonce, signature, userExist.walletPublicKey);
-                if (!isValid) {
-                    return ResponseService.CreateErrorResponse("Invalid Signature", 400);
-                }
-            } else {
-                return ResponseService.CreateErrorResponse("Invalid type", 400);
+            const verifySignature = await UserService.verifyWalletSignature(type, userExist.nonce, userExist.walletPublicKey, signature);
+            if (!verifySignature) {
+                return ResponseService.CreateErrorResponse("Invalid Signature/Type", 400);
             }
-            let moduleWork:boolean = moduleworking === "true" ? true : false;
+            let moduleWork: boolean = moduleworking === "true" ? true : false;
             const appHistory = await AppTransactionHistoryRepository.createHistory(moduleWork, description, evidenceImage_url, modulename, userId);
             return ResponseService.CreateSuccessResponse(appHistory, 200, res);
         } catch (e) {

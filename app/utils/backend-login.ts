@@ -11,9 +11,9 @@ export const fetchNonce = async (address: string) => {
 export const verifySignature = async (address: string, signature: string, type: string): Promise<{ success: boolean, error?: string }> => {
     try {
         await axios.post(`${apiBase}/api/auth/verify`, {
-            address,
-            signature,
-            type
+            address: address,
+            signature: signature,
+            type: type
         }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -57,10 +57,10 @@ export const signMessage = async (wallet: WalletType): Promise<{ success: boolea
                     signature: signature,
                     wallet: WalletType.METAMASK.toLocaleLowerCase(),
                 };
-            } catch {
+            } catch (error) {
                 return {
                     success: false,
-                    error: 'An error occurred during signing to MetaMask',
+                    error: error instanceof Error ? error.message : 'An error occurred during signing to MetaMask',
                 };
             }
         case WalletType.SUBWALLET:
@@ -104,13 +104,39 @@ export const signMessage = async (wallet: WalletType): Promise<{ success: boolea
                     signature: signature,
                     wallet: WalletType.SUBWALLET.toLocaleLowerCase(),
                 };
-            } catch {
+            } catch (error) {
                 return {
                     success: false,
-                    error: 'An error occurred while connecting to SubWallet. Check the console for more details.',
+                    error: error instanceof Error ? error.message : 'An error occurred while connecting to SubWallet. Check the console for more details.',
                 };
             }
-
+        case WalletType.PHANTOM:
+            if (typeof window === 'undefined' || typeof window.solana === 'undefined') {
+                return { success: false, error: 'Phantom Wallet is not installed' };
+            }
+            try {
+                const provider = window.solana;
+                if (!provider.isConnected) {
+                    await provider.connect();
+                }
+                if (!provider.publicKey) {
+                    throw new Error('Failed to retrieve public key from Phantom Wallet');
+                }
+                const address = provider.publicKey.toString();
+                const nonce = new TextEncoder().encode(await fetchNonce(address));
+                const { signature } = await provider.signMessage(nonce, 'utf8');
+                const baseSignature = btoa(String.fromCharCode(...signature));
+                return {
+                    success: true,
+                    signature: baseSignature,
+                    wallet: WalletType.PHANTOM.toLocaleLowerCase(),
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error instanceof Error ? error.message : 'An error occurred during connection to Phantom Wallet',
+                };
+            }
         default:
             return { success: false, error: 'Unsupported wallet type' };
     }

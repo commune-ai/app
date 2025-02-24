@@ -4,7 +4,7 @@ import * as solanaWeb3 from '@solana/web3.js';
 import { Connection } from '@solana/web3.js';
 import { fetchNonce, verifySignature } from './backend-login';
 
-interface SubWalletResponse {
+interface WalletResponse {
   success: boolean;
   error?: string;
   address?: string;
@@ -13,90 +13,59 @@ interface SubWalletResponse {
 
 /**
  * Connects to MetaMask and retrieves the user's account information.
- *
- * @returns {Promise<{
- *   success: boolean;
- *   error?: string;
- *   address?: string;
- *   balance?: string;
- * }>} An object containing the connection status, and if successful, the user's address, network name, and balance.
- *
- * @throws Will return an error message if MetaMask is not installed or if an error occurs during the connection process.
  */
-
-async function connectToMetaMask(): Promise<{
-  success: boolean;
-  error?: string;
-  address?: string;
-  balance?: string;
-}> {
-  if (typeof window.ethereum === 'undefined') {
-    return {
-      success: false,
-      error: 'MetaMask is not installed',
-    };
+const connectToMetaMask = async (): Promise<WalletResponse> => {
+  if (typeof window === 'undefined' || typeof window.ethereum === 'undefined') {
+    return { success: false, error: 'MetaMask is not installed' };
   }
+
   try {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
-    const address = signer.address;
+    const address = await signer.getAddress();
     const balance = await provider.getBalance(address);
+
     const nonce = await fetchNonce(address);
     const signature = await signer.signMessage(nonce);
     const response = await verifySignature(address, signature, 'metamask');
+
     if (!response.success) {
       throw new Error('Signature verification failed');
     }
+
     return {
       success: true,
       address,
       balance: ethers.formatEther(balance),
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
+  } catch {
     return {
       success: false,
       error: 'An error occurred during connection to MetaMask',
     };
   }
-}
+};
 
 /**
  * Connects to SubWallet and retrieves the user's Polkadot account information.
- *
- * @returns {Promise<{
- *   success: boolean;
- *   error?: string;
- *   address?: string;
- *   balance?: string;
- * }>} An object containing the connection status, and if successful, the user's address and balance.
- *
- * @throws Will return an error message if SubWallet is not installed or if an error occurs during the connection process.
  */
-const connectToSubWallet = async (): Promise<SubWalletResponse> => {
+const connectToSubWallet = async (): Promise<WalletResponse> => {
   if (typeof window === 'undefined' || typeof window.SubWallet === 'undefined') {
-    return {
-      success: false,
-      error: 'Subwallet is not installed',
-    };
+    return { success: false, error: 'SubWallet is not installed' };
   }
-  const { web3Enable, web3Accounts, web3FromAddress } = await import('@subwallet/extension-dapp');
+
   try {
+    const { web3Enable, web3Accounts, web3FromAddress } = await import('@subwallet/extension-dapp');
     const extensions = await web3Enable('SubWallet Connect');
+
     if (extensions.length === 0) {
-      return {
-        success: false,
-        error: 'SubWallet extension is not installed',
-      };
+      throw new Error('SubWallet extension is not installed');
     }
 
     const accounts = await web3Accounts();
     if (accounts.length === 0) {
-      return {
-        success: false,
-        error: 'No accounts found in SubWallet',
-      };
+      throw new Error('No accounts found in SubWallet');
     }
 
     const address = accounts[0].address;
@@ -104,20 +73,21 @@ const connectToSubWallet = async (): Promise<SubWalletResponse> => {
     const api = await ApiPromise.create({ provider: wsProvider });
 
     const accountInfo = await api.query.system.account(address);
-    const {
-      data: { free: balance },
-    } = accountInfo.toHuman() as { data: { free: string } };
+    const { data: { free: balance } } = accountInfo.toHuman() as { data: { free: string } };
 
     const nonce = await fetchNonce(address);
     const injector = await web3FromAddress(address);
+
     if (!injector.signer || !injector.signer.signRaw) {
       throw new Error('Signer or signRaw method is undefined');
     }
+
     const { signature } = await injector.signer.signRaw({
       address: address,
       data: nonce,
       type: 'bytes',
     });
+
     const response = await verifySignature(address, signature, 'subwallet');
     if (!response.success) {
       throw new Error('Signature verification failed');
@@ -128,60 +98,57 @@ const connectToSubWallet = async (): Promise<SubWalletResponse> => {
       address,
       balance: balance.toString(),
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return {
       success: false,
-      error: 'An error occurred while connecting to SubWallet. Check the console for more details.',
+      error: error instanceof Error ? error.message : 'An error occurred during connection to SubWallet',
     };
   }
 };
 
 /**
- * Connects to Phantom Wallet and retrieves the user's account information.
- *
- * @returns {Promise<{
- *   success: boolean;
- *   error?: string;
- *   address?: string;
- *   balance?: string;
- * }>} An object containing the connection status, and if successful, the user's address, and balance.
- *
- * @throws Will return an error message if Phantom Wallet is not installed or if an error occurs during the connection process.
+ * Connects to Phantom Wallet and retrieves the user's Solana account information.
  */
-async function connectToPhantom(): Promise<{
-  success: boolean;
-  error?: string;
-  address?: string;
-  balance?: string;
-}> {
-  if (typeof window.solana === 'undefined') {
-    return {
-      success: false,
-      error: 'Phantom Wallet is not installed',
-    };
+const connectToPhantom = async (): Promise<WalletResponse> => {
+  if (typeof window === 'undefined' || typeof window.solana === 'undefined') {
+    return { success: false, error: 'Phantom Wallet is not installed' };
   }
+
   try {
-    const response = await window.solana.connect();
-    const address = response.publicKey.toString();
+    const provider = window.solana;
+    if (!provider.isConnected) {
+      await provider.connect();
+    }
+
+    if (!provider.publicKey) {
+      throw new Error('Failed to retrieve public key from Phantom Wallet');
+    }
+
+    const address = provider.publicKey.toString();
+    const nonce = new TextEncoder().encode(await fetchNonce(address));
+    const { signature } = await provider.signMessage(nonce, 'utf8');
+
+    const baseSignature = btoa(String.fromCharCode(...signature));
+    const response = await verifySignature(address, baseSignature, 'phantom');
+
+    if (!response.success) {
+      throw new Error('Signature verification failed');
+    }
 
     const connection = new Connection('https://api.devnet.solana.com');
-    const balance = await connection.getBalance(
-      new solanaWeb3.PublicKey(response.publicKey.toString())
-    );
+    const balance = await connection.getBalance(new solanaWeb3.PublicKey(address));
 
     return {
       success: true,
       address,
       balance: (balance / solanaWeb3.LAMPORTS_PER_SOL).toString(),
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return {
       success: false,
-      error: 'An error occurred during connection to Phantom Wallet',
+      error: error instanceof Error ? error.message : 'An error occurred during connection to Phantom Wallet',
     };
   }
-}
+};
 
-export { connectToSubWallet, connectToMetaMask, connectToPhantom };
+export { connectToMetaMask, connectToSubWallet, connectToPhantom };
