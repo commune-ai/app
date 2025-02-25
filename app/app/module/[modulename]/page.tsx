@@ -34,6 +34,7 @@ import { ModuleReportDialog } from '@/components/module/module-report-dialog';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
+import HistoryTab from '@/components/module-tabs/history-tab';
 
 export default function ModuleDetailPage() {
   const params = useParams();
@@ -71,7 +72,7 @@ export default function ModuleDetailPage() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab && ['code', 'api', 'app', 'discussion'].includes(tab)) {
+    if (tab && ['code', 'api', 'app', 'discussion','history'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -288,6 +289,12 @@ export default function ModuleDetailPage() {
                 <MessageCircle className="mr-2 h-4 w-4" />
                 DISCUSSION
               </TabsTrigger>
+              <TabsTrigger
+                value="history"
+                className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-400"
+              >
+                HISTORY
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -305,6 +312,9 @@ export default function ModuleDetailPage() {
 
           <TabsContent value="discussion" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
             <DiscussionTab moduleName={moduleDetail[0]?.name} />
+          </TabsContent>
+          <TabsContent value="history" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
+            <HistoryTab moduleid={moduleDetail[0]?.id} />
           </TabsContent>
         </Tabs>
       </div>
