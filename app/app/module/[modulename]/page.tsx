@@ -17,14 +17,11 @@ import {
   Rocket,
   Code,
   Check,
-  Clock,
-  User,
   ChevronRight,
   MessageCircle,
   AlertTriangle,
   Coins,
-  ThumbsUp,
-  ThumbsDown,
+  ExternalLink,
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CodeTab } from '@/components/module-tabs/code-tab';
@@ -35,6 +32,8 @@ import { DiscussionTab } from '@/components/module-tabs/discussion-tab';
 import { useModuleDetailStore } from '@/store/use-module-detail-state';
 import { ModuleReportDialog } from '@/components/module/module-report-dialog';
 import Link from 'next/link';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { toast } from 'sonner';
 
 export default function ModuleDetailPage() {
   const params = useParams();
@@ -44,6 +43,7 @@ export default function ModuleDetailPage() {
   const [copied, setCopied] = useState({ key: false, hash: false });
   const [isLoading, setIsLoading] = useState(true);
   const [isReportingModuleDialogOpen, setIsReportingModuleDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { fetchModuleDetail, moduleDetail } = useModuleDetailStore();
 
@@ -54,9 +54,12 @@ export default function ModuleDetailPage() {
       const fetchData = async () => {
         try {
           setIsLoading(true);
-          await fetchModuleDetail(params.modulename as string);
+          const response = await fetchModuleDetail(params.modulename as string);
+          if (!response.success) {
+            setError(response.error ?? null);
+          }
         } catch (err) {
-          console.error(err);
+          setError(String(err))
         } finally {
           setIsLoading(false);
           hasFetched.current = true;
@@ -72,19 +75,6 @@ export default function ModuleDetailPage() {
       setActiveTab(tab);
     }
   }, [searchParams]);
-
-  const moduleData = {
-    name: 'DeepSeek AI',
-    description: 'A powerful AI model for natural language processing and understanding.',
-    key: 'module_key_123456789',
-    hash: '0xabc123def456...',
-    timeCreated: '2024-02-08 14:30:00',
-    owner: 'Founder123',
-    status: 'Active',
-    version: '1.0.0',
-    upvotes: 125,
-    downvotes: 23,
-  };
 
   const handleCopy = async (text: string, type: 'key' | 'hash') => {
     try {
@@ -103,8 +93,31 @@ export default function ModuleDetailPage() {
     router.push(`/module/${params.modulename}?tab=${value}`, { scroll: false });
   };
 
+  const dhubVersionTwo=()=>{
+    toast.warning("Wait for the next version of dhub to access this feature");
+  }
+
   if (isLoading) {
     return <ModuleDetailSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0F0F0F]">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Failed to get Module Data</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+          <Button
+            variant="link"
+            className="mt-2 text-white hover:text-gray-500"
+            onClick={() => router.push("/")}
+          >
+            Back to Home
+          </Button>
+        </Alert>
+      </div>
+    )
   }
 
   return (
@@ -112,7 +125,12 @@ export default function ModuleDetailPage() {
       <div className="w-full md:w-20 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-[#0F0F0Fs] backdrop-blur-xl backdrop-filter p-4 md:fixed md:h-screen md:left-0">
         <div>
           <div className="text-xl font-bold text-white">
-            <Link href="/" className="text-green-400">dhub</Link>
+            <span
+              onClick={() => router.push('/')}
+              className="text-green-400 cursor-pointer"
+            >
+              dhub
+            </span>
           </div>
         </div>
         <div className="flex items-center justify-center">
@@ -153,24 +171,6 @@ export default function ModuleDetailPage() {
               {moduleDetail[0]?.description ||
                 'This is a description of a module.The module take input from the user and give the output.'}
             </p>
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <span className="flex items-center">
-                <Clock className="mr-1 h-4 w-4" />
-                v1.0.0
-              </span>
-              <span className="flex items-center">
-                <User className="mr-1 h-4 w-4" />
-                {moduleData.owner}
-              </span>
-              <span className="flex items-center">
-                <ThumbsUp className="mr-1 h-4 w-4 text-green-400" />
-                {moduleData.upvotes}
-              </span>
-              <span className="flex items-center">
-                <ThumbsDown className="mr-1 h-4 w-4 text-red-400" />
-                {moduleData.downvotes}
-              </span>
-            </div>
           </div>
 
           <div className="rounded-lg border border-white/10 bg-[#0F0F0F] p-4 space-y-4">
@@ -183,7 +183,7 @@ export default function ModuleDetailPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleCopy(moduleData.key, 'key')}
+                  onClick={() => handleCopy(moduleDetail[0]?.key, 'key')}
                   className="h-8 w-8 rounded-md hover:bg-[#0F0F0F] transition-all duration-200"
                 >
                   {copied.key ? (
@@ -197,14 +197,17 @@ export default function ModuleDetailPage() {
 
             <div>
               <label className="text-sm text-gray-500 block mb-2">Hash</label>
-              <div className="flex items-center justify-between p-2 rounded bg-[#0F0F0F] border border-white/10">
+              <div className="flex items-center justify-between p-2 rounded bg-[#0F0F0F] border border-white/10 gap-2">
                 <code className="text-sm text-gray-300 font-mono truncate">
-                  {moduleDetail[0]?.hash}
+                  {moduleDetail[0]?.ipfs_cid}
                 </code>
+                <Link href={`https://gateway.lighthouse.storage/ipfs/${moduleDetail[0]?.ipfs_cid}`} target='blank' className='hover:text-green-500'>
+                  <ExternalLink className="h-4 w-4 text-green-400" />
+                </Link>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleCopy(moduleData.hash, 'hash')}
+                  onClick={() => handleCopy(moduleDetail[0]?.ipfs_cid, 'hash')}
                   className="h-8 w-8 rounded-md hover:bg-[#30363D] transition-all duration-200"
                 >
                   {copied.hash ? (
@@ -219,27 +222,29 @@ export default function ModuleDetailPage() {
 
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Button className="w-full bg-green-500 text-white hover:bg-green-600">
+              <Button className="w-full bg-green-500 text-white hover:bg-green-600" onClick={()=>{ dhubVersionTwo() }}>
                 <Rocket className="mr-2 h-4 w-4" />
                 Deploy
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-white/10 bg-[#0F0F0F] text-white hover:bg-white/10"
+                className="w-full border-white/10 bg-[#0F0F0F] text-white hover:bg-white/10 hover:text-white"
+                onClick={()=>{ dhubVersionTwo() }}
               >
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-white/10 bg-[#0F0F0F] text-white hover:bg-white/10"
+                className="w-full border-white/10 bg-[#0F0F0F] text-white hover:bg-white/10 hover:text-white"
+                onClick={()=>{ dhubVersionTwo() }}
               >
                 <Coins className="mr-2 h-4 w-4" />
                 Stake on Module
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                className="w-full border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-white"
                 onClick={() => {
                   setIsReportingModuleDialogOpen(true);
                 }}
@@ -295,7 +300,7 @@ export default function ModuleDetailPage() {
           </TabsContent>
 
           <TabsContent value="app" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
-            <AppTab name={Array.isArray(params.modulename) ? params.modulename[0] : params.modulename ?? ""} />
+            <AppTab id={moduleDetail[0]?.id} url={moduleDetail[0]?.appurl} />
           </TabsContent>
 
           <TabsContent value="discussion" className="flex-1 p-6 overflow-auto bg-[#0F0F0F]">
@@ -308,6 +313,6 @@ export default function ModuleDetailPage() {
         open={isReportingModuleDialogOpen}
         onOpenChange={setIsReportingModuleDialogOpen}
       />
-    </div>
+    </div >
   );
 }

@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 type Tag = string;
 
 interface ModuleCardProps {
+  id: string;
   name: string;
   mkey: string;
   timestamp: string;
@@ -23,45 +24,46 @@ interface ModuleCardProps {
 }
 
 export function ModuleCard({
+  id,
   name,
   mkey,
   timestamp,
   description,
   imageUrl,
   network = "commune",
-  tags = ["LLM", "Text Conversion", "LLM", "Text Conversion", "LLM", "Text Conversion"],
+  tags = ["module"],
 }: ModuleCardProps): JSX.Element {
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState<boolean>(false)
 
   const navigateToModule = useCallback(() => {
-    router.push(`/module/${encodeURIComponent(name.toLowerCase())}`);
-  }, [router, name]
+    router.push(`/module/${encodeURIComponent(id)}`);
+  }, [router, id]
   );
 
   const handleCodeClick = useCallback(
     (e: React.MouseEvent): void => {
       e.stopPropagation();
-      router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=code`);
+      router.push(`/module/${encodeURIComponent(id)}?tab=code`);
     },
-    [router, name]
+    [router, id]
   );
 
   const handleApiClick = useCallback(
     (e: React.MouseEvent): void => {
       e.stopPropagation();
-      router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=api`);
+      router.push(`/module/${encodeURIComponent(id)}?tab=api`);
     },
-    [router, name]
+    [router, id]
   );
 
   const handleAppClick = useCallback(
     (e: React.MouseEvent): void => {
       e.stopPropagation();
-      router.push(`/module/${encodeURIComponent(name.toLowerCase())}?tab=app`);
+      router.push(`/module/${encodeURIComponent(id)}?tab=app`);
     },
-    [router, name]
+    [router, id]
   );
 
 

@@ -24,12 +24,12 @@ import { useWalletStore } from '@/store/use-wallet-state';
 import { WalletType } from '@/types/wallet-types';
 import { useAppReportStore } from '@/store/use-app-report-state';
 
-export const AppTab = ({ name }: { name: string }) => {
+export const AppTab = ({ id, url }: { id: string, url: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     moduleworking: false,
     description: '',
-    modulename: name,
+    moduleid: id,
   });
   const [evidenceImage, setEvidenceImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -53,7 +53,7 @@ export const AppTab = ({ name }: { name: string }) => {
         const formDataToSend = new FormData();
         formDataToSend.append('moduleworking', formData.moduleworking.toString());
         formDataToSend.append('description', formData.description);
-        formDataToSend.append('modulename', formData.modulename);
+        formDataToSend.append('moduleid', formData.moduleid);
         formDataToSend.append('image', evidenceImage);
         formDataToSend.append('signature', signResponse.signature as string);
         formDataToSend.append('type', signResponse.wallet as string);
@@ -73,7 +73,7 @@ export const AppTab = ({ name }: { name: string }) => {
       setFormData({
         moduleworking: false,
         description: '',
-        modulename: name,
+        moduleid: id,
       });
       setEvidenceImage(null);
       setImagePreview(null);
@@ -110,7 +110,7 @@ export const AppTab = ({ name }: { name: string }) => {
   return (
     <div className="space-y-6">
       <Link
-        href="https://bettertherapy.ai/"
+        href={url}
         target="_blank"
         rel="noopener noreferrer"
         className="text-white text-sm hover:underline hover:text-blue-600 flex items-center gap-2"
@@ -134,18 +134,6 @@ export const AppTab = ({ name }: { name: string }) => {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="modulename">Module Name</Label>
-              <Input
-                id="modulename"
-                name="modulename"
-                value={formData.modulename}
-                onChange={handleChange}
-                disabled={true}
-                className="bg-background text-foreground"
-              />
-            </div>
-
             <div className="space-y-2">
               <Label>Is the module working?</Label>
               <RadioGroup
@@ -214,7 +202,7 @@ export const AppTab = ({ name }: { name: string }) => {
         <h3 className="text-lg font-semibold text-white">App Preview</h3>
         <div className="aspect-video w-full overflow-hidden rounded-lg border border-white/10">
           <iframe
-            src="https://bettertherapy.ai/"
+            src={url}
             className="w-full h-full"
             style={{ minHeight: '400px' }}
             title="Module Application Preview"

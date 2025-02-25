@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from 'sonner';
 
 type Comment = {
   readonly id: number;
@@ -36,22 +37,12 @@ const INITIAL_COMMENTS: readonly Comment[] = [
 ] as const;
 
 export function DiscussionTab({ moduleName }: DiscussionTabProps): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [comments, setComments] = useState<readonly Comment[]>(INITIAL_COMMENTS);
   const [newComment, setNewComment] = useState<string>('');
 
   const handleCommentSubmit = (): void => {
-    const trimmedComment = newComment.trim();
-    if (trimmedComment) {
-      const newCommentObj: Comment = {
-        id: comments.length + 1,
-        user: 'You',
-        avatar: '/avatars/default.png',
-        content: trimmedComment,
-        timestamp: 'Just now',
-      };
-      setComments((prevComments) => [...prevComments, newCommentObj]);
-      setNewComment('');
-    }
+    toast.warning("Wait for the next version of dhub to access this feature");
   };
 
   return (

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Terminal } from 'lucide-react';
+import { toast } from 'sonner';
 
 type InputField = {
   value: string;
@@ -72,7 +73,7 @@ export function ApiTab({ schema = schemaDefault }: ApiTabProps) {
   const handleExecute = async () => {
     try {
       setIsExecuting(true);
-      // Simulate API call
+      toast.warning("Wait for the next version of dhub to access this feature");
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setExecutionResult('Function executed successfully');
     } catch (error) {

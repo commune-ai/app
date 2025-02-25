@@ -18,7 +18,7 @@ interface CodeTabProps {
 }
 
 const defaultCode: CodeContent = {
-  'error.py': 'code file not found',
+  'v2.py': 'wait for the next version of dhub to access this feature',
 };
 
 export function CodeTab({ code = defaultCode }: CodeTabProps) {

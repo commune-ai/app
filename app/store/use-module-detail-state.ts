@@ -1,5 +1,9 @@
-import { create } from 'zustand';
-import { Client } from '@/utils/client';
+import { create } from "zustand";
+import axios, { AxiosError } from "axios";
+import getBackendUrl from "@/utils/get-backend-url";
+import { IErrorResponse } from "@/types/backend-error-types";
+
+const apiBase = await getBackendUrl();
 
 interface Code {
   [key: string]: string;
@@ -23,19 +27,31 @@ interface Schema {
 }
 
 interface ModuleDetailProps {
-  description?: string;
-  code: Code;
-  schema: Schema;
+  id: string;
+  module_image_url: string;
   name: string;
+  description: string;
+  network: string;
+  tags: string[];
   key: string;
   founder: string;
-  hash: string;
-  time: number;
+  codelocation: string;
+  appurl: string;
+  ipfs_cid: string;
+  deregistered: boolean;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+  code?: Code;
+  schema?: Schema;
 }
 
 interface ModuleDetailStore {
   moduleDetail: ModuleDetailProps[];
-  fetchModuleDetail: (odule_name: string) => Promise<void>;
+  fetchModuleDetail: (moduleId: string) => Promise<{
+    success:boolean,
+    error?: string
+  }>;
   loadingModuleDetail: boolean;
   setLoadingModuleDetail: (loading: boolean) => void;
 }
@@ -44,20 +60,17 @@ export const useModuleDetailStore = create<ModuleDetailStore>((set) => ({
   moduleDetail: [],
   loadingModuleDetail: true,
   setLoadingModuleDetail: (loading) => set({ loadingModuleDetail: loading }),
-  fetchModuleDetail: async (module_name) => {
+
+  fetchModuleDetail: async (moduleId) => {
     set({ loadingModuleDetail: true });
     try {
-      console.log('Fetching modules...');
-      const client = new Client();
-      const data = await client.call( 'get_module', { module: module_name });
-      if (Array.isArray(data)) {
-        set({ moduleDetail: data, loadingModuleDetail: false });
-      } else {
-        set({ moduleDetail: [data as ModuleDetailProps], loadingModuleDetail: false });
-      }
+      const response = await axios.get(`${apiBase}/api/module/${moduleId}`);
+      set({ moduleDetail: [response.data], loadingModuleDetail: false });
+      return { success: true };
     } catch (error) {
-      console.error('Failed to fetch modules:', error);
+      const { response } = error as AxiosError<IErrorResponse>;
       set({ moduleDetail: [], loadingModuleDetail: false });
+      return { success: false, error: response?.data.errorMessage ?? "Server is not connected" };
     }
   },
 }));

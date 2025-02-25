@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 interface ModuleReportDialogProps {
   moduleName: string;
@@ -29,12 +30,10 @@ export function ModuleReportDialog({
   const handleSubmit = useCallback(() => {
     const trimmedProblem = problem.trim();
     if (trimmedProblem) {
-      // Here you would typically send the report data to your backend
-      console.log('Report submitted:', { problem: trimmedProblem, moduleName });
-      setProblem('');
+      toast.warning("Wait for the next version of dhub to access this feature");
       onOpenChange(false);
     }
-  }, [problem, moduleName, onOpenChange]);
+  }, [problem, onOpenChange]);
 
   const handleCancel = useCallback(() => {
     onOpenChange(false);

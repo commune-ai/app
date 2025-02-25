@@ -112,7 +112,8 @@ export default function Home() {
                       ))
                       : currentItems.map((module, index) => (
                         <ModuleCard
-                          key={`${module.key}-${index}`}
+                          key={`${module.id}-${index}`}
+                          id={module.id}
                           name={module.name}
                           mkey={module.key}
                           network={module.network}
