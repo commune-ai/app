@@ -11,6 +11,7 @@ class ModuleRoute {
     }
     getRoutes() {
         this.router.get("/", ModuleController.getModules);
+        this.router.get("/:id", ModuleController.getModuleById);
     }
     postRoutes() {
         this.router.post("/create", imageUpload.single("image"), ModuleValidator.createModule(), GlobalMiddleware.CheckValidationResult, GlobalMiddleware.CheckAuth, ModuleController.createModule);

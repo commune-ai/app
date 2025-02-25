@@ -5,15 +5,15 @@ export class AppTransactionHistoryValidator {
         return [
             body("moduleworking")
                 .isBoolean()
-                .withMessage("moduleworking must be a boolean"),
+                .withMessage("Moduleworking must be a boolean"),
             body("description")
                 .isString()
                 .notEmpty()
-                .withMessage("moduleid is required"),
-            body("modulename")
+                .withMessage("Description is required"),
+            body("moduleid")
                 .isString()
                 .notEmpty()
-                .withMessage("moduleid is required"),
+                .withMessage("Moduleid is required"),
             body('signature')
                 .notEmpty().withMessage('Signature is required'),
             body('type')

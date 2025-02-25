@@ -54,4 +54,17 @@ export class ModuleController {
             next(e);
         }
     }
+
+    static async getModuleById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id;
+            const module = await ModuleRepository.findModuleById(id);
+            if (!module) {
+                return ResponseService.CreateErrorResponse("Module not found", 404);
+            }
+            return ResponseService.CreateSuccessResponse(module, 200, res);
+        } catch (e) {
+            next(e);
+        }
+    }
 }
