@@ -1,65 +1,61 @@
-import { Wallet } from "@/utils/local-wallet";
-import { ApiPromise, WsProvider } from "@polkadot/api";
+import { PolkadotWallet } from "@/utils/polkadot-local-wallet";
 import { create } from "zustand";
 import { useWalletStore } from "./use-wallet-state";
 import { WalletType } from "@/types/wallet-types";
+import { EthWallet } from "@/utils/ethereum-local-wallet";
 
 interface SigninState {
   privateKey: string;
   isLoading: boolean;
   signinSuccess: boolean;
-  getBalance: (address: string) => Promise<string>;
 }
 
 interface SigninActions {
   setPrivateKey: (privateKey: string) => void;
   setIsLoading: (isLoading: boolean) => void;
   setSigninSuccess: (success: boolean) => void;
-  walletSelected:WalletType;
+  walletSelected: WalletType;
   setWalletSelected: (walletSelected: WalletType) => void;
   handlePrivateKeyChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSignIn: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSignIn: (e: React.FormEvent<HTMLFormElement>, type: WalletType) => void;
 }
-const wsProvider = new WsProvider("wss://rpc.polkadot.io");
-const api = ApiPromise.create({ provider: wsProvider });
 
 export const useSigninStore = create<SigninState & SigninActions>((set) => ({
   privateKey: "",
   isLoading: false,
   signinSuccess: false,
-  walletSelected:WalletType.POLKADOT,
+  walletSelected: WalletType.POLKADOT,
   setWalletSelected: (walletSelected: WalletType) => set({ walletSelected }),
   setPrivateKey: (privateKey: string) => set({ privateKey }),
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   setSigninSuccess: (success: boolean) => set({ signinSuccess: success }),
-
-  getBalance: async (address: string) => {
-    const apiInstance = await api;
-    const accountInfo = await apiInstance.query.system.account(address);
-    const {
-      data: { free: balance },
-    } = accountInfo.toHuman() as { data: { free: string } };
-    return balance.toString();
-  },
   handlePrivateKeyChange: (e: React.ChangeEvent<HTMLInputElement>) => {
     set({ privateKey: e.target.value });
   },
-  handleSignIn: async (e: React.FormEvent) => {
+  handleSignIn: async (e: React.FormEvent, type: WalletType) => {
     e.preventDefault();
     const { privateKey } = useSigninStore.getState();
     if (!privateKey) return;
 
     try {
       set({ isLoading: true, signinSuccess: false });
-      const localWallet = new Wallet();
-      const walletData = await localWallet.fromPassword(privateKey);
+      let localWallet;
+      if (type === WalletType.POLKADOT) {
+        localWallet = new PolkadotWallet();
+      } else {
+        localWallet = new EthWallet();
+      }
+      if (!localWallet) {
+        throw new Error("Invalid wallet type");
+      }
+      const walletData = await localWallet.fromMnemonic(privateKey);
       const walletAddress = walletData.address;
 
       if (!walletAddress || walletAddress === "undefined") {
         throw new Error("Invalid wallet address");
       }
 
-      const balance = await useSigninStore.getState().getBalance(walletAddress);
+      const balance = walletData.balance;
       if (!balance || balance === "undefined") {
         throw new Error("Invalid balance");
       }

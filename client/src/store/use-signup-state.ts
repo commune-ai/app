@@ -1,10 +1,9 @@
-import { ApiPromise, WsProvider } from "@polkadot/api";
 import { create } from "zustand";
 import * as bip39 from "bip39";
-import { Wallet } from "@/utils/local-wallet";
 import { WalletType } from "@/types/wallet-types";
 import { useWalletStore } from "./use-wallet-state";
-
+import { EthWallet } from "@/utils/ethereum-local-wallet";
+import { PolkadotWallet } from "@/utils/polkadot-local-wallet";
 interface State {
   mnemonic: string;
   copied: boolean;
@@ -14,20 +13,17 @@ interface State {
 
 type StoreType = State & {
   setMnemonic: (value: string) => void;
-  walletSelected:WalletType;
+  walletSelected: WalletType;
   setWalletSelected: (walletSelected: WalletType) => void;
   setCopied: (value: boolean) => void;
   setConfirmed: (value: boolean) => void;
   setWalletLoading: (value: boolean) => void;
   generateMnemonic: () => Promise<void>;
-  getBalance: (address: string) => Promise<string>;
   handleCopyMnemonic: () => void;
-  handleSignUp: () => Promise<void>;
+  handleSignUp: (type: WalletType) => Promise<void>;
   getMnemonicWords: () => string[];
 };
 
-const wsProvider = new WsProvider("wss://rpc.polkadot.io");
-const api = ApiPromise.create({ provider: wsProvider });
 
 export const useSignupStore = create<StoreType>((set) => {
   const generateMnemonic = async () => {
@@ -52,29 +48,39 @@ export const useSignupStore = create<StoreType>((set) => {
       console.error("Error handling copy:", error);
     }
   };
-  const handleSignUp = async () => {
+  const handleSignUp = async (type: WalletType) => {
     if (!useSignupStore.getState().confirmed) {
       set((prev) => ({ ...prev, confirmed: true }));
       return;
     }
 
+
     set((prev) => ({ ...prev, walletLoading: true }));
     try {
-      const localWallet = new Wallet();
-      const walletData = await localWallet.fromPassword(useSignupStore.getState().mnemonic);
+      let localWallet;
+      if(type===WalletType.POLKADOT){
+        localWallet = new PolkadotWallet();
+      }else{
+        localWallet = new EthWallet();
+      }
+      if(!localWallet){
+        throw new Error("Invalid wallet type");
+      }
+      const walletData = await localWallet.fromMnemonic(useSignupStore.getState().mnemonic);
+      console.log(walletData);
       const walletAddress = walletData.address;
 
       if (!walletAddress || walletAddress === "undefined") {
         throw new Error("Invalid wallet address");
       }
 
-      const balance = await useSignupStore.getState().getBalance(walletAddress);
+      const balance = walletData.balance;
       if (!balance || balance === "undefined") {
         throw new Error("Invalid balance");
       }
 
       useWalletStore.getState().setWalletConnected(true);
-      const {walletSelected}=useSignupStore.getState();
+      const { walletSelected } = useSignupStore.getState();
       useWalletStore.getState().setWallet(walletSelected, walletAddress, balance);
     } catch (error) {
       console.error("Error during signup:", error);
@@ -98,18 +104,6 @@ export const useSignupStore = create<StoreType>((set) => {
     setWalletSelected: (walletSelected: WalletType) => set({ walletSelected }),
     setConfirmed: (value: boolean) => set({ confirmed: value }),
     setWalletLoading: (value: boolean) => set({ walletLoading: value }),
-    getBalance: async (address: string): Promise<string> => {
-      try {
-        const accountInfo = await (await api).query.system.account(address);
-        const {
-          data: { free: balance },
-        } = accountInfo.toHuman() as { data: { free: string } };
-        return balance.toString();
-      } catch (error) {
-        console.error("Error getting balance:", error);
-        throw error;
-      }
-    },
     getMnemonicWords,
     generateMnemonic,
     handleCopyMnemonic,

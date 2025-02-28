@@ -133,7 +133,7 @@ export default function SignUp() {
               )}
 
               <Button
-                onClick={handleSignUp}
+                onClick={() => { handleSignUp(walletSelected) }}
                 className={`w-full ${confirmed ? "bg-green-500 hover:bg-green-600" : "bg-yellow-500 hover:bg-yellow-600"
                   } text-white transition-colors`}
                 disabled={walletLoading}

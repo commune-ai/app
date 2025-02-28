@@ -76,7 +76,7 @@ export default function SignIn() {
               <CardDescription>Enter your private key to continue</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSignIn} className="space-y-6">
+              <form onSubmit={(e) => { handleSignIn(e, walletSelected) }} className="space-y-6">
                 <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
                   <LocalWalletSelector

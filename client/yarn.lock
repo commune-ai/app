@@ -156,6 +156,17 @@
     "@ethereumjs/rlp" "^5.0.2"
     ethereum-cryptography "^2.2.1"
 
+"@ethereumjs/wallet@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@ethereumjs/wallet/-/wallet-2.0.4.tgz#1e11880e4ce70e626b31eb057d120e75f319203d"
+  integrity sha512-XPX9sUhIXdPjA5FpOmPD0weCAz+9OvCA10OdntJGOXVHtQQZRbncPokxkotDFWopExU/Vj+qZZSHqu+jWK5nkw==
+  dependencies:
+    "@ethereumjs/util" "^9.1.0"
+    "@scure/base" "^1.1.7"
+    ethereum-cryptography "^2.2.1"
+    js-md5 "^0.8.3"
+    uuid "^9.0.1"
+
 "@ethersproject/abstract-provider@^5.7.0":
   version "5.7.0"
   resolved "https://registry.npmjs.org/@ethersproject/abstract-provider/-/abstract-provider-5.7.0.tgz"
@@ -4143,6 +4154,11 @@ jiti@^1.21.6:
   version "1.21.7"
   resolved "https://registry.npmjs.org/jiti/-/jiti-1.21.7.tgz"
   integrity sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==
+
+js-md5@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/js-md5/-/js-md5-0.8.3.tgz#921bab7efa95bfc9d62b87ee08a57f8fe4305b69"
+  integrity sha512-qR0HB5uP6wCuRMrWPTrkMaev7MJZwJuuw4fnwAzRgP4J4/F8RwtodOKpGp4XpqsLBFzzgqIO42efFAyz2Et6KQ==
 
 js-sha3@0.8.0:
   version "0.8.0"

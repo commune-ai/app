@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethereumjs/wallet": "^2.0.4",
     "@ethersproject/providers": "^5.7.2",
     "@polkadot/api": "^15.5.2",
     "@radix-ui/react-avatar": "^1.1.3",
