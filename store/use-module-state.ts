@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Client } from '@/utils/client';
+import { Client } from '@/client/client';
 
 export type ModuleType = {
   description: string;
@@ -77,7 +77,7 @@ export const useModuleStore = create<ModuleStore>((set) => ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data:any = await client.call('modules');
       if (data.success === false) {
-        console.error('Failed to fetch modules:', data);
+        // console.error('Failed to fetch modules:', data);
         set({ modules: [], loadingModules: false });
         return;
       }

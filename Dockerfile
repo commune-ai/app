@@ -17,7 +17,7 @@ RUN pip install -e /commune --break-system-packages
 # Copy package.json and install dependencies
 WORKDIR /app
 COPY . .
-RUN yarn install
+RUN npm install
 RUN chmod +x run/*
 
 ENTRYPOINT [ "bash", "-c", " ./run/app.sh" ]

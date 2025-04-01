@@ -9,10 +9,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Copy, AlertTriangle, Check, ChevronLeft, Loader } from "lucide-react";
 import { useSignupStore } from "@/store/use-signup-state";
 import { useEffect } from "react";
-import { useWalletStore } from "@/store/use-wallet-state";
+import { useWalletStore } from "@/wallet/state";
 import { WalletType, walletOptions } from "@/wallet/types";
 import { Label } from "@/components/ui/label";
-import { LocalWalletSelector } from "@/wallet/local/selector";
+import { WalletSelector } from "@/wallet/selector";
 
 export default function SignUp() {
   const {
@@ -74,7 +74,7 @@ export default function SignUp() {
             <CardContent className="space-y-6">
             <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
-                  <LocalWalletSelector
+                  <WalletSelector
                     options={walletOptions}
                     selectedWallet={walletSelected}
                     onSelect={(walletId: string) => setWalletSelected(walletId as WalletType)}

@@ -145,4 +145,5 @@ export class Wallet {
   decode(message: Uint8Array): string {
     return Buffer.from(message).toString();
   }
+
 }

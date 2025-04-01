@@ -17,7 +17,7 @@ interface WalletSelectorProps {
     onSelect: (walletId: string) => void
 }
 
-export function LocalWalletSelector({ options, selectedWallet, onSelect }: WalletSelectorProps) {
+export function WalletSelector({ options, selectedWallet, onSelect }: WalletSelectorProps) {
     return (
         <div className="grid grid-cols-3 gap-4">
             {options.map((wallet) => (
@@ -32,7 +32,7 @@ export function LocalWalletSelector({ options, selectedWallet, onSelect }: Walle
     )
 }
 
-function WalletOption({
+export function WalletOption({
     wallet,
     isSelected,
     onSelect,

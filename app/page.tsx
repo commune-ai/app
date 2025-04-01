@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useNavbarSidebarStore } from "@/store/use-navbar-sidebar-state";
 import { NavbarSidebarToggle } from "@/components/sidebar/navbar-sidebar-toggle";
 import { AlternateSidebar } from "@/components/footer/footer";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -266,7 +267,7 @@ export default function Home() {
             )}
 
             {!isLoading && !loadingModules && filteredModules.length === 0 && (
-              <div className="text-center text-gray-400 mt-8">No modules found.</div>
+              <div className="text-center text-gray-400 mt-8">No  found.</div>
             )}
           </main>
           <Footer />

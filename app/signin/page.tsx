@@ -11,10 +11,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Key, ChevronLeft, Loader } from "lucide-react";
 import { useSigninStore } from "@/store/use-signin-state";
-import { useWalletStore } from "@/store/use-wallet-state";
-import { WalletType, WalletOption, walletOptions } from "@/wallet/types";
+import { useWalletStore } from "@/wallet/state";
+import { WalletType, walletOptions } from "@/wallet/types";
 import { Label } from "@/components/ui/label"
-import { LocalWalletSelector } from "@/wallet/local";
+import { WalletSelector } from "@/wallet";
 
 export default function SignIn() {
   const { privateKey, isLoading, handleSignIn, handlePrivateKeyChange, setWalletSelected, walletSelected } =
@@ -69,7 +69,7 @@ export default function SignIn() {
               <form onSubmit={handleSignIn} className="space-y-6">
               <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-200">Select Wallet</Label>
-                  <LocalWalletSelector
+                  <WalletSelector
                     options={walletOptions}
                     selectedWallet={walletSelected}
                     onSelect={(walletId: string) => setWalletSelected(walletId as WalletType)}
