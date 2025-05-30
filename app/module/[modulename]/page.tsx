@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { WalletConnect } from '@/wallet/connect';
+import { WalletConnect } from '@/wallet/connect/connect';
 import { Button } from '@/components/ui/button';
 import {
   Breadcrumb,
@@ -32,7 +32,7 @@ import { ApiTab } from '@/components/module/tabs/api-tab';
 import { AppTab } from '@/components/module/tabs/app-tab';
 import ModuleDetailSkeleton from '@/components/skeleton/module-detail-skeleton';
 import { DiscussionTab } from '@/components/module/tabs/discussion-tab';
-import { useModuleDetailStore } from '@/store/use-module-detail-state';
+import { useModuleDetailStore } from '@/store/module';
 import { ModuleReportDialog } from '@/components/module/module-report-dialog';
 
 export default function ModuleDetailPage() {
@@ -112,7 +112,7 @@ export default function ModuleDetailPage() {
       <div className="w-full md:w-20 flex md:flex-col justify-between items-center border-b md:border-b-0 md:border-r border-white/10 bg-white/5 backdrop-blur-xl backdrop-filter p-4 md:fixed md:h-screen md:left-0">
         <div>
           <span className="text-xl font-bold text-white">
-            <span className="text-blue-400">dhub</span>
+            <span className="text-blue-400">commune</span>
           </span>
         </div>
         <div className="flex items-center justify-center">

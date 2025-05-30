@@ -1,121 +1,101 @@
-# ComHub - The Hub for Commune AI Modules
 
-ComHub is a web application that serves as a central hub for managing and discovering Commune AI modules. It provides a user-friendly interface to interact with modules and includes features like module search, creation, and management.
+# Wallet Password Authentication System
 
-## 🚀 Quick Start
+This system provides password-based authentication for wallet sign-in and sign-out operations.
 
-### Prerequisites
+## Components
 
-- Docker
-- Git
+### PasswordWallet
 
-### Installation
+Used for signing in with a password. It can generate and use a default password for convenience.
 
-1. Clone the repository:
-```bash
-git clone https://github.com/commune-ai/app.git
-cd app
+```jsx
+import { PasswordWallet } from '@/wallet/password/password-wallet';
+
+<PasswordWallet 
+  onSuccess={() => console.log('Sign in successful')} 
+  onError={(error) => console.error(error)}
+  useDefaultPassword={true} // Auto-generates a password if none exists
+/>
 ```
 
-2. Build the Docker image:
-```bash
-./run/build.sh # make build
+### PasswordSignOut
+
+Requires password confirmation before signing out, enhancing security.
+
+```jsx
+import { PasswordSignOut } from '@/wallet/password/password-signout';
+
+<PasswordSignOut 
+  onSuccess={() => console.log('Sign out successful')} 
+  onError={(error) => console.error(error)}
+/>
 ```
 
-3. Start the container:
-```bash
-./run/start.sh # make start or make up
+### SignOutDialog
+
+A complete dialog component that handles sign-out confirmation, with special handling for password wallets.
+
+```jsx
+import { useState } from 'react';
+import { SignOutDialog } from '@/components/dialogs/signout-dialog';
+
+function MyComponent() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  return (
+    <>
+      <button onClick={() => setDialogOpen(true)}>
+        Sign Out
+      </button>
+      
+      <SignOutDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+      />
+    </>
+  );
+}
 ```
 
-This will:
-- Build the Docker image with all required dependencies
-- Start the container with the necessary port mappings
-- Mount required volumes for persistence
+## Password Utilities
 
-### Development
+The system includes utilities for password generation and storage:
 
-The application consists of two main parts:
+```javascript
+import { 
+  generateSecurePassword, 
+  storeDefaultPassword,
+  getDefaultPassword,
+  generateAndStoreDefaultPassword,
+  clearDefaultPassword
+} from '@/wallet/utils/password-generator';
 
-1. Frontend (Next.js app running on port 3000)
-2. Backend (FastAPI server running on port 8000)
+// Generate a new password
+const password = generateSecurePassword();
 
-To run the development environment:
+// Store a password
+storeDefaultPassword(password);
 
-```bash
-# Enter the container
-./run/enter.sh # make enter
+// Retrieve the stored password
+const storedPassword = getDefaultPassword();
 
-# Start the application
-./run/app.sh # make app
+// Generate and store in one step
+const newPassword = generateAndStoreDefaultPassword();
+
+// Clear the stored password
+clearDefaultPassword();
 ```
 
-## 🛠️ Architecture
+## Implementation Notes
 
-The application is built with:
+1. The default password is stored in localStorage for convenience
+2. For production use, consider implementing more secure storage methods
+3. The sign-out confirmation adds an extra layer of security for password wallets
+4. Non-password wallets use a simpler confirmation dialog
 
-- **Frontend**: Next.js, TailwindCSS, TypeScript
-- **Backend**: FastAPI, Python
-- **Storage**: Local file system for module data
-- **Container**: Docker
+## Security Considerations
 
-## 📁 Project Structure
-
-```
-.
-├── app/                    # Frontend application
-│   ├── components/        # React components
-│   ├── modules/          # Module-related pages
-│   └── wallet/           # Wallet implementation
-├── api/                   # Backend API
-│   ├── api.py            # Main API implementation
-│   └── utils.py          # Utility functions
-├── run/                   # Shell scripts for running the application
-│   ├── app.sh            # Start the application
-│   ├── build.sh          # Build Docker image
-│   ├── enter.sh          # Enter container
-│   ├── start.sh          # Start container
-│   └── stop.sh           # Stop container
-└── Dockerfile            # Docker configuration
-```
-
-## 🔧 Configuration
-
-The application can be configured through environment variables:
-
-- `API_PORT`: Backend API port (default: 8000)
-- `APP_PORT`: Frontend application port (default: 3000)
-
-## 🚀 Features
-
-- Module discovery and search
-- Module creation and management
-- Wallet integration
-- Real-time module status
-- Grid and table views for modules
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- Built on top of Commune AI
-- Inspired by the need for a central hub for AI modules
-
-```
-
-This README provides:
-1. Clear installation instructions using Docker
-2. Project structure overview
-3. Configuration options
-4. Development setup instructions
-5. Feature list
-6. Contributing guidelines
+- The default password mechanism is designed for convenience in development
+- For production applications, consider implementing more robust authentication
+- Password storage in localStorage is not secure for highly sensitive applications

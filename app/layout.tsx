@@ -11,7 +11,7 @@ const pixelifySans = Pixelify_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'dhub',
+  title: 'commune',
   description:
     'A fully open source protocol for developers to create, connect and share machine learning modules',
   viewport: 'width=device-width, initial-scale=1',

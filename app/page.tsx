@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { HubNavbar } from "@/components/navbar/hub-navbar";
+import { HubNavbar } from "@/components/navbar/navbar";
 import { SearchInput } from "@/components/search/search-input";
 import { ModuleCard } from "@/components/module/module-card";
 import { ModuleCardSkeleton } from "@/components/skeleton/module-card-skeleton";
@@ -11,9 +11,9 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
-import { ModuleType, useModuleStore } from "@/store/use-module-state";
+import { ModuleType, useModuleStore } from "@/store/module";
 import { useRouter } from "next/navigation";
-import { useNavbarSidebarStore } from "@/store/use-navbar-sidebar-state";
+import { useNavbarSidebarStore } from "@/store/navbar";
 import { NavbarSidebarToggle } from "@/components/sidebar/navbar-sidebar-toggle";
 import { AlternateSidebar } from "@/components/footer/footer";
 

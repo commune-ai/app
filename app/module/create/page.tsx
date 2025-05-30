@@ -26,7 +26,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/utils/lib';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { SimpleHubNavbar } from '@/components/navbar/hub-navbar-simple';
+import { SimpleHubNavbar } from '@/components/navbar/navbar-simple';
 import {
   Breadcrumb,
   BreadcrumbItem,
