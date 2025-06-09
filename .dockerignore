@@ -6,6 +6,7 @@
 *.pyc
 .pytest_cache/
 env/
+.next/
 
 # benchmark results
 benchmarks/results/
