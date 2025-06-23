@@ -23,22 +23,22 @@ import {
     private private_key: string // Stores the private key of the wallet
     public public_key: string // Stores the public key of the wallet
     public address: string // Stores the wallet's address
-    public signiture: signature_t // Defines the signature type used by the wallet
+    public crypto_type: signature_t // Defines the signature type used by the wallet
   
     /**
      * Constructs a new Wallet instance using a password as the seed.
      * @param password - The password used to generate keys.
-     * @param signiture - The cryptographic algorithm (default: 'sr25519').
+     * @param crypto_type - The cryptographic algorithm (default: 'sr25519').
      */
-    constructor(password: string, signiture: signature_t = 'sr25519') {
+    constructor(password: string, crypto_type: signature_t = 'sr25519') {
       const { public_key, private_key, address } = this.fromPassword(
         password,
-        signiture
+        crypto_type
       )
       this.public_key = public_key
       this.private_key = private_key
       this.address = address
-      this.signiture = signiture
+      this.crypto_type = crypto_type
     }
   
     /**
@@ -99,13 +99,13 @@ import {
       }
       const messageBytes = this.encode(message)
   
-      if (this.signiture === 'sr25519') {
+      if (this.crypto_type === 'sr25519') {
         const signature = sr25519Sign(messageBytes, {
           publicKey: hexToU8a(this.public_key),
           secretKey: hexToU8a(this.private_key),
         })
         return this.decode(signature)
-      } else if (this.signiture === 'ecdsa') {
+      } else if (this.crypto_type === 'ecdsa') {
         const messageHash = blake2AsHex(message)
         const signature = secp256k1.sign(
           hexToU8a(messageHash),
@@ -132,7 +132,7 @@ import {
       if (!message || !signature || !public_key) {
         throw new Error('Invalid verification parameters')
       }
-      const sigType = this.signiture
+      const sigType = this.crypto_type
       const messageBytes = new TextEncoder().encode(message)
   
       if (sigType === 'sr25519') {

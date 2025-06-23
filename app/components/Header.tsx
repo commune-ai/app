@@ -22,7 +22,7 @@ export const Header = () => {
       const wallet = new Wallet(password)
       setWalletInfo({
         address: wallet.address,
-        crypto_type: wallet.signiture,
+        crypto_type: wallet.crypto_type,
       })
       setPassword('')
       setIsMenuOpen(false)

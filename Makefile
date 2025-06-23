@@ -15,3 +15,8 @@ stop:
 	${SCRIPTS_PATH}/stop.sh
 down:
 	make stop
+
+build:
+	${SCRIPTS_PATH}/build.sh
+enter: 
+	${SCRIPTS_PATH}/enter.sh
